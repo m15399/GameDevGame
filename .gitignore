@@ -44,7 +44,7 @@ Desktop.ini
 ######################
  
 *.pydevproject
-.project
+#.project
 .metadata
 bin/**
 tmp/**
@@ -55,7 +55,7 @@ tmp/**/*
 *~.nib
 local.properties
 .classpath
-.settings/
+#.settings/
 .loadpath
 /src/main/resources/rebel.xml
 # External tool builders
