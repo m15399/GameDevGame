@@ -25,6 +25,9 @@ public class TestRectangleGuy extends GameObject {
 			y -= moveSpeed * dt;
 		if(Input.isDown(KeyEvent.VK_DOWN))
 			y += moveSpeed * dt;
+		
+		x = Utils.clamp(x, width/2, Game.WIDTH -width/2);
+		y = Utils.clamp(y, height/2, Game.HEIGHT - height/2);
 	}
 	
 	public void draw(Graphics2D g){

@@ -1,5 +1,9 @@
 package engine;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.geom.AffineTransform;
+
 import javax.swing.*;
 
 import engine.Input.InputListener;
@@ -29,6 +33,19 @@ public class Application extends JFrame implements Runnable {
 		
 		private static final long serialVersionUID = 1958492344976812306L;
 
+		public DrawPanel(){
+			// Handle resizing of panel
+			addComponentListener(new ComponentAdapter() 
+			{  
+			        public void componentResized(ComponentEvent evt) {
+			        	scaleFac = getHeight() / (double)Game.HEIGHT;
+			        	leftSide = (getWidth() - (Game.WIDTH * scaleFac)) / 2;
+			        	toBack(); // this seems to (sometimes) fix a bug in Java...
+			        	toFront();
+			        }
+			});
+		}
+		
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g);
 			draw((Graphics2D) g);
@@ -36,38 +53,63 @@ public class Application extends JFrame implements Runnable {
 	}
 
 	Game game;
+	JPanel panel;
+	
+	// How to scale and translate the game to fit inside the window
+	public static double leftSide = 0;
+	public static double scaleFac = 1;
 
 	public Application(String title) {
 		// Create Game
 		game = new Game();
 		
-		// Create draw panel
-		JPanel panel = new DrawPanel();
-		add(panel);
+		// Preload resources
+		Resources.preloadResources();
 		
+		// Screen dimensions
+		Dimension screenDimensions = Toolkit.getDefaultToolkit().getScreenSize();
+		double screenHeight = screenDimensions.height;
+		double screenWidth = screenDimensions.width;
+
+		// Create window
+		setTitle(title);
+		setLayout(new BorderLayout()); // auto resizes panel
+		
+		// Create draw panel
+		panel = new DrawPanel();
+		add(panel, BorderLayout.CENTER);
+	
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		pack();
+		
+		
+		// Fit on screen
+		double desiredHeight = screenHeight * .8;
+		
+		double scale = desiredHeight/(Game.HEIGHT);
+		setGameSize(Game.WIDTH * scale, Game.HEIGHT * scale);
+		
+		setLocation((int)(screenWidth/2 - getWidth()/2),
+				(int)(screenHeight*5.5/12.0 - getHeight()/2));
+		
+		setVisible(true);
+
 		// Add input listeners
 		InputListener inputListener = new Input.InputListener();
 		addKeyListener(inputListener);
 		panel.addMouseListener(inputListener);
 		panel.addMouseMotionListener(inputListener);
-		
-		// Preload resources
-		Resources.preloadResources();
-		
-		// Create window
-		setTitle(title);
-		setSize(Game.WIDTH, Game.HEIGHT);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setVisible(true);
-		setResizable(false);
-		
-		// Resize to take the sides of the window into account
-		// (Coordinates will be a little off otherwise)
+
+	}
+	
+	void setGameSize(double w, double h){
 		Insets insets = getInsets();
-		setSize(Game.WIDTH + insets.left + insets.right, 
-				Game.HEIGHT + insets.top + insets.bottom);
-		
-		
+		int vertInsets = insets.top + insets.bottom;
+		int horizInsets = insets.left + insets.right;
+		setSize((int)(w + horizInsets), 
+				(int)(h + vertInsets));
+		System.out.println(scaleFac + " " + leftSide);
+
 	}
 
 	// Called about 60 times a second
@@ -77,7 +119,23 @@ public class Application extends JFrame implements Runnable {
 	}
 
 	void draw(Graphics2D g) {
+
+		AffineTransform prevTransform = g.getTransform();
+		
+		// Scale to fit window
+		g.translate(leftSide, 0);
+		g.scale(scaleFac, scaleFac);
+		
 		game.draw(g);
+		
+		g.setTransform(prevTransform);
+		
+		if(leftSide > 0){
+			// Draw vertical bars on left and right
+			g.setColor(Color.darkGray);
+			g.fillRect(0, 0, (int)leftSide+1, getHeight());
+			g.fillRect(getWidth()-(int)leftSide-1, 0, (int)leftSide+1, getHeight());			
+		}
 	}
 
 	// Game loop -

@@ -241,4 +241,14 @@ public class MissileCommandTest extends GameObject {
 		}
 	}
 	
+	public void draw(Graphics2D g){
+		// draw crosshairs where our mouse is
+		g.setColor(Color.white);
+		double ls = 5;
+		double targetX = Input.getMouseLoc().x;
+		double targetY = Input.getMouseLoc().y;
+		g.drawLine((int)(targetX - ls), (int)targetY, (int)(targetX + ls), (int)targetY);
+		g.drawLine((int)targetX, (int)(targetY - ls), (int)targetX, (int)(targetY + ls));
+	}
+	
 }
