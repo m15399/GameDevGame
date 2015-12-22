@@ -111,7 +111,7 @@ public class SnakeTest extends GameObject {
 			currLength = 0;
 			tailLength = 10;
 			
-			drawOrder = 1;
+			setDrawOrder(1);
 			
 			disableInputTimeLeft = 0;
 			
@@ -192,7 +192,7 @@ public class SnakeTest extends GameObject {
 		
 		public Pickup(){
 			relocate();
-			drawOrder = .5;
+			setDrawOrder(.5);
 		}
 		
 		public void relocate(){

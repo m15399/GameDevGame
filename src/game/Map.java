@@ -1,6 +1,7 @@
 package game;
 
 import java.awt.Graphics2D;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
@@ -15,6 +16,9 @@ public class Map extends GameObject {
 
 	Tile[][] tiles;
 
+	// Objects on the map, such as walls
+	ArrayList<MapEntity> onMap; 
+	
 	/**
 	 * Create a map from a text file
 	 */
@@ -52,10 +56,18 @@ public class Map extends GameObject {
 
 		// Create the map using the tokens we collected
 
+		onMap = new ArrayList<MapEntity>();
+		
 		tiles = new Tile[h][w];
 		for (int i = 0; i < h; i++) {
 			for (int j = 0; j < w; j++) {
-				tiles[i][j] = new Tile(tokens.poll());
+				Type type = Tile.getType(tokens.poll());
+				tiles[i][j] = new Tile(type);
+				
+				// Create a wall object on top of wall tiles
+				if(type == Type.WALL){
+					onMap.add(new Wall(j, i));
+				}
 			}
 		}
 
@@ -99,6 +111,28 @@ public class Map extends GameObject {
 		else
 			return false;
 	}
+	
+	/**
+	 * Is the coordinate on the floor?
+	 */
+	public boolean isFloorAt(double x, double y) {
+		Tile t = tileAt(x, y);
+		if (t != null)
+			return t.type == Type.FLOOR;
+		else
+			return false;
+	}
+	
+	/**
+	 * Is any part of the rect on the floor?
+	 */
+	public boolean isOnFloor(double x, double y, double w, double h){
+		if(isFloorAt(x, y) || isFloorAt(x+w, y) || isFloorAt(x, y+h) || isFloorAt(x+w, y+h)){
+			return true;
+		} else {
+			return false;
+		}
+	}
 
 	public void update(double dt) {
 
@@ -110,6 +144,12 @@ public class Map extends GameObject {
 			for (int j = 0; j < tiles[0].length; j++) {
 				tiles[i][j].draw(g, j, i);
 			}
+		}
+	}
+	
+	public void onDestroy(){
+		for(MapEntity e : onMap){
+			e.destroy();
 		}
 	}
 

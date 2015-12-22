@@ -48,7 +48,7 @@ public class Camera extends Entity {
 	class CameraTransformStart extends GameObject {
 		public CameraTransformStart() {
 			// a little extra to include objects whose drawOrder == 10
-			this.drawOrder = -10.00001;
+			setDrawOrder(-10.00001);
 		}
 
 		public void draw(Graphics2D g) {
@@ -62,7 +62,7 @@ public class Camera extends Entity {
 
 	class CameraTransformEnd extends GameObject {
 		public CameraTransformEnd() {
-			this.drawOrder = 10.00001;
+			setDrawOrder(10.00001);
 		}
 
 		public void draw(Graphics2D g) {

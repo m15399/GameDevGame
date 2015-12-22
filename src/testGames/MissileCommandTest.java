@@ -144,7 +144,7 @@ public class MissileCommandTest extends GameObject {
 		public TrailParticle(double x, double y){
 			this.x = x;
 			this.y = y;
-			drawOrder = -1;
+			setDrawOrder(-1);
 		}
 		
 		public void update(double dt){

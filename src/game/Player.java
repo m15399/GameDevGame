@@ -2,15 +2,21 @@ package game;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.awt.geom.AffineTransform;
 
 import engine.*;
 
-public class Player extends Entity {
+public class Player extends MapEntity {
 
+	static final double FALL_DURATION = .75;
+	
 	private int width = 40, height = 50;
 
 	// Radius of circle that bumps into walls
 	private int wallRadius = 20;
+	
+	// Radius of circle that must be off floor for player to fall
+	private int floorRadius = 18;
 
 	// Movement variables
 	private double maxV = 260;
@@ -22,28 +28,55 @@ public class Player extends Entity {
 
 	// Velocity
 	double vx, vy;
-
+	
+	// Falling
+	boolean falling;
+	double fallTime;
+	
+	
 	public void onStart() {
+		respawn();
+	}
+	
+	public void respawn(){
 		x = 100;
 		y = 100;
-
-		drawOrder = 1;
+		setDrawOrder(0);
+		
+		falling = false;
+		fallTime = 0;
 	}
 
 	public void update(double dt) {
+		super.update(dt);
 		
+		if(falling){
+			fallTime += dt;
+			
+			// Now fallen below the ground layer
+			if(fallTime >= FALL_DURATION/3){
+				setDrawOrder(-1);
+			}
+			
+			// Done falling
+			if(fallTime >= FALL_DURATION){
+				respawn();
+			}
+		}
 		
 		// Movement
-
-		// Key input
-		if (Input.isDown(KeyEvent.VK_A))
-			vx -= acc * dt;
-		if (Input.isDown(KeyEvent.VK_D))
-			vx += acc * dt;
-		if (Input.isDown(KeyEvent.VK_W))
-			vy -= acc * dt;
-		if (Input.isDown(KeyEvent.VK_S))
-			vy += acc * dt;
+		
+		if(!falling){
+			// Key input
+			if (Input.isDown(KeyEvent.VK_A))
+				vx -= acc * dt;
+			if (Input.isDown(KeyEvent.VK_D))
+				vx += acc * dt;
+			if (Input.isDown(KeyEvent.VK_W))
+				vy -= acc * dt;
+			if (Input.isDown(KeyEvent.VK_S))
+				vy += acc * dt;
+		}
 
 		// Cap velocity
 		double cv = Math.sqrt(vx * vx + vy * vy);
@@ -115,6 +148,11 @@ public class Player extends Entity {
 		x += pushX;
 		y += pushY;
 
+		// Collision with floor
+		
+		if(!map.isOnFloor(x-floorRadius, y-floorRadius, floorRadius*2, floorRadius*2)){
+			falling = true;
+		}
 		
 		// Press 1 to test getting stuck in a wall
 		if (Input.isPressed(KeyEvent.VK_1)) {
@@ -124,15 +162,26 @@ public class Player extends Entity {
 	}
 
 	public void draw(Graphics2D g) {
+		AffineTransform prev = g.getTransform();
+		g.translate((int)x, (int)y);
+		
+		// If falling, scale the sprite down to make it look like we're falling 
+		if(falling){
+			double fac = 1 - (fallTime / FALL_DURATION);
+			g.scale(fac, fac);
+		}
+		
 		// Draw a rect to represent player
 		g.setColor(Color.white);
-		g.fillRect((int) (x - width / 2),
-				(int) (y - width / 2 - (height - width)), width, height);
+		g.fillRect((int) (-width / 2), (int) (-width / 2 - (height - width)), width, height);
 		
 		// Collision circle (for debugging)
 		g.setColor(Color.green);
-		// g.drawArc((int)(x-wallRadius), (int)(y-wallRadius), wallRadius*2,
-		// wallRadius*2, 0, 360);
+//		g.drawArc((int)(-wallRadius), (int)(-wallRadius), wallRadius*2,wallRadius*2, 0, 360);
+		g.setColor(Color.red);
+//		g.drawArc((int)(-floorRadius), (int)(-floorRadius), floorRadius*2,floorRadius*2, 0, 360);
+		
+		g.setTransform(prev);
 	}
 
 }

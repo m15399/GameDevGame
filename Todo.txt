@@ -6,7 +6,6 @@ Mark's To do list
 ################################
 
 
-
 Milestones:
 	First - Player and Level:
 		Walking around, bumping into walls, falling through pits and dying
@@ -24,36 +23,40 @@ _______________________________________________________________________________
 Code:
 
 Map
-	Tiles
-		Placeholder image
-		Ground
-			normal, cracked, burning levels
-		Pit
-		Wall
-			same location but "stands up" above ground
-	Collisions
-		Get all tiles in a disk
-		Where am I after the walls push me out?
-		Am I considered on the ground or in a pit?
+	Ground
+		normal, cracked, burning levels
+	Background
+		placeholder image
+		scrolling
 Character
-	Movement
-		Bumping into walls, falling
+	Create placeholder sprite
 	Aiming
 		Some kind of gun visual
 	Firing
 		Spew particles in a cone, each heats up tiles underneath
-Camera
-	Offset start/end objects, everything between those depths is affected
+
 
 
 
 Wishlist:
 Mouse breaks when resizing?
 Make side bars black instead of gray
+Improve wall collisions
+Seperate tile for under walls (make lip match)
+options for image instead of just type (if we have multiple tilesets)
 
 _______________________________________________________________________________
 
 Art:
+
+Have people replace the placeholders
+
+
+_______________________________________________________________________________
+
+Audio:
+
+Get a couple background music's
 
 
 _______________________________________________________________________________

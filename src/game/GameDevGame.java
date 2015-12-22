@@ -33,7 +33,7 @@ public class GameDevGame extends GameObject {
 		
 		// Tell camera to follow the player
 		camera.setTarget(player);
-		
+				
 	}
 
 }

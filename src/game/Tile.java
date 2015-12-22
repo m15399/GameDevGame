@@ -2,6 +2,9 @@ package game;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+
+import engine.Resources;
 
 /**
  * Represents a single Tile on the map. Holds its Tile type and determines how to
@@ -35,23 +38,20 @@ public class Tile {
 
 	Type type;
 
-	public Tile() {
-		this.type = Type.EMPTY;
-	}
 
-	public Tile(String type) {
-		this.type = getType(type); // yo dawg, I hear you like types
+	public Tile(Type type) {
+		this.type = type;
 	}
 
 	public void draw(Graphics2D g, int xc, int yc) {
+		
+		int x = xc * SIZE;
+		int y = yc * SIZE;
+		
 		switch (type) {
 		case FLOOR:
-			g.setColor(Color.gray);
-			g.fillRect(xc * SIZE + 1, yc * SIZE + 1, SIZE - 2, SIZE - 2);
-			break;
 		case WALL:
-			g.setColor(Color.lightGray);
-			g.fillRect(xc * SIZE + 1, yc * SIZE + 1, SIZE - 2, SIZE - 2);
+			g.drawImage(Resources.getImage("rocktile.png"), x, y, null);
 			break;
 		default:
 			break;

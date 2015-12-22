@@ -14,7 +14,7 @@ import java.util.Stack;
 public class GameObject {
 	
 	public String tag;
-	public double drawOrder; // e.g. backgrounds have negative draw orders
+	private double drawOrder; // e.g. backgrounds have negative draw orders
 	private int objectIndex; // index in allObjects list
 	
 	public GameObject() {
@@ -55,6 +55,13 @@ public class GameObject {
 	}
 
 	
+	public void setDrawOrder(double o){
+		drawOrder = o;
+	}
+	
+	public double getDrawOrder(){
+		return drawOrder;
+	}
 	
 	
 	//
@@ -123,8 +130,8 @@ public class GameObject {
 	
 	// Remove all objects waiting to be destroyed
 	private static void removeDestroyedObjects(){
-		for(GameObject o : toDestroy){
-			removeObject(o);
+		for(int i = 0; i < toDestroy.size(); i++){
+			removeObject(toDestroy.get(i));
 		}
 		toDestroy.clear();
 	}
