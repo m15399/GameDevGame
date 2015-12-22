@@ -36,13 +36,13 @@ public class Player extends Entity {
 		// Movement
 
 		// Key input
-		if (Input.isDown(KeyEvent.VK_LEFT))
+		if (Input.isDown(KeyEvent.VK_A))
 			vx -= acc * dt;
-		if (Input.isDown(KeyEvent.VK_RIGHT))
+		if (Input.isDown(KeyEvent.VK_D))
 			vx += acc * dt;
-		if (Input.isDown(KeyEvent.VK_UP))
+		if (Input.isDown(KeyEvent.VK_W))
 			vy -= acc * dt;
-		if (Input.isDown(KeyEvent.VK_DOWN))
+		if (Input.isDown(KeyEvent.VK_S))
 			vy += acc * dt;
 
 		// Cap velocity
@@ -82,7 +82,7 @@ public class Player extends Entity {
 
 		double pushX = 0;
 		double pushY = 0;
-		double maxPush = 80 * dt;
+		double maxPush = 150 * dt;
 
 		if (lpInsideTile) {
 			// How far to push?
