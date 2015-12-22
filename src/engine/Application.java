@@ -106,9 +106,12 @@ public class Application extends JFrame implements Runnable {
 		Insets insets = getInsets();
 		int vertInsets = insets.top + insets.bottom;
 		int horizInsets = insets.left + insets.right;
-		setSize((int)(w + horizInsets), 
-				(int)(h + vertInsets));
-		System.out.println(scaleFac + " " + leftSide);
+		int width = (int)(w + horizInsets);
+		int height = (int)(h + vertInsets);
+		setSize(width, height);
+		setPreferredSize(new Dimension(width, height));
+		pack();
+		System.out.println("Setting window size: " + width + " " + height);
 
 	}
 

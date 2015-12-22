@@ -1,0 +1,63 @@
+
+################################
+
+Mark's To do list
+
+################################
+
+
+
+Milestones:
+	First - Player and Level:
+		Walking around, bumping into walls, falling through pits and dying
+		Flamethrower
+		Burning floor
+	Second - Playable with Bots:
+		Simple AI
+		Basic game mechanics done, can play the game
+		Should be fun at this point!
+	Third - Playable with Friends:
+		Get multiplayer working
+
+_______________________________________________________________________________
+
+Code:
+
+Map
+	Tiles
+		Placeholder image
+		Ground
+			normal, cracked, burning levels
+		Pit
+		Wall
+			same location but "stands up" above ground
+	Collisions
+		Get all tiles in a disk
+		Where am I after the walls push me out?
+		Am I considered on the ground or in a pit?
+Character
+	Movement
+		Bumping into walls, falling
+	Aiming
+		Some kind of gun visual
+	Firing
+		Spew particles in a cone, each heats up tiles underneath
+Camera
+	Offset start/end objects, everything between those depths is affected
+
+
+
+Wishlist:
+Mouse breaks when resizing?
+Make side bars black instead of gray
+
+_______________________________________________________________________________
+
+Art:
+
+
+_______________________________________________________________________________
+
+Other:
+
+

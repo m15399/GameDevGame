@@ -1,0 +1,17 @@
+
+ You can actually write comments by starting a line with whitespace
+ 
+ The map is a rectangle of "tokens". Each token is a single character that
+ represents a tile in the map. Right now this is what we have:
+ 
+	0 - Empty
+	1 - Floor
+
+2 2 2 2 2 2 2
+2 1 0 1 0 1 2
+2 1 1 0 1 0 2
+2 1 0 0 1 0 2
+2 1 1 1 1 1 2
+2 2 2 2 1 1 2
+1 1 1 1 1 1 1 
+ 
