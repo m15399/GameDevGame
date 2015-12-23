@@ -31,9 +31,9 @@ Map
 Character
 	Create placeholder sprite
 	Aiming
-		Some kind of gun visual
+		Add mouse control
 	Firing
-		Spew particles in a cone, each heats up tiles underneath
+		Fire heats up tiles underneath
 
 
 

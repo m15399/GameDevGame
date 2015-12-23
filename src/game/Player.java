@@ -23,9 +23,6 @@ public class Player extends MapEntity {
 	private double acc = 2600;
 	private double fric = 10;
 
-	// The map we're on
-	Map map;
-
 	// Velocity
 	double vx, vy;
 	
@@ -33,6 +30,11 @@ public class Player extends MapEntity {
 	boolean falling;
 	double fallTime;
 	
+	FlameThrower flameThrower;
+	
+	public Player(){
+		flameThrower = new FlameThrower(this);
+	}
 	
 	public void onStart() {
 		respawn();
@@ -108,6 +110,7 @@ public class Player extends MapEntity {
 		 * pretty simple and works for now
 		 */
 
+		Map map = Map.currMap;
 		boolean lpInsideTile = map.isWallAt(x - wallRadius, y);
 		boolean rpInsideTile = map.isWallAt(x + wallRadius, y);
 		boolean tpInsideTile = map.isWallAt(x, y - wallRadius);
@@ -153,6 +156,38 @@ public class Player extends MapEntity {
 		if(!map.isOnFloor(x-floorRadius, y-floorRadius, floorRadius*2, floorRadius*2)){
 			falling = true;
 		}
+		
+		// Flame thrower
+		
+		boolean shouldBeFiring = false;
+		int xDir = 0;
+		int yDir = 0;
+		
+		if(Input.isDown(KeyEvent.VK_LEFT)){
+			shouldBeFiring = true;
+			xDir = -1;
+		}
+		if (Input.isDown(KeyEvent.VK_RIGHT)){
+			shouldBeFiring = true;
+			xDir = 1;
+		}
+		if(Input.isDown(KeyEvent.VK_UP)){
+			shouldBeFiring = true;
+			yDir = -1;
+		}
+		if (Input.isDown(KeyEvent.VK_DOWN)){
+			shouldBeFiring = true;
+			yDir = 1;
+		}
+		
+		if(shouldBeFiring){
+			double fireAngle = Math.atan2(yDir, xDir);
+			flameThrower.angle = fireAngle;
+			flameThrower.setFiring(true);
+		} else {
+			flameThrower.setFiring(false);
+		}
+		
 		
 		// Press 1 to test getting stuck in a wall
 		if (Input.isPressed(KeyEvent.VK_1)) {

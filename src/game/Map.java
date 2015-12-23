@@ -14,6 +14,11 @@ import game.Tile.Type;
  */
 public class Map extends GameObject {
 
+	/**
+	 * The current map in use
+	 */
+	public static Map currMap = null;
+	
 	Tile[][] tiles;
 
 	// Objects on the map, such as walls
@@ -72,6 +77,8 @@ public class Map extends GameObject {
 		}
 
 		System.out.println("Created map of size " + w + " x " + h);
+		
+		currMap = this;
 	}
 
 	/**
@@ -151,6 +158,7 @@ public class Map extends GameObject {
 		for(MapEntity e : onMap){
 			e.destroy();
 		}
+		currMap = null;
 	}
 
 }

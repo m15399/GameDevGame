@@ -11,11 +11,18 @@ public class Game {
 
 	public static final int WIDTH = 800, HEIGHT = 600;
 
+	/**
+	 * Time passed since start of game
+	 */
+	public static double time;
+	
 	public Game() {
-
+		time = 0;
 	}
 
 	public void update(double dt) {
+		time += dt;
+		
 		// update all gameobjects
 		GameObject.updateAll(dt);
 

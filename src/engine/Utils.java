@@ -8,7 +8,7 @@ import java.awt.geom.AffineTransform;
  * Useful utility functions
  */
 public class Utils {
-
+	
 	/**
 	 * This method makes it easier to draw images centered with rotation and
 	 * scale

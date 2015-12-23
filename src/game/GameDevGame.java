@@ -29,7 +29,6 @@ public class GameDevGame extends GameObject {
 		map = new Map("TestLevel.txt");
 		
 		player = new Player();
-		player.map = map;
 		
 		// Tell camera to follow the player
 		camera.setTarget(player);
