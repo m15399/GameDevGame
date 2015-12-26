@@ -24,7 +24,10 @@ Code:
 
 Map
 	Ground
-		normal, cracked, burning levels
+		normal, cracked, burning states
+			ember stage will die out, flame stage will burst into flames after a few sec
+		wood tiles
+		cracked overlay for both stone and wood?
 	Background
 		placeholder image
 		scrolling
@@ -33,7 +36,8 @@ Character
 	Aiming
 		Add mouse control
 	Firing
-		Fire heats up tiles underneath
+		Fire heats up tiles underneath, enough heat bumps tile to next stage
+		Flame placeholder image
 
 
 
@@ -43,7 +47,13 @@ Mouse breaks when resizing?
 Make side bars black instead of gray
 Improve wall collisions
 Seperate tile for under walls (make lip match)
-options for image instead of just type (if we have multiple tilesets)
+Switch to using tilesets - specify tileset with "@tileset cave" (loads tilesets/cave.png)
+Make code "more resposible" - private vars, throw errors on bad inputs, etc
+	Prefer readable code over comments
+Joystick/Gamepad control
+Make flames use additive blending mode
+Move ground radius down
+Show fps in top left
 
 _______________________________________________________________________________
 

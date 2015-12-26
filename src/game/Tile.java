@@ -2,16 +2,17 @@ package game;
 
 import java.awt.Graphics2D;
 
+import engine.Entity;
 import engine.Resources;
 
 /**
- * Represents a single Tile on the map. Holds its Tile type and determines how to
- * draw it.
+ * Represents a single Tile on the map. Holds its Tile type and determines how
+ * to draw it.
  */
-public class Tile {
+public class Tile extends Entity {
 
 	public static final int SIZE = 64;
-	
+
 	/**
 	 * Type of a tile
 	 */
@@ -20,36 +21,62 @@ public class Tile {
 	}
 
 	/**
-	 * Convert a String to a Type
+	 * Decide how to create a tile based on a given token string
 	 */
-	static Type getType(String s) {
-		char c = s.charAt(0);
+	static Tile create(String token, int xc, int yc) {
+
+		Tile tile = new Tile(xc, yc);
+
+		char c = token.charAt(0);
 		switch (c) {
+
+		case 'f':
+			tile.catchFire();
 		case '1':
-			return Type.FLOOR;
+			tile.type = Type.FLOOR;
+			break;
 		case '2':
-			return Type.WALL;
-		default:
-			return Type.EMPTY;
+			tile.type = Type.WALL;
+
+			// Create a wall object on top of wall tiles
+			new Wall(xc, yc);
+			break;
 		}
+
+		return tile;
 	}
 
 	Type type;
 
+	int xc, yc;
 
-	public Tile(Type type) {
-		this.type = type;
+	boolean burning;
+	Fire fire;
+
+	public Tile(int xc, int yc) {
+		this.type = Type.EMPTY;
+		burning = false;
+		fire = null;
+
+		this.xc = xc;
+		this.yc = yc;
+		x = xc * SIZE;
+		y = yc * SIZE;
+
 	}
 
-	public void draw(Graphics2D g, int xc, int yc) {
-		
-		int x = xc * SIZE;
-		int y = yc * SIZE;
-		
+	public void catchFire() {
+		burning = true;
+		fire = new Fire(x + SIZE/2, y + SIZE/2);
+
+	}
+
+	public void manualDraw(Graphics2D g) {
 		switch (type) {
 		case FLOOR:
 		case WALL:
-			g.drawImage(Resources.getImage("rocktile.png"), x, y, null);
+			g.drawImage(Resources.getImage("rocktile.png"), (int) x, (int) y,
+					null);
 			break;
 		default:
 			break;

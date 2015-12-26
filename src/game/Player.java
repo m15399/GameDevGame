@@ -180,8 +180,12 @@ public class Player extends MapEntity {
 			yDir = 1;
 		}
 		
+		// Can't shoot if falling
+		if(falling)
+			shouldBeFiring = false;
+		
 		if(shouldBeFiring){
-			double fireAngle = Math.atan2(yDir, xDir);
+			double fireAngle = Math.atan2(-yDir, xDir);
 			flameThrower.angle = fireAngle;
 			flameThrower.setFiring(true);
 		} else {

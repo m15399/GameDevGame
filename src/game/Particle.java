@@ -4,23 +4,20 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 
 /**
- * Flame particle - flies around and burns stuff.
+ * Generic particle - extend to create specialized particles
  */
-public class Flame extends MapEntity {
+public class Particle extends MapEntity {
 
-	static final double FLAME_LIFE = .6; // How long until particle dies
-	
-	double xv, yv;
+	public double xv, yv;
 	double life;
-	double size;
 	
-	public Flame(double x, double y, double xv, double yv){
+	public Particle(double x, double y, double xv, double yv){
 		this.x = x;
 		this.y = y;
 		this.xv = xv;
 		this.yv = yv;
-		life = FLAME_LIFE;
-		size = 20;
+		
+		life = 3;
 	}
 	
 	public void update(double dt){
@@ -43,9 +40,8 @@ public class Flame extends MapEntity {
 	}
 	
 	public void draw(Graphics2D g){
-		// Alpha depends on how long particle has been alive
-		g.setColor(new Color(255,255,100,(int)(100 + 155.0 * life/FLAME_LIFE)));
-		
+		g.setColor(Color.white);
+		double size = 5;
 		g.fillArc((int)(x-size/2), (int)(y-size/2-15), (int)size, (int)size, 0, 360);
 	}
 	

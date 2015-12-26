@@ -94,4 +94,12 @@ public class Utils {
 				&& (y + ys / 2 > y2 - ys2 / 2) && (y - ys / 2 < y2 + ys2 / 2);
 	}
 
+	/**
+	 * Linear interpolate between two values.
+	 * @param t Value between 0 and 1
+	 */
+	public static double lerp(double a, double b, double t) {
+		return (1 - t) * a + t * b;
+	}
+	
 }

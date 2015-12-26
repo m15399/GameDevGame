@@ -1,82 +1,74 @@
 package game;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
+
 import engine.Entity;
-import engine.Game;
 import engine.Utils;
 
 /**
- * Emits Flame particles towards a particular angle.
+ * Shoots flames.
  */
-public class FlameThrower extends Entity {
+public class FlameThrower extends Emitter {
 
-	static final double RATE_OF_FIRE = 40;
-	static final double SPREAD = Math.PI/12;
-	static final double VELOCITY = 400; // of particles
-	static final double DISTANCE = 30; // distance away from (x,y) that particles are emitted
-	
 	Entity parent; // spatial parent
 	double xo, yo; // offset from parent
-	
-	boolean firing;
-	double angle;
-	
-	double lastFire;
 	
 	public FlameThrower(Entity parent){
 		this.parent = parent;
 		xo = yo = 0;
+		
+		// Emitter settings
+		rate = 40;
+		angleJitter = Math.PI/12;
+		velocity = 400;
+		advance = 30;
 	}
 	
 	public void setFiring(boolean b){
-		if(firing && !b){
-			ceaseFire();
-		} else if (!firing && b){
-			fire();
-		}
+		setEnabled(b);
 	}
 	
-	public void fire(){
-		firing = true;
-
-		shootFlame();
-		lastFire = Game.time;
-	}
-	
-	public void ceaseFire(){
-		firing = false;
-	}
-	
-	/**
-	 * Shoot a single flame particle towards 'angle'
-	 */
-	void shootFlame(){		
-		double a = Utils.randomRange(angle - SPREAD, angle + SPREAD);
-		
-		double xdir = Math.cos(a);
-		double ydir = Math.sin(a);
-				
-		new Flame(x + xo + xdir * DISTANCE, y + yo + ydir * DISTANCE, xdir * VELOCITY, ydir * VELOCITY);
-	}
-	
-	public void update(double dt){
+	public void emitParticle(){
+		// Follow parent object
 		x = parent.x + xo;
 		y = parent.y + yo;
 		
-		// Shoot some particles if enough time has passed
-		if(firing){
-			double timeSinceFire = Game.time - lastFire;
-			double desiredTime = 1.0 / RATE_OF_FIRE;
-			
-			// Shoot enough particles to maintain rate of fire
-			while(timeSinceFire > desiredTime){
-				timeSinceFire -= desiredTime;
-				lastFire += desiredTime;
-				
-				shootFlame();
-			}
-		}
+		super.emitParticle();
 	}
 	
+
+	@Override
+	public void createParticle(double x, double y, double xv, double yv) {
+		new FlameParticle(x, y, xv, yv);
+	}
 	
+	/**
+	 * Flame particle - flies around and burns stuff.
+	 */
+	public class FlameParticle extends Particle {
+
+		static final double FLAME_LIFE = .6; // How long until particle dies
+
+		double size;
+		
+		public FlameParticle(double x, double y, double xv, double yv){
+			super(x, y, xv, yv);
+
+			life = FLAME_LIFE;
+			size = 20;
+		}
+		
+		@Override
+		public void draw(Graphics2D g){
+			// Alpha depends on how long particle has been alive
+			int alpha = (int)(Utils.lerp(60, 255, life/FLAME_LIFE));
+			g.setColor(new Color(255,255,100, alpha));
+			
+			// We subtract 15 to make it look like it's floating
+			g.fillArc((int)(x-size/2), (int)(y-size/2-15), (int)size, (int)size, 0, 360);
+		}
+		
+	}
 	
 }

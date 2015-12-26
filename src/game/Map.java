@@ -1,7 +1,6 @@
 package game;
 
 import java.awt.Graphics2D;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
@@ -21,8 +20,6 @@ public class Map extends GameObject {
 	
 	Tile[][] tiles;
 
-	// Objects on the map, such as walls
-	ArrayList<MapEntity> onMap; 
 	
 	/**
 	 * Create a map from a text file
@@ -60,19 +57,12 @@ public class Map extends GameObject {
 		s.close();
 
 		// Create the map using the tokens we collected
-
-		onMap = new ArrayList<MapEntity>();
 		
 		tiles = new Tile[h][w];
 		for (int i = 0; i < h; i++) {
 			for (int j = 0; j < w; j++) {
-				Type type = Tile.getType(tokens.poll());
-				tiles[i][j] = new Tile(type);
-				
-				// Create a wall object on top of wall tiles
-				if(type == Type.WALL){
-					onMap.add(new Wall(j, i));
-				}
+				String token = tokens.poll();
+				tiles[i][j] = Tile.create(token, j, i);
 			}
 		}
 
@@ -149,15 +139,12 @@ public class Map extends GameObject {
 		// Draw all the tiles
 		for (int i = 0; i < tiles.length; i++) {
 			for (int j = 0; j < tiles[0].length; j++) {
-				tiles[i][j].draw(g, j, i);
+				tiles[i][j].manualDraw(g);
 			}
 		}
 	}
 	
 	public void onDestroy(){
-		for(MapEntity e : onMap){
-			e.destroy();
-		}
 		currMap = null;
 	}
 
