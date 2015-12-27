@@ -16,44 +16,21 @@ public class Tile extends Entity {
 	/**
 	 * Type of a tile
 	 */
-	enum Type {
+	public enum Type {
 		EMPTY, FLOOR, WALL
 	}
+	
+	public Type type;
+
+	public int xc, yc;
+
+	private boolean burning;
+	private Fire fire;
 
 	/**
 	 * Decide how to create a tile based on a given token string
 	 */
-	static Tile create(String token, int xc, int yc) {
-
-		Tile tile = new Tile(xc, yc);
-
-		char c = token.charAt(0);
-		switch (c) {
-
-		case 'f':
-			tile.catchFire();
-		case '1':
-			tile.type = Type.FLOOR;
-			break;
-		case '2':
-			tile.type = Type.WALL;
-
-			// Create a wall object on top of wall tiles
-			new Wall(xc, yc);
-			break;
-		}
-
-		return tile;
-	}
-
-	Type type;
-
-	int xc, yc;
-
-	boolean burning;
-	Fire fire;
-
-	public Tile(int xc, int yc) {
+	public Tile(String token, int xc, int yc) {
 		this.type = Type.EMPTY;
 		burning = false;
 		fire = null;
@@ -62,13 +39,36 @@ public class Tile extends Entity {
 		this.yc = yc;
 		x = xc * SIZE;
 		y = yc * SIZE;
+		
+		char c = token.charAt(0);
+		switch (c) {
+
+		case 'f':
+			catchFire();
+		case '1':
+			type = Type.FLOOR;
+			break;
+		case '2':
+			type = Type.WALL;
+			new WallVisual(xc, yc);
+			break;
+		}
 
 	}
 
-	public void catchFire() {
-		burning = true;
-		fire = new Fire(x + SIZE/2, y + SIZE/2);
-
+	private void catchFire() {
+		if(!burning){
+			burning = true;
+			fire = new Fire(x + SIZE/2, y + SIZE/2);
+		}
+	}
+	
+	private void putOutFire(){
+		if(burning){
+			fire.destroy();
+			fire = null;
+			burning = false;	
+		}	
 	}
 
 	public void manualDraw(Graphics2D g) {

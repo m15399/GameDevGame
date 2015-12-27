@@ -8,7 +8,7 @@ import engine.*;
 
 public class Player extends MapEntity {
 
-	static final double FALL_DURATION = .75;
+	private static final double FALL_DURATION = .75;
 	
 	private int width = 40, height = 50;
 
@@ -24,13 +24,13 @@ public class Player extends MapEntity {
 	private double fric = 10;
 
 	// Velocity
-	double vx, vy;
+	private double vx, vy;
 	
 	// Falling
-	boolean falling;
-	double fallTime;
+	private boolean falling;
+	private double fallTime;
 	
-	FlameThrower flameThrower;
+	private FlameThrower flameThrower;
 	
 	public Player(){
 		flameThrower = new FlameThrower(this);

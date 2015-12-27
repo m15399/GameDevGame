@@ -18,7 +18,7 @@ public class Map extends GameObject {
 	 */
 	public static Map currMap = null;
 	
-	Tile[][] tiles;
+	private Tile[][] tiles;
 
 	
 	/**
@@ -26,6 +26,10 @@ public class Map extends GameObject {
 	 */
 	public Map(String textFileName) {
 
+		if(currMap != null){
+			Utils.fatal("Trying to have multiple maps at the same time");
+		}
+		
 		// Read the file, keep track of width and height, and store each token
 
 		Scanner s = Resources.getFile(textFileName);
@@ -62,7 +66,7 @@ public class Map extends GameObject {
 		for (int i = 0; i < h; i++) {
 			for (int j = 0; j < w; j++) {
 				String token = tokens.poll();
-				tiles[i][j] = Tile.create(token, j, i);
+				tiles[i][j] = new Tile(token, j, i);
 			}
 		}
 
@@ -115,7 +119,7 @@ public class Map extends GameObject {
 	public boolean isFloorAt(double x, double y) {
 		Tile t = tileAt(x, y);
 		if (t != null)
-			return t.type == Type.FLOOR;
+			return (t.type == Type.FLOOR || t.type == Type.WALL);
 		else
 			return false;
 	}
@@ -131,12 +135,8 @@ public class Map extends GameObject {
 		}
 	}
 
-	public void update(double dt) {
-
-	}
-
 	public void draw(Graphics2D g) {
-		// Draw all the tiles
+		// Draw the tiles top to bottom
 		for (int i = 0; i < tiles.length; i++) {
 			for (int j = 0; j < tiles[0].length; j++) {
 				tiles[i][j].manualDraw(g);

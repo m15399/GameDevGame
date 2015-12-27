@@ -12,21 +12,21 @@ public class GameDevGame extends GameObject {
 		new GameDevGame();
 	}
 
-	Camera camera;
-	Map map;
-	Player player;
+	private Camera camera;
+	private Player player;
 	
 	
 	public void onStart() {
 		// Play some music
 		Clip c = Resources.getSound("test.wav");
 		c.loop(Clip.LOOP_CONTINUOUSLY);
-//		c.stop();
+		c.stop();
 		
 		camera = new Camera();
+		new Background("background.png");
 		
 		// Load level from file
-		map = new Map("TestLevel.txt");
+		new Map("TestLevel.txt");
 		
 		player = new Player();
 		

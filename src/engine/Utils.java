@@ -102,4 +102,18 @@ public class Utils {
 		return (1 - t) * a + t * b;
 	}
 	
+	/**
+	 * Log a fatal error and quit
+	 */
+	public static void fatal(String msg){
+		System.out.println("Fatal error: " + msg);
+		Application.quit();
+	}
+	
+	/**
+	 * Do a mod operation that doesn't return negative values
+	 */
+	public static double mod(double a, double b){
+		return (a % b + b) % b;
+	}
 }

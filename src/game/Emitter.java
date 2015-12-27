@@ -17,10 +17,10 @@ public abstract class Emitter extends Entity {
 	public double advance; // move the particle a given distance forward when created
 	
 	// Currently emitting
-	boolean enabled;
+	private boolean enabled;
 	
 	// Time last particle was emitted
-	double lastEmit;
+	private double lastEmit;
 	
 	public Emitter(){
 		rate = 10;
@@ -60,7 +60,7 @@ public abstract class Emitter extends Entity {
 	/**
 	 * Shoot a single particle particle towards 'angle'
 	 */
-	void emitParticle(){
+	public void emitParticle(){
 		double a = Utils.randomRange(angle - angleJitter, angle + angleJitter);
 		
 		double xdir = Math.cos(a);

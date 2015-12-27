@@ -9,7 +9,7 @@ import java.awt.Graphics2D;
 public class Particle extends MapEntity {
 
 	public double xv, yv;
-	double life;
+	public double life;
 	
 	public Particle(double x, double y, double xv, double yv){
 		this.x = x;

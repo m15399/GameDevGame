@@ -57,7 +57,7 @@ public class Resources {
 		}
 	}
 
-	// Sound system likely needs to be rewritten becausethe same Clip can't 
+	// Sound system likely needs to be rewritten because the same Clip can't 
 	// be played twice at the same time, and we can't play mp3s. 
 	/**
 	 * @return A reference to the sound located in Resources/filename. The sound
@@ -74,8 +74,7 @@ public class Resources {
 		loadSound(filename);
 		clip = sounds.get(filename);
 		if (clip == null) {
-			System.out.println("Error getting clip: " + filename);
-			System.exit(1);
+			Utils.fatal("Couldn't get clip: " + filename);
 		}
 		return clip;
 	}
@@ -90,8 +89,7 @@ public class Resources {
 		BufferedImage image = images.get(filename);
 
 		if (image == null) {
-			System.out.println("Error getting image: " + filename);
-			System.exit(1);
+			Utils.fatal("Couldn't get image: " + filename);
 		}
 		return image;
 	}
@@ -106,8 +104,7 @@ public class Resources {
 		Scanner reader = files.get(filename);
 
 		if (reader == null) {
-			System.out.println("Error getting file: " + filename);
-			System.exit(1);
+			Utils.fatal("Couldn't get file: " + filename);
 		}
 		return reader;
 	}
@@ -119,8 +116,7 @@ public class Resources {
 			BufferedImage img = ImageIO.read(new File("Resources/" + filename));
 			images.put(filename, img);
 		} catch (IOException e) {
-			System.out.println("Couldn't load image: " + "Resources/" + filename);
-			System.exit(1);
+			Utils.fatal("Couldn't load image: " + filename);
 		}
 	}
 
@@ -142,14 +138,11 @@ public class Resources {
 			clip.open(sound);
 
 		} catch (UnsupportedAudioFileException e) {
-			System.out.println("Unsupported audio exception");
-			System.exit(1);
+			Utils.fatal("Unsupported audio format: " + filename);
 		} catch (IOException e) {
-			System.out.println("Couldn't load clip file: " + "Resources/" + filename);
-			System.exit(1);
+			Utils.fatal("Couldn't load clip: " + filename);
 		} catch (LineUnavailableException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Utils.fatal("Couldn't load clip: " + filename);
 		}
 
 		sounds.put(filename, clip);
@@ -161,8 +154,7 @@ public class Resources {
 			Scanner s = new Scanner(new File("Resources/" + filename));
 			files.put(filename, s);
 		} catch (FileNotFoundException e) {
-			System.out.println("Couldn't load file: " + "Resources/" + filename);
-			System.exit(1);
+			Utils.fatal("Couldn't load clip: " + filename);
 		}
 	}
 

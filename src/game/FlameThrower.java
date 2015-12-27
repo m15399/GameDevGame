@@ -11,8 +11,8 @@ import engine.Utils;
  */
 public class FlameThrower extends Emitter {
 
-	Entity parent; // spatial parent
-	double xo, yo; // offset from parent
+	private Entity parent; // spatial parent
+	private double xo, yo; // offset from parent
 	
 	public FlameThrower(Entity parent){
 		this.parent = parent;
@@ -46,11 +46,11 @@ public class FlameThrower extends Emitter {
 	/**
 	 * Flame particle - flies around and burns stuff.
 	 */
-	public class FlameParticle extends Particle {
+	private class FlameParticle extends Particle {
 
-		static final double FLAME_LIFE = .6; // How long until particle dies
+		private static final double FLAME_LIFE = .6; // How long until particle dies
 
-		double size;
+		private double size;
 		
 		public FlameParticle(double x, double y, double xv, double yv){
 			super(x, y, xv, yv);

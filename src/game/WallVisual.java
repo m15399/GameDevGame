@@ -8,9 +8,9 @@ import engine.Resources;
 /**
  * Draws the wall
  */
-public class Wall extends MapEntity {
+public class WallVisual extends MapEntity {
 
-	public Wall(int xc, int yc){
+	public WallVisual(int xc, int yc){
 		x = Tile.SIZE * xc;
 		y = Tile.SIZE * yc;
 	}

@@ -54,7 +54,6 @@ public class GameObject {
 		toDestroy.add(this);
 	}
 
-	
 	public void setDrawOrder(double o){
 		drawOrder = o;
 	}

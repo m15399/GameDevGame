@@ -26,10 +26,12 @@ public class Application extends JFrame implements Runnable {
 		new Thread(app).start(); // thread.start calls our run method
 	}
 
-	
+	public static void quit(){
+		System.exit(0);
+	}
 	
 	// Panel to draw stuff on
-	class DrawPanel extends JPanel {
+	private class DrawPanel extends JPanel {
 		
 		private static final long serialVersionUID = 1958492344976812306L;
 
@@ -52,8 +54,8 @@ public class Application extends JFrame implements Runnable {
 		}
 	}
 
-	Game game;
-	JPanel panel;
+	private Game game;
+	private JPanel panel;
 	
 	// How to scale and translate the game to fit inside the window
 	public static double leftSide = 0;
@@ -102,7 +104,8 @@ public class Application extends JFrame implements Runnable {
 
 	}
 	
-	void setGameSize(double w, double h){
+	
+	private void setGameSize(double w, double h){
 		Insets insets = getInsets();
 		int vertInsets = insets.top + insets.bottom;
 		int horizInsets = insets.left + insets.right;
@@ -112,16 +115,15 @@ public class Application extends JFrame implements Runnable {
 		setPreferredSize(new Dimension(width, height));
 		pack();
 		System.out.println("Setting window size: " + width + " " + height);
-
 	}
 
 	// Called about 60 times a second
 	// dt is the amount of time (in seconds) passed since last frame
-	void update(double dt) {
+	private void update(double dt) {
 		game.update(dt);
 	}
 
-	void draw(Graphics2D g) {
+	private void draw(Graphics2D g) {
 
 		AffineTransform prevTransform = g.getTransform();
 		
@@ -144,10 +146,10 @@ public class Application extends JFrame implements Runnable {
 	// Game loop -
 	// Updates and redraws the window about 60 times a second
 	// mostly copied from the internet
-	long desiredFPS = 60;
-	long desiredDeltaLoop = (1000 * 1000 * 1000) / desiredFPS;
+	private long desiredFPS = 60;
+	private long desiredDeltaLoop = (1000 * 1000 * 1000) / desiredFPS;
 
-	boolean running = true;
+	private boolean running = true;
 
 	public void run() {
 

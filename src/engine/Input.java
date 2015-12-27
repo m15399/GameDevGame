@@ -69,7 +69,7 @@ public class Input {
 	
 	static class InputListener implements MouseListener, MouseMotionListener, KeyListener {
 		
-		Point adjustPoint(Point p){
+		private Point adjustPoint(Point p){
 			int x = (int)((p.x - Application.leftSide) / Application.scaleFac);
 			int y = (int)(p.y / Application.scaleFac);
 			return new Point(x, y);

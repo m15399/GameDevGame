@@ -28,9 +28,6 @@ Map
 			ember stage will die out, flame stage will burst into flames after a few sec
 		wood tiles
 		cracked overlay for both stone and wood?
-	Background
-		placeholder image
-		scrolling
 Character
 	Create placeholder sprite
 	Aiming
@@ -48,12 +45,11 @@ Make side bars black instead of gray
 Improve wall collisions
 Seperate tile for under walls (make lip match)
 Switch to using tilesets - specify tileset with "@tileset cave" (loads tilesets/cave.png)
-Make code "more resposible" - private vars, throw errors on bad inputs, etc
-	Prefer readable code over comments
 Joystick/Gamepad control
 Make flames use additive blending mode
 Move ground radius down
 Show fps in top left
+Particle use degrees instead of rads
 
 _______________________________________________________________________________
 

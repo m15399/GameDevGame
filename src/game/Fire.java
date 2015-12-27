@@ -28,14 +28,13 @@ public class Fire extends Emitter {
 	@Override
 	public void createParticle(double x, double y, double xv, double yv) {
 		new FireParticle(x, y, xv, yv);
-		
 	}
 	
-	class FireParticle extends Particle{
+	private class FireParticle extends Particle{
 		
-		static final double FIRE_PARTICLE_LIFE = .3; 
+		private static final double FIRE_PARTICLE_LIFE = .3; 
 
-		double size;
+		private double size;
 		
 		public FireParticle(double x, double y, double xv, double yv){
 			super(x, y, xv, yv);

@@ -6,6 +6,7 @@ import java.awt.geom.AffineTransform;
 import engine.Entity;
 import engine.Game;
 import engine.GameObject;
+import engine.Utils;
 
 /**
  * Controls the camera. You can set a target object for it to follow.
@@ -15,16 +16,26 @@ import engine.GameObject;
  * backgrounds should go below -10, and UI stuff should go above 10.
  * 
  */
-public class Camera extends Entity {
+public class Camera extends GameObject {
 
+	public static Camera currCamera = null;
+	
 	// Target to follow
-	Entity target;
+	private Entity target;
 
-	AffineTransform prevTransform;
+	private CameraTransformStart cts;
+	private CameraTransformEnd cte;
+	private AffineTransform prevTransform;
 
 	public Camera() {
-		new CameraTransformStart();
-		new CameraTransformEnd();
+		if(currCamera != null){
+			Utils.fatal("Trying to instantiate multiple cameras");
+		}
+		
+		cts = new CameraTransformStart();
+		cte = new CameraTransformEnd();
+		
+		currCamera = this;
 	}
 
 	/**
@@ -32,6 +43,22 @@ public class Camera extends Entity {
 	 */
 	public void setTarget(Entity t) {
 		target = t;
+	}
+	
+	public double[] getPos(){
+		double[] pos = new double[2];
+		
+		pos[0] = target.x - Game.WIDTH / 2;
+		pos[1] = target.y - Game.HEIGHT / 2;
+		
+		return pos;
+	}
+	
+	public void onDestroy(){
+		cts.destroy();
+		cte.destroy();
+		
+		currCamera = null;
 	}
 
 	/*
@@ -45,7 +72,7 @@ public class Camera extends Entity {
 	 * transform for objects with drawOrder > 10.
 	 */
 
-	class CameraTransformStart extends GameObject {
+	private class CameraTransformStart extends GameObject {
 		public CameraTransformStart() {
 			// a little extra to include objects whose drawOrder == 10
 			setDrawOrder(-10.00001);
@@ -56,11 +83,12 @@ public class Camera extends Entity {
 			prevTransform = g.getTransform();
 			
 			// Transform to take camera into account
-			g.translate(-target.x + Game.WIDTH / 2, -target.y + Game.HEIGHT / 2);
+			double[] pos = getPos();
+			g.translate(-pos[0], -pos[1]);
 		}
 	}
 
-	class CameraTransformEnd extends GameObject {
+	private class CameraTransformEnd extends GameObject {
 		public CameraTransformEnd() {
 			setDrawOrder(10.00001);
 		}
