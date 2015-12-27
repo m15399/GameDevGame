@@ -106,8 +106,12 @@ public class Utils {
 	 * Log a fatal error and quit
 	 */
 	public static void fatal(String msg){
-		System.out.println("Fatal error: " + msg);
+		System.err.println("Fatal error: " + msg);
 		Application.quit();
+	}
+	
+	public static void err(String msg){
+		System.err.println("Error: " + msg);
 	}
 	
 	/**

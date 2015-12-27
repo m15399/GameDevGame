@@ -214,12 +214,13 @@ public class Player extends MapEntity {
 		g.setColor(Color.white);
 		g.fillRect((int) (-width / 2), (int) (-width / 2 - (height - width)), width, height);
 		
-		// Collision circle (for debugging)
-		g.setColor(Color.green);
-//		g.drawArc((int)(-wallRadius), (int)(-wallRadius), wallRadius*2,wallRadius*2, 0, 360);
-		g.setColor(Color.red);
-//		g.drawArc((int)(-floorRadius), (int)(-floorRadius), floorRadius*2,floorRadius*2, 0, 360);
-		
+		if(Game.DEBUG){
+			// Collision circle (for debugging)
+			g.setColor(Color.green);
+			g.drawArc((int)(-wallRadius), (int)(-wallRadius), wallRadius*2,wallRadius*2, 0, 360);
+			g.setColor(Color.red);
+			g.drawArc((int)(-floorRadius), (int)(-floorRadius), floorRadius*2,floorRadius*2, 0, 360);
+		}
 		g.setTransform(prev);
 	}
 

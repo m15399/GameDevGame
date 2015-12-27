@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 
 import engine.Entity;
+import engine.Game;
 import engine.Utils;
 
 /**
@@ -44,19 +45,42 @@ public class FlameThrower extends Emitter {
 	}
 	
 	/**
-	 * Flame particle - flies around and burns stuff.
+	 * Flame particle - flies around and heats up tiles underneath it. 
 	 */
 	private class FlameParticle extends Particle {
 
 		private static final double FLAME_LIFE = .6; // How long until particle dies
-
-		private double size;
+		
+		private static final double TICK_TIME = .15; // Time between ticks of heat
+		private static final double AMT_HEAT = TICK_TIME * 5; // Strength of heat
+		
+		private double lastTick;
 		
 		public FlameParticle(double x, double y, double xv, double yv){
 			super(x, y, xv, yv);
 
 			life = FLAME_LIFE;
-			size = 20;
+			
+			lastTick = Game.time;
+		}
+		
+		/**
+		 * Apply a small amount of heat to the tile we're on
+		 */
+		private void tickHeat(){			
+			Map m = Map.currMap;
+			Tile t = m.tileAt(x, y);
+			if(t != null)
+				t.addHeat(AMT_HEAT);
+		}
+		
+		public void update(double dt){
+			super.update(dt);
+			
+			if(Game.time > lastTick + TICK_TIME){
+				tickHeat();
+				lastTick += TICK_TIME;
+			}
 		}
 		
 		@Override
@@ -66,6 +90,7 @@ public class FlameThrower extends Emitter {
 			g.setColor(new Color(255,255,100, alpha));
 			
 			// We subtract 15 to make it look like it's floating
+			double size = 20;
 			g.fillArc((int)(x-size/2), (int)(y-size/2-15), (int)size, (int)size, 0, 360);
 		}
 		

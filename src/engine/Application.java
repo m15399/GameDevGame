@@ -137,7 +137,7 @@ public class Application extends JFrame implements Runnable {
 		
 		if(leftSide > 0){
 			// Draw vertical bars on left and right
-			g.setColor(Color.darkGray);
+			g.setColor(Color.black);
 			g.fillRect(0, 0, (int)leftSide+1, getHeight());
 			g.fillRect(getWidth()-(int)leftSide-1, 0, (int)leftSide+1, getHeight());			
 		}

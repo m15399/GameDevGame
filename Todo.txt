@@ -33,7 +33,6 @@ Character
 	Aiming
 		Add mouse control
 	Firing
-		Fire heats up tiles underneath, enough heat bumps tile to next stage
 		Flame placeholder image
 
 
@@ -41,14 +40,12 @@ Character
 
 Wishlist:
 Mouse breaks when resizing?
-Make side bars black instead of gray
 Improve wall collisions
 Seperate tile for under walls (make lip match)
 Switch to using tilesets - specify tileset with "@tileset cave" (loads tilesets/cave.png)
 Joystick/Gamepad control
 Make flames use additive blending mode
 Move ground radius down
-Show fps in top left
 Particle use degrees instead of rads
 
 _______________________________________________________________________________
