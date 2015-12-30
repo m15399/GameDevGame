@@ -26,7 +26,6 @@ Map
 	Ground
 		cracked tiles
 			cracked overlay for both stone and wood?
-		stone vs wood tiles
 Character
 	Create placeholder sprite
 	Aiming

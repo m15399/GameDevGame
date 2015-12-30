@@ -119,7 +119,7 @@ public class Map extends GameObject {
 	public boolean isFloorAt(double x, double y) {
 		Tile t = tileAt(x, y);
 		if (t != null)
-			return (t.getType() == Type.FLOOR || t.getType() == Type.WALL);
+			return (t.getType() != Type.EMPTY);
 		else
 			return false;
 	}

@@ -186,7 +186,7 @@ public class TileFire extends Entity {
 			public void draw(Graphics2D g){
 				// Alpha depends on how long particle has been alive
 				int alpha = (int)(Utils.lerp(60, 255, life/LIFE));
-				g.setColor(new Color(255,170,100, alpha));
+				g.setColor(new Color(255,190,100, alpha));
 				
 				double size = 5;
 				g.fillArc((int)(x-size/2), (int)(y-size/2), (int)size, (int)size, 0, 360);

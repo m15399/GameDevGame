@@ -18,7 +18,7 @@ public class Tile extends Entity {
 	 * Type of a tile
 	 */
 	public enum Type {
-		EMPTY, FLOOR, WALL
+		EMPTY, FLOOR, FLOOR_UNBURNABLE, WALL
 	}
 	
 	private Type type;
@@ -47,6 +47,9 @@ public class Tile extends Entity {
 			setType(Type.FLOOR);
 			break;
 		case '2':
+			setType(Type.FLOOR_UNBURNABLE);
+			break;
+		case 'W':
 			setType(Type.WALL);
 			break;
 		}
@@ -95,10 +98,16 @@ public class Tile extends Entity {
 	public void manualDraw(Graphics2D g) {
 		switch (type) {
 		case FLOOR:
+			g.drawImage(Resources.getImage("woodtile.png"), (int) x, (int) y,
+					null);
+			break;
+			
+		case FLOOR_UNBURNABLE:
 		case WALL:
 			g.drawImage(Resources.getImage("rocktile.png"), (int) x, (int) y,
 					null);
 			break;
+			
 		default:
 			break;
 		}
