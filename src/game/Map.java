@@ -92,7 +92,7 @@ public class Map extends GameObject {
 	 * How far is the coordinate into the tile? (in pixels)
 	 */
 	public double distIntoTile(double c) {
-		return c % Tile.SIZE;
+		return Utils.mod(c, Tile.SIZE);
 	}
 
 	/**

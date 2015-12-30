@@ -82,7 +82,8 @@ public class Input {
 
 		@Override
 		public void keyPressed(KeyEvent e) {
-			keysPressed.put(e.getKeyCode(), true);
+			if(!isDown(e.getKeyCode()))
+				keysPressed.put(e.getKeyCode(), true);
 			keysDown.put(e.getKeyCode(), true);
 		}
 

@@ -56,7 +56,7 @@ public class Tile extends Entity {
 		return type;
 	}
 	
-	public void setType(Type t){
+	private void setType(Type t){
 		if(tileFire != null){
 			tileFire.destroy();
 			tileFire = null;
@@ -86,6 +86,10 @@ public class Tile extends Entity {
 		
 		if(tileFire != null)
 			tileFire.addHeat(amt);
+	}
+	
+	public void burnUp(){
+		setType(Type.EMPTY);
 	}
 	
 	public void manualDraw(Graphics2D g) {

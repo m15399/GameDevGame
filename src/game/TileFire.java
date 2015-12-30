@@ -6,7 +6,6 @@ import java.awt.Graphics2D;
 import engine.Entity;
 import engine.Game;
 import engine.Utils;
-import game.Tile.Type;
 
 
 /**
@@ -23,15 +22,15 @@ public class TileFire extends Entity {
 	
 	// Heat required to reach each stage 	
 	private static final double[] STAGE_HEATS = {
-		0, 10, 30, 50
+		0, 8, 25, 45
 	};
 	
 	// Max heat possible
-	private static final double HEAT_CAP = 55;
+	private static final double HEAT_CAP = STAGE_HEATS[STAGE_HEATS.length-1] + 5;
 
-	// Passive heat gain/loss at each stage
+	// Passive heat gain/loss at each stage (in heat per second)
 	private static final double[] STAGE_HEAT_MODIFY = {
-		-2, -1, +1, +1
+		-2, -2, +2, +1
 	};
 	
 	// On the final stage, tile will burn up and disappear after this amount of time
@@ -139,7 +138,7 @@ public class TileFire extends Entity {
 		if(stage.ordinal() == Stage.values().length-1){
 			timeOnFinalStage += dt;
 			if(timeOnFinalStage >= FINAL_STAGE_TIME){
-				tile.setType(Type.EMPTY);
+				tile.burnUp();
 			}
 		}
 	}

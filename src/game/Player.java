@@ -9,6 +9,8 @@ import engine.*;
 public class Player extends MapEntity {
 
 	private static final double FALL_DURATION = .75;
+	private static final double JUMP_DURATION = .36;
+	private static final double JUMP_HEIGHT = 22;
 	
 	private int width = 40, height = 50;
 
@@ -30,6 +32,10 @@ public class Player extends MapEntity {
 	private boolean falling;
 	private double fallTime;
 	
+	// Jumping
+	private boolean jumping;
+	private double jumpTime;
+	
 	private FlameThrower flameThrower;
 	
 	public Player(){
@@ -47,6 +53,9 @@ public class Player extends MapEntity {
 		
 		falling = false;
 		fallTime = 0;
+		
+		jumping = false;
+		jumpTime = 0;
 	}
 
 	public void update(double dt) {
@@ -78,6 +87,10 @@ public class Player extends MapEntity {
 				vy -= acc * dt;
 			if (Input.isDown(KeyEvent.VK_S))
 				vy += acc * dt;
+			
+			if(!jumping && Input.isPressed(KeyEvent.VK_SPACE)){
+				jumping = true;
+			}
 		}
 
 		// Cap velocity
@@ -95,7 +108,15 @@ public class Player extends MapEntity {
 		// Friction
 		vx *= 1 - (dt * fric);
 		vy *= 1 - (dt * fric);
-
+		
+		// Jumping
+		if(jumping){
+			jumpTime += dt;
+			if(jumpTime >= JUMP_DURATION){
+				jumpTime = 0;
+				jumping = false;
+			}
+		}
 		
 		// Collisions with walls
 
@@ -153,7 +174,7 @@ public class Player extends MapEntity {
 
 		// Collision with floor
 		
-		if(!map.isOnFloor(x-floorRadius, y-floorRadius, floorRadius*2, floorRadius*2)){
+		if(!jumping && !map.isOnFloor(x-floorRadius, y-floorRadius, floorRadius*2, floorRadius*2)){
 			falling = true;
 		}
 		
@@ -210,9 +231,19 @@ public class Player extends MapEntity {
 			g.scale(fac, fac);
 		}
 		
-		// Draw a rect to represent player
+		// Draw shadow
+		g.setColor(new Color(0, 0, 0, 100));
+		int shadowHeight = height/4;
+		int shadowWidth = width + 8;
+		g.fillRect((int) (-shadowWidth / 2), (int) (width/2-shadowHeight/2), shadowWidth, shadowHeight);
+		
+		// Draw player
+		double yo = 0;
+		if(jumping){
+			yo = -Math.sin((jumpTime/JUMP_DURATION) * Math.PI) * JUMP_HEIGHT;
+		}
 		g.setColor(Color.white);
-		g.fillRect((int) (-width / 2), (int) (-width / 2 - (height - width)), width, height);
+		g.fillRect((int) (-width / 2), (int) (-width / 2 - (height - width) + yo), width, height);
 		
 		if(Game.DEBUG){
 			// Collision circle (for debugging)
