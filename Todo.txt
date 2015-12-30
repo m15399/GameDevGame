@@ -24,10 +24,9 @@ Code:
 
 Map
 	Ground
-		normal, cracked, burning states
-			ember stage will die out, flame stage will burst into flames after a few sec
-		wood tiles
-		cracked overlay for both stone and wood?
+		cracked tiles
+			cracked overlay for both stone and wood?
+		stone vs wood tiles
 Character
 	Create placeholder sprite
 	Aiming
@@ -42,7 +41,7 @@ Wishlist:
 Mouse breaks when resizing?
 Improve wall collisions
 Seperate tile for under walls (make lip match)
-Switch to using tilesets - specify tileset with "@tileset cave" (loads tilesets/cave.png)
+Switch to using tilesets - specify tileset with "TILESET cave.png" (loads tilesets/cave.png)
 Joystick/Gamepad control
 Make flames use additive blending mode
 Move ground radius down

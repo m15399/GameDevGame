@@ -17,6 +17,8 @@ public class GameObject {
 	private double drawOrder; // e.g. backgrounds have negative draw orders
 	private int objectIndex; // index in allObjects list
 	
+	private boolean destroyed;
+	
 	public GameObject() {
 		newObjects.add(this);
 
@@ -24,6 +26,8 @@ public class GameObject {
 		drawOrder = 0;
 		
 		objectIndex = -1;
+		
+		destroyed = false;
 	}
 
 	//
@@ -51,7 +55,11 @@ public class GameObject {
 	}
 
 	public void destroy() {
+		if(destroyed)
+			Utils.err("Tried to destroy object more than once");
+		
 		toDestroy.add(this);
+		destroyed = true;
 	}
 
 	public void setDrawOrder(double o){
@@ -141,12 +149,12 @@ public class GameObject {
 		addNewObjects();
 		
 		for (GameObject o : allObjects) {
-			if(o != null)
+			if(o != null && !o.destroyed)
 				o.update(dt);
 		}
 		
-		removeDestroyedObjects();
 		addNewObjects();	
+		removeDestroyedObjects();
 	}
 
 	// Draw all GameObjects in the game

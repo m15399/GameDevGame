@@ -194,8 +194,8 @@ public class Player extends MapEntity {
 		
 		
 		// Press 1 to test getting stuck in a wall
-		if (Input.isPressed(KeyEvent.VK_1)) {
-			x = 32;
+		if (Game.DEBUG && Input.isPressed(KeyEvent.VK_1)) {
+			x = 32 + 64 * 5;
 			y = 32;
 		}
 	}

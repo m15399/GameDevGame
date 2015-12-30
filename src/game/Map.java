@@ -108,7 +108,7 @@ public class Map extends GameObject {
 	public boolean isWallAt(double x, double y) {
 		Tile t = tileAt(x, y);
 		if (t != null)
-			return t.type == Type.WALL;
+			return t.getType() == Type.WALL;
 		else
 			return false;
 	}
@@ -119,7 +119,7 @@ public class Map extends GameObject {
 	public boolean isFloorAt(double x, double y) {
 		Tile t = tileAt(x, y);
 		if (t != null)
-			return (t.type == Type.FLOOR || t.type == Type.WALL);
+			return (t.getType() == Type.FLOOR || t.getType() == Type.WALL);
 		else
 			return false;
 	}

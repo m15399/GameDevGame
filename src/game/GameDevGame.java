@@ -20,7 +20,7 @@ public class GameDevGame extends GameObject {
 		// Play some music
 		Clip c = Resources.getSound("test.wav");
 		c.loop(Clip.LOOP_CONTINUOUSLY);
-		c.stop();
+//		c.stop();
 		
 		camera = new Camera();
 		new Background("background.png");

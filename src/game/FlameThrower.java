@@ -17,13 +17,14 @@ public class FlameThrower extends Emitter {
 	
 	public FlameThrower(Entity parent){
 		this.parent = parent;
-		xo = yo = 0;
+		xo = 0;
+		yo = 10;
 		
 		// Emitter settings
 		rate = 40;
 		angleJitter = Math.PI/12;
 		velocity = 400;
-		advance = 30;
+		advance = 55;
 	}
 	
 	public void setFiring(boolean b){
@@ -49,7 +50,7 @@ public class FlameThrower extends Emitter {
 	 */
 	private class FlameParticle extends Particle {
 
-		private static final double FLAME_LIFE = .6; // How long until particle dies
+		private static final double FLAME_LIFE = .5; // How long until particle dies
 		
 		private static final double TICK_TIME = .15; // Time between ticks of heat
 		private static final double AMT_HEAT = TICK_TIME * 5; // Strength of heat
@@ -61,6 +62,7 @@ public class FlameThrower extends Emitter {
 
 			life = FLAME_LIFE;
 			
+			tickHeat();
 			lastTick = Game.time;
 		}
 		
