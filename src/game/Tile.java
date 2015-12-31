@@ -1,9 +1,9 @@
 package game;
 
 import java.awt.Graphics2D;
+import java.awt.Image;
 
 import engine.Entity;
-import engine.Resources;
 import engine.Utils;
 
 /**
@@ -96,16 +96,24 @@ public class Tile extends Entity {
 	}
 	
 	public void manualDraw(Graphics2D g) {
+		
+		// Draw the tile's image from the tileset
+		
+		Image tileset = Map.currTileset;
+		
+		int xi = (int)x;
+		int yi = (int)y;
+		int w = (int)(64);
+		int h = (int)(76);
+		
 		switch (type) {
 		case FLOOR:
-			g.drawImage(Resources.getImage("woodtile.png"), (int) x, (int) y,
-					null);
+			g.drawImage(tileset, xi, yi, xi + w, yi + h, 64 * 1, 64, 64 * 2, 64 + 76, null);
 			break;
 			
 		case FLOOR_UNBURNABLE:
 		case WALL:
-			g.drawImage(Resources.getImage("rocktile.png"), (int) x, (int) y,
-					null);
+			g.drawImage(tileset, xi, yi, xi + w, yi + h, 64 * 3, 64, 64 * 4, 64 + 76, null);
 			break;
 			
 		default:

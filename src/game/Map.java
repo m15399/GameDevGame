@@ -1,6 +1,7 @@
 package game;
 
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
@@ -17,6 +18,7 @@ public class Map extends GameObject {
 	 * The current map in use
 	 */
 	public static Map currMap = null;
+	public static Image currTileset = null;
 	
 	private Tile[][] tiles;
 
@@ -47,12 +49,21 @@ public class Map extends GameObject {
 			if (line.length() == 0 || Character.isWhitespace(line.charAt(0)))
 				continue;
 
+			Scanner l = new Scanner(line);
+			
+			if(line.startsWith("TILESET")){
+				l.next(); 
+				currTileset = Resources.getImage(l.next());
+				continue;
+			}
+			
 			h++;
 
 			// Add tokens of this line to 'tokens'
-			Scanner l = new Scanner(line);
 			while (l.hasNext()) {
-				tokens.add(l.next());
+				String token = l.next();
+				
+				tokens.add(token);
 				if (h == 1)
 					w++;
 			}
@@ -66,7 +77,7 @@ public class Map extends GameObject {
 		for (int i = 0; i < h; i++) {
 			for (int j = 0; j < w; j++) {
 				String token = tokens.poll();
-				tiles[i][j] = new Tile(token, j, i);
+				tiles[i][j] = new Tile(token, j, i);					
 			}
 		}
 

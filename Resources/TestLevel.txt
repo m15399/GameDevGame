@@ -1,13 +1,20 @@
 
- You can write comments by starting a line with whitespace
+  You can write comments by starting a line with whitespace
+  
+  First you should set the tileset with a line like this:
+  	TILESET path.png
+  (path is relative to the Resources folder)
+  
+  The map is a rectangle of "tokens". Each token is a single character that
+  represents a tile in the map. Right now this is what we have:
  
- The map is a rectangle of "tokens". Each token is a single character that
- represents a tile in the map. Right now this is what we have:
- 
-	0 - Empty
-	1 - Wood
-	2 - Stone
-	W - Wall
+    0 - Empty
+    1 - Wood
+    2 - Stone
+    W - Wall
+
+
+TILESET placeholder.png
 
 2 2 2 0 0 W W W W W W W 0 0 0 0 0 
 2 2 2 1 1 1 1 0 1 0 1 W 1 1 1 1 0
