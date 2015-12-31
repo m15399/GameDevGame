@@ -162,8 +162,8 @@ public class TileFire extends Entity {
 			this.y = y;
 			
 			rate = 20;
-			angle = Math.PI/2;
-			angleJitter = Math.PI/10;
+			angle = 90;
+			angleJitter = 36;
 			jitter = Tile.SIZE/2 - 10;
 			velocity = 40;
 			advance = 0;
@@ -202,8 +202,8 @@ public class TileFire extends Entity {
 			this.y = y;
 			
 			rate = 30;
-			angle = Math.PI/2;
-			angleJitter = Math.PI/10;
+			angle = 90;
+			angleJitter = 36;
 			jitter = Tile.SIZE/2 - 10;
 			velocity = 60;
 			advance = 0;
@@ -240,8 +240,8 @@ public class TileFire extends Entity {
 			this.y = y;
 			
 			rate = 80;
-			angle = Math.PI/2;
-			angleJitter = Math.PI/10;
+			angle = 90;
+			angleJitter = 36;
 			jitter = Tile.SIZE/2 - 10;
 			velocity = 150;
 			advance = 0;

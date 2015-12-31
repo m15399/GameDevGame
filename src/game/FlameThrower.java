@@ -12,17 +12,23 @@ import engine.Utils;
  */
 public class FlameThrower extends Emitter {
 
+	/**
+	 * Offset from player center - this makes the Flamethrower shoot from the
+	 * player's hands instead of his feet. 
+	 */
+	public static double Y_OFFS = -10;
+	
 	private Entity parent; // spatial parent
 	private double xo, yo; // offset from parent
 	
 	public FlameThrower(Entity parent){
 		this.parent = parent;
 		xo = 0;
-		yo = 10;
+		yo = Y_OFFS;
 		
 		// Emitter settings
 		rate = 40;
-		angleJitter = Math.PI/12;
+		angleJitter = 30;
 		velocity = 400;
 		advance = 55;
 	}
@@ -91,9 +97,8 @@ public class FlameThrower extends Emitter {
 			int alpha = (int)(Utils.lerp(60, 255, life/FLAME_LIFE));
 			g.setColor(new Color(255,255,100, alpha));
 			
-			// We subtract 15 to make it look like it's floating
 			double size = 20;
-			g.fillArc((int)(x-size/2), (int)(y-size/2-15), (int)size, (int)size, 0, 360);
+			g.fillArc((int)(x-size/2), (int)(y-size/2), (int)size, (int)size, 0, 360);
 		}
 		
 	}

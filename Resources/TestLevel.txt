@@ -1,4 +1,6 @@
-
+  
+  Test map file!
+  
   You can write comments by starting a line with whitespace
   
   First you should set the tileset with a line like this:
@@ -12,16 +14,20 @@
     1 - Wood
     2 - Stone
     W - Wall
+  
+  It doesn't matter what size the map is, it just has to be a rectangle 
+  (e.g. don't make some lines longer than others)
 
+  _____________________________________
 
 TILESET placeholder.png
 
 2 2 2 0 0 W W W W W W W 0 0 0 0 0 
 2 2 2 1 1 1 1 0 1 0 1 W 1 1 1 1 0
-2 2 2 1 1 1 1 1 0 1 1 1 1 1 f 1 0
-1 1 1 0 0 W 1 0 0 1 1 1 1 f 1 1 0
+2 2 2 1 1 1 1 1 0 1 1 1 1 1 1 1 0
+1 1 1 0 0 W 1 0 0 1 1 1 1 1 1 1 0
 1 W 2 0 0 W 1 1 1 1 1 W 1 1 1 1 0
-1 1 1 0 0 W W W W 1 1 W 0 0 0 0 0
+1 1 1 0 0 W W W W 1 W W 0 0 0 0 0
 1 W 2 0 0 1 1 1 1 1 1 1 0 0 0 0 0 
 1 1 1 1 1 2 1 1 1 1 1 1 0 0 0 0 0
 W 2 2 1 1 2 1 1 1 1 1 1 0 0 0 0 0

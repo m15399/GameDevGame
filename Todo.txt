@@ -29,8 +29,6 @@ Map
 		respawning tiles
 Character
 	Create placeholder sprite
-	Aiming
-		Add mouse control
 	Firing
 		Flame placeholder image
 
@@ -40,11 +38,9 @@ Character
 Wishlist:
 Mouse breaks when resizing?
 Improve wall collisions
-Seperate tile for under walls (make lip match)
 Joystick/Gamepad control
-Make flames use additive blending mode
-Move ground radius down
-Particle use degrees instead of rads
+Test on Windows/Linux
+Hitting space .25 seconds before you hit the ground should still jump
 
 _______________________________________________________________________________
 

@@ -10,7 +10,7 @@ public class Player extends MapEntity {
 
 	private static final double FALL_DURATION = .75;
 	private static final double JUMP_DURATION = .36;
-	private static final double JUMP_HEIGHT = 22;
+	private static final double JUMP_HEIGHT = 21;
 	
 	private int width = 40, height = 50;
 
@@ -18,7 +18,7 @@ public class Player extends MapEntity {
 	private int wallRadius = 20;
 	
 	// Radius of circle that must be off floor for player to fall
-	private int floorRadius = 18;
+	private int floorRadius = 17;
 
 	// Movement variables
 	private double maxV = 260;
@@ -201,16 +201,27 @@ public class Player extends MapEntity {
 			yDir = 1;
 		}
 		
-		// Can't shoot if falling
-		if(falling)
-			shouldBeFiring = false;
+		boolean mouseFiring = false;
+		if(Input.isMouseDown()){
+			mouseFiring = true;
+		}
 		
-		if(shouldBeFiring){
-			double fireAngle = Math.atan2(-yDir, xDir);
-			flameThrower.angle = fireAngle;
-			flameThrower.setFiring(true);
-		} else {
-			flameThrower.setFiring(false);
+		// Can't shoot if falling
+		if(!falling){
+			if(shouldBeFiring){
+				double fireAngle = Math.atan2(-yDir, xDir);
+				flameThrower.angle = Math.toDegrees(fireAngle);
+				flameThrower.setFiring(true);
+			} else if (mouseFiring){
+				Point mp = Input.getMouseLoc();
+				double xAim = mp.x - Game.WIDTH/2;
+				double yAim = mp.y - Game.HEIGHT/2 - FlameThrower.Y_OFFS;
+				double fireAngle = Math.atan2(-yAim, xAim);
+				flameThrower.angle = Math.toDegrees(fireAngle);
+				flameThrower.setFiring(true);
+			} else {
+				flameThrower.setFiring(false);
+			}
 		}
 		
 		
@@ -223,7 +234,9 @@ public class Player extends MapEntity {
 
 	public void draw(Graphics2D g) {
 		AffineTransform prev = g.getTransform();
-		g.translate((int)x, (int)y);
+		
+		// We subtract this offset to make (x, y) be the coord of the player's feet, instead of his middle
+		g.translate((int)x, (int)(y - height/4));
 		
 		// If falling, scale the sprite down to make it look like we're falling 
 		if(falling){
@@ -238,21 +251,26 @@ public class Player extends MapEntity {
 		g.fillRect((int) (-shadowWidth / 2), (int) (width/2-shadowHeight/2), shadowWidth, shadowHeight);
 		
 		// Draw player
-		double yo = 0;
+		double yo = 0; // y offset
 		if(jumping){
-			yo = -Math.sin((jumpTime/JUMP_DURATION) * Math.PI) * JUMP_HEIGHT;
+			double fx = jumpTime / JUMP_DURATION;
+			double fofx = -4 * (fx * fx - fx); // -4x^2 + 4x
+			yo = fofx * -JUMP_HEIGHT;
 		}
 		g.setColor(Color.white);
-		g.fillRect((int) (-width / 2), (int) (-width / 2 - (height - width) + yo), width, height);
-		
-		if(Game.DEBUG){
-			// Collision circle (for debugging)
-			g.setColor(Color.green);
-			g.drawArc((int)(-wallRadius), (int)(-wallRadius), wallRadius*2,wallRadius*2, 0, 360);
-			g.setColor(Color.red);
-			g.drawArc((int)(-floorRadius), (int)(-floorRadius), floorRadius*2,floorRadius*2, 0, 360);
-		}
+		int left = (int)(-width/2);
+		int top = (int) (-width / 2 - (height - width) + yo);
+		g.fillRect(left, top, width, height);
+
 		g.setTransform(prev);
+
+		if(Game.DEBUG){
+			// Draw collision bounds (for debugging)
+			g.setColor(Color.green);
+			g.drawArc((int)(x-wallRadius), (int)(y-wallRadius), wallRadius*2,wallRadius*2, 0, 360);
+			g.setColor(Color.red);
+			g.drawRect((int)(x-floorRadius), (int)(y-floorRadius), floorRadius*2,floorRadius*2);
+		}
 	}
 
 }

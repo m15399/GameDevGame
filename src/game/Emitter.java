@@ -11,8 +11,8 @@ public abstract class Emitter extends Entity {
 
 	public double rate; // particles /sec
 	public double jitter; // adds randomness to position
-	public double angle; // angle to shoot particles
-	public double angleJitter; // adds randomness to angle
+	public double angle; // angle to shoot particles (in degrees)
+	public double angleJitter; // adds randomness to angle (in degrees)
 	public double velocity; // velocity of particles when emitted
 	public double advance; // move the particle a given distance forward when created
 	
@@ -25,7 +25,7 @@ public abstract class Emitter extends Entity {
 	public Emitter(){
 		rate = 10;
 		angle = 0;
-		angleJitter = Math.PI;
+		angleJitter = 360;
 		jitter = 0;
 		velocity = 100;
 		advance = 0;
@@ -61,7 +61,8 @@ public abstract class Emitter extends Entity {
 	 * Shoot a single particle particle towards 'angle'
 	 */
 	public void emitParticle(){
-		double a = Utils.randomRange(angle - angleJitter, angle + angleJitter);
+		double a = Utils.randomRange(angle - angleJitter/2, angle + angleJitter/2);
+		a = Math.toRadians(a);
 		
 		double xdir = Math.cos(a);
 		double ydir = -Math.sin(a);
