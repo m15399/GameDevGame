@@ -260,7 +260,9 @@ public class Player extends MapEntity {
 		}
 		
 		// Can't shoot if falling
-		if(!falling){
+		if(falling){
+			flameThrower.setFiring(false);
+		} else {
 			if(shouldBeFiring){
 				double fireAngle = Math.atan2(-yDir, xDir);
 				flameThrower.angle = Math.toDegrees(fireAngle);
