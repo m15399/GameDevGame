@@ -9,16 +9,23 @@ import engine.*;
 public class Player extends MapEntity {
 
 	private static final double FALL_DURATION = .75;
+	
 	private static final double JUMP_DURATION = .36;
 	private static final double JUMP_HEIGHT = 21;
 	
+	private static final double STEP_DURATION = .25;
+	private static final double STEP_HEIGHT = 5.5;
+	
 	private int width = 40, height = 50;
+
+	// This makes the player appeared to be centered at his feet
+	private static final double Y_DRAW_OFFSET = 10;
 
 	// Radius of circle that bumps into walls
 	private int wallRadius = 20;
 	
 	// Radius of circle that must be off floor for player to fall
-	private int floorRadius = 17;
+	private int floorRadius = 16;
 
 	// Movement variables
 	private double maxV = 260;
@@ -35,6 +42,10 @@ public class Player extends MapEntity {
 	// Jumping
 	private boolean jumping;
 	private double jumpTime;
+	
+	// Walking
+	private boolean walking;
+	private double walkTime; 
 	
 	private FlameThrower flameThrower;
 	
@@ -56,10 +67,15 @@ public class Player extends MapEntity {
 		
 		jumping = false;
 		jumpTime = 0;
+		
+		walking = false;
+		walkTime = 0;
 	}
 
 	public void update(double dt) {
 		super.update(dt);
+		
+		// Falling
 		
 		if(falling){
 			fallTime += dt;
@@ -73,25 +89,56 @@ public class Player extends MapEntity {
 			if(fallTime >= FALL_DURATION){
 				respawn();
 			}
+		} 
+		
+		// Walk cycle
+		
+		if (walking){
+			// Walk cycle goes from 0 to STEP_DURATION and wraps around
+			walkTime += dt;
+			if(walkTime > STEP_DURATION)
+				walkTime = 0;
+		} else {
+			// If not walking, get back to being on the ground (walkTime == 0)
+			if(walkTime != 0){
+				// Quickest way to get to walkTime == 0
+				int dir = (walkTime > STEP_DURATION/2 ? 1 : -1);
+				
+				walkTime += dt * dir;
+				
+				// Back on ground
+				if(walkTime >= STEP_DURATION || walkTime <= 0)
+					walkTime = 0;
+			}
 		}
 		
 		// Movement
-		
+
+		walking = false;
+
 		if(!falling){
 			// Key input
-			if (Input.isDown(KeyEvent.VK_A))
+			if (Input.isDown(KeyEvent.VK_A)){
 				vx -= acc * dt;
-			if (Input.isDown(KeyEvent.VK_D))
+				walking = true;
+			}
+			if (Input.isDown(KeyEvent.VK_D)){
 				vx += acc * dt;
-			if (Input.isDown(KeyEvent.VK_W))
+				walking = true;
+			}
+			if (Input.isDown(KeyEvent.VK_W)){
 				vy -= acc * dt;
-			if (Input.isDown(KeyEvent.VK_S))
+				walking = true;
+			}
+			if (Input.isDown(KeyEvent.VK_S)){
 				vy += acc * dt;
+				walking = true;
+			}
 			
 			if(!jumping && Input.isPressed(KeyEvent.VK_SPACE)){
 				jumping = true;
 			}
-		}
+		} 
 
 		// Cap velocity
 		double cv = Math.sqrt(vx * vx + vy * vy);
@@ -116,6 +163,8 @@ public class Player extends MapEntity {
 				jumpTime = 0;
 				jumping = false;
 			}
+			
+			walking = false;
 		}
 		
 		// Collisions with walls
@@ -236,7 +285,7 @@ public class Player extends MapEntity {
 		AffineTransform prev = g.getTransform();
 		
 		// We subtract this offset to make (x, y) be the coord of the player's feet, instead of his middle
-		g.translate((int)x, (int)(y - height/4));
+		g.translate(x, (y - Y_DRAW_OFFSET));
 		
 		// If falling, scale the sprite down to make it look like we're falling 
 		if(falling){
@@ -256,7 +305,12 @@ public class Player extends MapEntity {
 			double fx = jumpTime / JUMP_DURATION;
 			double fofx = -4 * (fx * fx - fx); // -4x^2 + 4x
 			yo = fofx * -JUMP_HEIGHT;
+		} else {
+			double fx = walkTime / STEP_DURATION;
+			double fofx = -4 * (fx * fx - fx); // -4x^2 + 4x
+			yo = fofx * -STEP_HEIGHT;
 		}
+		
 		g.setColor(Color.white);
 		int left = (int)(-width/2);
 		int top = (int) (-width / 2 - (height - width) + yo);

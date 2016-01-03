@@ -51,21 +51,22 @@ public class Map extends GameObject {
 
 			Scanner l = new Scanner(line);
 			
-			if(line.startsWith("TILESET")){
-				l.next(); 
-				currTileset = Resources.getImage(l.next());
-				continue;
-			}
+			String firstToken = l.next();
 			
-			h++;
+			if(firstToken.equals("TILESET")){
+				currTileset = Resources.getImage(l.next());
 
-			// Add tokens of this line to 'tokens'
-			while (l.hasNext()) {
-				String token = l.next();
+			} else {
+				// It's a line of tile tokens, add them to 'tokens'
+
+				tokens.add(firstToken);
+				w = 1;
 				
-				tokens.add(token);
-				if (h == 1)
+				while (l.hasNext()) {
+					tokens.add(l.next());
 					w++;
+				}
+				h++;
 			}
 			l.close();
 		}

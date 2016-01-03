@@ -13,6 +13,12 @@ import engine.Utils;
  */
 public class TileFire extends Entity {
 	
+	// How fast the heat passively changes
+	private static final double HEAT_CHANGE_SPEED = 1;
+	
+	// On the final stage, tile will burn up and disappear after this amount of time
+	private static final double FINAL_STAGE_TIME = 1.15;
+	
 	// How much extra heat is required to bump up/down to the next stage of heat.
 	private static final double TOLERANCE = 2;
 	
@@ -28,13 +34,11 @@ public class TileFire extends Entity {
 	// Max heat possible
 	private static final double HEAT_CAP = STAGE_HEATS[STAGE_HEATS.length-1] + 5;
 
-	// Passive heat gain/loss at each stage (in heat per second)
+	// Passive heat gain/loss at each stage (in heat per second, but multiplied by HEAT_CHANGE_SPEED)
 	private static final double[] STAGE_HEAT_MODIFY = {
 		-2, -2, +2, +1
 	};
-	
-	// On the final stage, tile will burn up and disappear after this amount of time
-	private static final double FINAL_STAGE_TIME = 1.5;
+
 	
 	
 	
@@ -131,7 +135,7 @@ public class TileFire extends Entity {
 	
 	public void update(double dt){
 		// Passive heat gain/loss
-		double mod = STAGE_HEAT_MODIFY[stage.ordinal()];
+		double mod = STAGE_HEAT_MODIFY[stage.ordinal()] * HEAT_CHANGE_SPEED;
 		changeHeat(mod * dt);
 		
 		// Burn up if long enough time on final stage

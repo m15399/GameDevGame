@@ -22,16 +22,22 @@ _______________________________________________________________________________
 
 Code:
 
-Map
-	Ground
-		cracked tiles
-			cracked overlay for both stone and wood?
-		respawning tiles
+
+First milestone:
+	Overheat mechanic
+
+
 Character
 	Create placeholder sprite
 	Firing
 		Flame placeholder image
+	Aiming
+		Camera follows cursor a bit?
 
+cracked tiles?
+respawning tiles?
+	respawning tiles - 10-15 sec
+			small graphic in middle when half way through respawn time
 
 
 
@@ -41,6 +47,51 @@ Improve wall collisions
 Joystick/Gamepad control
 Test on Windows/Linux
 Hitting space .25 seconds before you hit the ground should still jump
+Custom mouse cursor(s)
+Add fade out and draw fn to Emitter to make it more useful
+
+
+Thoughts about networking (won't be coded for a while):
+Network module
+	Objects can send updates to the Network
+		Network sends updates to the server 
+		Can possibly combine multiple updates to make messages smaller
+	Network holds on to revieved messages until asked to run them
+	Game tells Network to run all updates
+		How to determine recieving object? Publish/subscribe?
+			E.g. Player 4 object subscribes to "p04" network messages
+Server
+	Server forwards updates from each player to all other players
+	Global stuff like score, time left, map suggestions, starting the game
+	Hosting
+		Run the server program seperately
+			Prints out the IP and port
+		Players join the host by IP
+	Game flow
+		Server chooses a selection of maps based on num players
+		Players vote on a map (maybe they vote by moving around on a wait map?)
+		Server starts the map
+		Game over
+			Game is over when condition is met (e.g. 100 points or 1 survivor)
+			Also a clock to prevent stalemates
+Updates
+	Each client owns their Player (and maybe some bots)
+		Owned players - can heat tiles, pick up stuff, die, respawn
+		Unowned players - run around and look pretty
+	Projectiles and the like are also owned
+		Owned projectiles - can change a tile's state
+		Unowned projectiles - look pretty, can hit the owned players
+	Tiles are not owned
+		When a player heats a tile up enough to change its stage
+			The tile changes states and updates the server
+	Chat
+		Client sends strings to server
+	Menu options
+		Vote to end round - only living players count
+		Exit game
+
+
+
 
 _______________________________________________________________________________
 
@@ -58,6 +109,57 @@ Get a couple background music's
 
 _______________________________________________________________________________
 
-Other:
+Design:
+
+What are the goals? Last man standing? Deathmatch?
+	Could have different modes:
+		Last man standing, Deathmatch, Team Deathmatch
+		Find the ball and hold it, Capture the flag
+
+Differentiate from Spleef
+	Pizza Spleef: https://www.youtube.com/watch?v=L_39RxKj0pk
+	Need to differentiate, don't want a clone for 2 reasons:
+		1. We don't want to make a clone of any game
+		2. 2D Spleef probably wouldn't be that good 
+	Our version could be more tactical:
+		Takes a second or two to light an area on fire, isn't instantaneous
+		Players have a chance to run away from people trying to burn them
+		To kill people you have to think tactically - 
+			Set up traps, fight for space, maneuver around danger
+
+Flamethrower
+	More or less powerful?
+		Balance with more or less heat generated when using
+
+Weapons
+	Should we have them?
+	Do you have one Flamethrower and one Alt weapon, or can you cycle through
+	Limited ammo? Durability?
+	Ideas:
+		Bow and arrow - slow while charging, knocks enemy back
+			Flaming arrows?
+		Sword/bat - melee weapon that knocks back
+		Traps - Lay slow traps or bomb traps
+		Grenade - sets all tiles in an area on fire
+		Place plank - replace missing plank or place a new plank on burning one
+		Hose / water baloon
+
+Powerups
+	Temporary or permanent?
+	Increase Flamethrower range/power/heat capacity
+	Increase speed, jetpack
+	Copied from PizzaSpleef:
+		Blind other players, stealth
+
+
+
+
+
+
+
+
+
+
+
 
 

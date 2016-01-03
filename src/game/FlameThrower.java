@@ -13,10 +13,15 @@ import engine.Utils;
 public class FlameThrower extends Emitter {
 
 	/**
+	 * How powerful the flamethrower is
+	 */
+	private static final double POWER = 5.5; 
+	
+	/**
 	 * Offset from player center - this makes the Flamethrower shoot from the
 	 * player's hands instead of his feet. 
 	 */
-	public static double Y_OFFS = -10;
+	public static final double Y_OFFS = -10;
 	
 	private Entity parent; // spatial parent
 	private double xo, yo; // offset from parent
@@ -59,7 +64,7 @@ public class FlameThrower extends Emitter {
 		private static final double FLAME_LIFE = .5; // How long until particle dies
 		
 		private static final double TICK_TIME = .15; // Time between ticks of heat
-		private static final double AMT_HEAT = TICK_TIME * 5; // Strength of heat
+		private static final double AMT_HEAT = TICK_TIME * FlameThrower.POWER; // Strength of heat
 		
 		private double lastTick;
 		

@@ -7,7 +7,7 @@ import java.awt.event.KeyEvent;
 
 /**
  * Makes sure GameObjects are updated and drawn each frame, updates Input,
- * clears screen. 
+ * clears screen, measures fps. 
  */
 public class Game {
 
