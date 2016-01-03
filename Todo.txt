@@ -35,6 +35,9 @@ respawning tiles?
 	respawning tiles - 10-15 sec
 			small graphic in middle when half way through respawn time
 
+Better Map Editor
+	In-game editor? Tiled? Image file?
+
 
 
 Wishlist:

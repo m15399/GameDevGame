@@ -1,11 +1,16 @@
 package game;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
+
 import javax.sound.sampled.Clip;
 
 import engine.*;
 
 public class GameDevGame extends GameObject {
 
+	public static final String VERSION = "0.1";
+	
 	// Starts the game!
 	public static void main(String[] args) {
 		Application.launch("GameDevGame");
@@ -38,6 +43,17 @@ public class GameDevGame extends GameObject {
 		camera.setTarget(player);
 		
 		new HeatMeter();
+		
+		setDrawOrder(1000);
+
+	}
+	
+	public void draw(Graphics2D g){
+		// Display the version number for the first few seconds of the game
+		if(Game.time < 5){
+			g.setColor(Color.white);
+			Utils.drawStringCentered(g, "v" + VERSION, Game.WIDTH - 22, Game.HEIGHT - 12);
+		}
 	}
 
 }
