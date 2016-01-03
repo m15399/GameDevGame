@@ -12,9 +12,13 @@ public class GameDevGame extends GameObject {
 		new GameDevGame();
 	}
 
-	private Camera camera;
-	private Player player;
+	// Global variables - it's likely these will be moved later
 	
+	public static Player player;
+	public static Map map;
+	
+	
+	private Camera camera;
 	
 	public void onStart() {
 		// Play some music
@@ -26,13 +30,14 @@ public class GameDevGame extends GameObject {
 		new Background("background.png");
 		
 		// Load level from file
-		new Map("TestLevel.txt");
+		map = new Map("TestLevel.txt");
 		
 		player = new Player();
 		
 		// Tell camera to follow the player
 		camera.setTarget(player);
-				
+		
+		new HeatMeter();
 	}
 
 }

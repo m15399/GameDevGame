@@ -99,7 +99,7 @@ public class Tile extends Entity {
 		
 		// Draw the tile's image from the tileset
 		
-		Image tileset = Map.currTileset;
+		Image tileset = GameDevGame.map.tileset;
 		
 		int xi = (int)x;
 		int yi = (int)y;

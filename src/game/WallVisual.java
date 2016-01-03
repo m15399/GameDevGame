@@ -18,7 +18,7 @@ public class WallVisual extends MapEntity {
 	}
 	
 	public void draw(Graphics2D g){
-		Image tileset = Map.currTileset;
+		Image tileset = GameDevGame.map.tileset;
 		g.drawImage(tileset, (int) x, (int) (y-32), (int)(x + 64), (int)(y + 64), 
 					64 * 5, 32, 64 * 6, 64 * 2, null);
 	}	

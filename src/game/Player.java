@@ -71,6 +71,10 @@ public class Player extends MapEntity {
 		walking = false;
 		walkTime = 0;
 	}
+	
+	public FlameThrower getFlameThrower(){
+		return flameThrower;
+	}
 
 	public void update(double dt) {
 		super.update(dt);
@@ -180,7 +184,7 @@ public class Player extends MapEntity {
 		 * pretty simple and works for now
 		 */
 
-		Map map = Map.currMap;
+		Map map = GameDevGame.map;
 		boolean lpInsideTile = map.isWallAt(x - wallRadius, y);
 		boolean rpInsideTile = map.isWallAt(x + wallRadius, y);
 		boolean tpInsideTile = map.isWallAt(x, y - wallRadius);

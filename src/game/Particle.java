@@ -27,7 +27,7 @@ public class Particle extends MapEntity {
 		y += yv * dt;
 		
 		// Destroy if inside a wall
-		Map map = Map.currMap;
+		Map map = GameDevGame.map;
 		if(map.isWallAt(x, y)){
 			destroy();
 			return;

@@ -23,10 +23,6 @@ _______________________________________________________________________________
 Code:
 
 
-First milestone:
-	Overheat mechanic
-
-
 Character
 	Create placeholder sprite
 	Firing
@@ -49,6 +45,7 @@ Test on Windows/Linux
 Hitting space .25 seconds before you hit the ground should still jump
 Custom mouse cursor(s)
 Add fade out and draw fn to Emitter to make it more useful
+Factor GameObject static methods into GameObjectManager
 
 
 Thoughts about networking (won't be coded for a while):
@@ -111,10 +108,8 @@ _______________________________________________________________________________
 
 Design:
 
-What are the goals? Last man standing? Deathmatch?
-	Could have different modes:
-		Last man standing, Deathmatch, Team Deathmatch
-		Find the ball and hold it, Capture the flag
+What are the "core pillars" of our game?
+Define the theme better
 
 Differentiate from Spleef
 	Pizza Spleef: https://www.youtube.com/watch?v=L_39RxKj0pk
@@ -127,6 +122,11 @@ Differentiate from Spleef
 		To kill people you have to think tactically - 
 			Set up traps, fight for space, maneuver around danger
 
+Game type
+	Could have different modes:
+		Last man standing, Deathmatch, Team Deathmatch
+		Find the ball and hold it, Capture the flag
+
 Flamethrower
 	More or less powerful?
 		Balance with more or less heat generated when using
@@ -135,7 +135,9 @@ Weapons
 	Should we have them?
 	Do you have one Flamethrower and one Alt weapon, or can you cycle through
 	Limited ammo? Durability?
+	Do you select them or pick them up?
 	Ideas:
+		(Should be awesome and cool thematically)
 		Bow and arrow - slow while charging, knocks enemy back
 			Flaming arrows?
 		Sword/bat - melee weapon that knocks back

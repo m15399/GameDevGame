@@ -1,5 +1,6 @@
 package engine;
 
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.geom.AffineTransform;
@@ -119,5 +120,12 @@ public class Utils {
 	 */
 	public static double mod(double a, double b){
 		return (a % b + b) % b;
+	}
+	
+	public static void drawStringCentered(Graphics2D g, String s, int x, int y){
+		FontMetrics fm = g.getFontMetrics();
+		int w = fm.stringWidth(s);
+		int h = fm.getHeight();
+		g.drawString(s, x - w/2, y + h/3);
 	}
 }

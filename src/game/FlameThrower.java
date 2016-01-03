@@ -17,6 +17,13 @@ public class FlameThrower extends Emitter {
 	 */
 	private static final double POWER = 5.5; 
 	
+	// Overheat controls
+	private static final double HEATUP_RATE = .15;
+	private static final double COOLDOWN_RATE = HEATUP_RATE;
+	private static final double OVERHEAT_DURATION = 3;
+	
+	
+	
 	/**
 	 * Offset from player center - this makes the Flamethrower shoot from the
 	 * player's hands instead of his feet. 
@@ -25,6 +32,9 @@ public class FlameThrower extends Emitter {
 	
 	private Entity parent; // spatial parent
 	private double xo, yo; // offset from parent
+	
+	private double overheatTime;
+	private double heat; 
 	
 	public FlameThrower(Entity parent){
 		this.parent = parent;
@@ -36,10 +46,24 @@ public class FlameThrower extends Emitter {
 		angleJitter = 30;
 		velocity = 400;
 		advance = 55;
+		
+		overheatTime = 0;
+		heat = 0;
+	}
+	
+	public double getHeatFraction(){
+		return heat;
+	}
+	
+	public boolean isOverheating(){
+		return overheatTime != 0;
 	}
 	
 	public void setFiring(boolean b){
-		setEnabled(b);
+		if(b && overheatTime == 0)
+			enable();
+		else
+			disable();
 	}
 	
 	public void emitParticle(){
@@ -54,6 +78,36 @@ public class FlameThrower extends Emitter {
 	@Override
 	public void createParticle(double x, double y, double xv, double yv) {
 		new FlameParticle(x, y, xv, yv);
+	}
+	
+	public void update(double dt){
+		super.update(dt);
+		
+		if(getEnabled()){
+			// Heat up
+			heat += HEATUP_RATE * dt;
+			
+			// Overheated
+			if(heat >= 1){
+				heat = 1;
+				overheatTime = OVERHEAT_DURATION; 
+				disable();
+			}
+		} else {
+			// Cool down
+			heat -= COOLDOWN_RATE * dt;
+			if(heat < 0)
+				heat = 0;
+			
+			// If we're overheated
+			if(overheatTime != 0){
+				overheatTime -= dt;
+				
+				// Done overheating
+				if(overheatTime < 0)
+					overheatTime = 0;
+			}
+		}
 	}
 	
 	/**
@@ -81,7 +135,7 @@ public class FlameThrower extends Emitter {
 		 * Apply a small amount of heat to the tile we're on
 		 */
 		private void tickHeat(){			
-			Map m = Map.currMap;
+			Map m = GameDevGame.map;
 			Tile t = m.tileAt(x, y);
 			if(t != null)
 				t.addHeat(AMT_HEAT);

@@ -14,11 +14,8 @@ import game.Tile.Type;
  */
 public class Map extends GameObject {
 
-	/**
-	 * The current map in use
-	 */
-	public static Map currMap = null;
-	public static Image currTileset = null;
+
+	public Image tileset;
 	
 	private Tile[][] tiles;
 
@@ -27,10 +24,8 @@ public class Map extends GameObject {
 	 * Create a map from a text file
 	 */
 	public Map(String textFileName) {
-
-		if(currMap != null){
-			Utils.fatal("Trying to have multiple maps at the same time");
-		}
+		
+		tileset = null;
 		
 		// Read the file, keep track of width and height, and store each token
 
@@ -54,7 +49,7 @@ public class Map extends GameObject {
 			String firstToken = l.next();
 			
 			if(firstToken.equals("TILESET")){
-				currTileset = Resources.getImage(l.next());
+				tileset = Resources.getImage(l.next());
 
 			} else {
 				// It's a line of tile tokens, add them to 'tokens'
@@ -83,8 +78,6 @@ public class Map extends GameObject {
 		}
 
 		System.out.println("Created map of size " + w + " x " + h);
-		
-		currMap = this;
 	}
 
 	/**
@@ -154,10 +147,6 @@ public class Map extends GameObject {
 				tiles[i][j].manualDraw(g);
 			}
 		}
-	}
-	
-	public void onDestroy(){
-		currMap = null;
 	}
 
 }

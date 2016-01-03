@@ -39,14 +39,21 @@ public abstract class Emitter extends Entity {
 	public abstract void createParticle(double x, double y, double xv, double yv);
 	
 	public void setEnabled(boolean b){
-		if(enabled && !b){
+		if(!b){
 			disable();
-		} else if (!enabled && b){
+		} else {
 			enable();
 		}
 	}
 	
+	public boolean getEnabled(){
+		return enabled;
+	}
+	
 	public void enable(){
+		if(enabled)
+			return;
+		
 		enabled = true;
 
 		emitParticle();
@@ -54,6 +61,9 @@ public abstract class Emitter extends Entity {
 	}
 	
 	public void disable(){
+		if(!enabled)
+			return; 
+		
 		enabled = false;
 	}
 	
