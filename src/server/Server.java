@@ -4,9 +4,10 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import network.DataTranslator;
 import network.NetworkMessagePublisher;
 import network.SocketHandler;
-import network.TestMessage;
+import network.TestNetworkMessage;
 
 import engine.Observer;
 import engine.Utils;
@@ -30,16 +31,18 @@ public class Server implements Runnable {
 	private ServerSocket serverSocket;
 	
 	private NetworkMessagePublisher serverPub;
+	private DataTranslator translator;
 
 	public Server(int port) {
 		this.port = port;
 		
-		serverPub = new NetworkMessagePublisher();
+		translator = new DataTranslator();
+		serverPub = new NetworkMessagePublisher(translator);
 		serverPub.forwardImmediately = true;
 		
-		serverPub.subscribe(TestMessage.class, new Observer(){
+		serverPub.subscribe(TestNetworkMessage.class, new Observer(){
 			public void notify(Object arg){
-				TestMessage msg = (TestMessage) arg;
+				TestNetworkMessage msg = (TestNetworkMessage) arg;
 				System.out.println("Server recieved message: " + msg);
 			}
 		});
@@ -64,11 +67,11 @@ public class Server implements Runnable {
 				System.out.println("A user connected");
 
 				// Start a handler for each user
-				SocketHandler handler = new SocketHandler(sock, serverPub);
+				SocketHandler handler = new SocketHandler(sock, serverPub, translator);
 				new Thread(handler).start();
 				
 				// Test message
-				handler.sendMessage(new TestMessage("Hello from server!", 3.14159f));
+				handler.sendMessage(new TestNetworkMessage("Hello from server!", 3.14159f));
 				
 			} catch (IOException e) {
 				Utils.err("Failed to accept socket");

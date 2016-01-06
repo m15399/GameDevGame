@@ -6,8 +6,7 @@ import java.awt.Graphics2D;
 import javax.sound.sampled.Clip;
 
 import network.Client;
-import network.NetworkMessagePublisher;
-import network.TestMessage;
+import network.TestNetworkMessage;
 
 import engine.*;
 
@@ -25,7 +24,6 @@ public class GameDevGame extends GameObject {
 	
 	public static Player player;
 	public static Map map;
-	public static NetworkMessagePublisher clientPub;
 	
 	private Camera camera;
 		
@@ -52,25 +50,21 @@ public class GameDevGame extends GameObject {
 
 		
 		// Network stuff
-		
-		clientPub = new NetworkMessagePublisher();
-		
-		clientPub.subscribe(TestMessage.class, new Observer(){
+		Client.subscribe(TestNetworkMessage.class, new Observer(){
 			public void notify(Object arg){
-				TestMessage msg = (TestMessage) arg;
+				TestNetworkMessage msg = (TestNetworkMessage) arg;
 				System.out.println("GameDevGame recieved test message: " + msg);
 			}
 		});
 		
-		// Start client
-		Client client = new Client("localhost", 8000);
+		Client.connect("localhost", 8000);
 		
 		// Send test message
-		client.sendMessage(new TestMessage("Hello from GameDevGame!", 42.42f));
+		Client.sendMessage(new TestNetworkMessage("Hello from GameDevGame!", 42.42f));
 	}
 	
 	public void update(double dt){
-		clientPub.forwardQueuedMessages();
+		Client.update();
 	}
 	
 	public void draw(Graphics2D g){

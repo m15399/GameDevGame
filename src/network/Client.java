@@ -4,28 +4,34 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import engine.Observer;
 import engine.Utils;
-import game.GameDevGame;
 
 /**
- * Handles network on the client side
+ * Handles network on the client side. You can subscribe to messages of a given class,
+ * and all those messages will be forwarded to you. Don't connect to the network until
+ * all subscriptions have been set up!
  */
 public class Client {
 
-	private SocketHandler socketHandler;
+	private static DataTranslator translator = new DataTranslator();
+	public static NetworkMessagePublisher publisher = new NetworkMessagePublisher(translator);
 	
-	public String addr;
-	public int port;
+	private static SocketHandler socketHandler = null;
 	
-	private boolean connected;
+	public static String addr;
+	public static int port;
 	
-	public Client(String addr, int port){
-		this.addr = addr;
-		this.port = port;
+	private static boolean connected = false;
+	
+	public static void connect(String addr, int port){
+				
+		Client.addr = addr;
+		Client.port = port;
 		
 		connected = false;
 		
-		System.out.println("Starting client: " + addr + ":" + port);
+		System.out.println("Client connecting to: " + addr + ":" + port);
 		
 		Socket socket;
 		
@@ -41,12 +47,28 @@ public class Client {
 			return;
 		}
 		
-		// Create a socket handler, forward messages to global clientPub
-		socketHandler = new SocketHandler(socket, GameDevGame.clientPub);
+		// Create a socket handler, forward messages to global clientPub, translate with the translator
+		socketHandler = new SocketHandler(socket, publisher, translator);
 		new Thread(socketHandler).start();
 	}
+	
+	public static void update(){
+		publisher.forwardQueuedMessages();
+	}
 
-	public void sendMessage(NetworkMessage msg){
+	/**
+	 * Subscribe the observer to messages of the given class. Cannot have multiple observers subscribed
+	 * to one class, and must subscribe to all messages the Server might send before connecting. 
+	 * Otherwise you won't be able to translate some of the incoming messages. 
+	 */
+	public static void subscribe(Class <? extends NetworkMessage> theClass, Observer observer){
+		publisher.subscribe(theClass, observer);
+	}
+	
+	/**
+	 * Send the message to the server
+	 */
+	public static void sendMessage(NetworkMessage msg){
 		if(connected)
 			socketHandler.sendMessage(msg);
 	}

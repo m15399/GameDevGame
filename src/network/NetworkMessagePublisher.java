@@ -10,10 +10,11 @@ import engine.Utils;
 /**
  * Publish/subscribe system for network messages. You can subscribe an Observer 
  * object to updates from a specific class of NetworkMessage. 
+ * Also registers the subscribed classes to the translator...
  */
 public class NetworkMessagePublisher {
 
-	private HashMap<Class<?>, Observer> subscribers;
+	private HashMap<Class<? extends NetworkMessage>, Observer> subscribers;
 	
 	/**
 	 * Should we forward messages when recieved, or hold until 
@@ -23,10 +24,13 @@ public class NetworkMessagePublisher {
 	
 	private Queue<NetworkMessage> queuedMessages;
 	
-	public NetworkMessagePublisher(){
-		subscribers = new HashMap<Class<?>, Observer>();
+	private DataTranslator translator;
+	
+	public NetworkMessagePublisher(DataTranslator translator){
+		subscribers = new HashMap<Class<? extends NetworkMessage>, Observer>();
 		queuedMessages = new LinkedList<NetworkMessage>();
 		forwardImmediately = false;
+		this.translator = translator;
 	}
 	
 	/**
@@ -38,13 +42,15 @@ public class NetworkMessagePublisher {
 		else
 			queuedMessages.add(message);
 	}
-	
+
 	/**
 	 * Subscribe the observer to get messages of a given class. Can
-	 * only have one observer per class right now
+	 * only have one observer per class right now.
+	 * Also registers the class in the translator
 	 */
-	public void subscribe(Class<?> theClass, Observer observer){
+	public void subscribe(Class<? extends NetworkMessage> theClass, Observer observer){
 		subscribers.put(theClass, observer);
+		translator.registerClass(theClass);
 	}
 	
 	private void forward(NetworkMessage msg){

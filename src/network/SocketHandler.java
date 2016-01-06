@@ -1,8 +1,8 @@
 package network;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.Socket;
 
 import engine.Utils;
@@ -14,57 +14,59 @@ import engine.Utils;
 public class SocketHandler implements Runnable {
 
 	private Socket socket;
-
-	private ObjectOutputStream output;
-	private ObjectInputStream input;
+	
+	private StreamHandler streamHandler;
 	
 	private NetworkMessagePublisher publisher;
 
-	public SocketHandler(Socket sock, NetworkMessagePublisher publisher) {
+	public SocketHandler(Socket sock, NetworkMessagePublisher publisher, DataTranslator translator) {
 		socket = sock;
 		this.publisher = publisher;
 
+		streamHandler = new DataStreamHandler(this, translator);
+	}
+	
+	public OutputStream getOutputStream(){
 		try {
-			output = new ObjectOutputStream(socket.getOutputStream());
-			input = new ObjectInputStream(socket.getInputStream());
-		} catch (IOException e1) {
-			Utils.err("Failded to create input/output sockets");
-			return;
+			return socket.getOutputStream();
+		} catch (IOException e) {
+			Utils.err("Couldn't get output stream");
 		}
+		return null;
+	}
+	
+	public InputStream getInputStream(){
+		try {
+			return socket.getInputStream();
+		} catch (IOException e) {
+			Utils.err("Couldn't get input stream");
+		}
+		return null;
 	}
 
 	/**
 	 * Send a message through the output socket
 	 */
 	public synchronized void sendMessage(NetworkMessage msg){
-		try {
-			output.writeObject(msg);
-		} catch (IOException e2) {
-			Utils.err("Unable to send message");
-		}
+		streamHandler.sendMessage(msg);
 	}
 	
 	public void run() {
-		
 		// Listen for incoming messages, forward them to the publisher
 		while (true) {
-			try {
-				NetworkMessage msg = (NetworkMessage) input.readObject();
+			NetworkMessage msg = streamHandler.readObject();
+			
+			if(msg != null){
 				publisher.takeMessage(msg);
-
-			} catch (ClassNotFoundException e) {
-				Utils.err("Expected object of type NetworkMessage");
-			} catch (IOException e) {
-				Utils.err("Failed to read object");
-				Utils.err("Connection to client *probably* lost - disconnecting");
+			} else {
 				try {
+					Utils.err("Disconnecting (closing socket)");
 					socket.close();
+					return;
 				} catch (IOException e1) {
 					Utils.err("Failed to close socket");
 				}
-				return;
 			}
 		}
-
 	}
 }

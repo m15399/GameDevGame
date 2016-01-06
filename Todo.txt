@@ -34,9 +34,14 @@ respawning tiles?
 			small graphic in middle when half way through respawn time
 
 Networking
-	test disconnects and playing offline
-	synchronize player movements
+	what if no one's suscribed to an opcode but they will be soon?
+		do nothing and wait for someone to subscribe to it...
+	make networkmessage an interface, incorporate into code of object?
+		Player saying Client.send(this) calls Player.writeData
+		publisher calls PlayerManager.readData which forwards to Player4.readData
 
+	synchronize player movements
+	
 
 
 
@@ -55,14 +60,6 @@ Better Map Editor
 
 
 Thoughts about networking (won't be coded for a while):
-Network module
-	Objects can send updates to the Network
-		Network sends updates to the server 
-		Can possibly combine multiple updates to make messages smaller
-	Network holds on to revieved messages until asked to run them
-	Game tells Network to run all updates
-		How to determine recieving object? Publish/subscribe?
-			E.g. Player 4 object subscribes to "p04" network messages
 Server
 	Server forwards updates from each player to all other players
 		Ignore messages that contradict current map state
@@ -102,22 +99,6 @@ Updates
 	Menu options
 		Vote to end round - only living players count
 		Exit game
-
-
-Sendng objects vs sending data
-	Size vs processing
-	Sending objects
-		recieve a stream of objects
-		send them to subscribers based on their types
-	Sending data
-		recieve a stream of data
-		turn data into objects based on a protocol
-		then do the same thing
-		how to reminder:
-			dataoutput(bufferedoutput(os))
-				dataoutput.write, buf.flush()
-			datainput(is)
-
 
 
 
