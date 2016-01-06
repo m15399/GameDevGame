@@ -17,9 +17,13 @@ public class Client {
 	public String addr;
 	public int port;
 	
+	private boolean connected;
+	
 	public Client(String addr, int port){
 		this.addr = addr;
 		this.port = port;
+		
+		connected = false;
 		
 		System.out.println("Starting client: " + addr + ":" + port);
 		
@@ -27,6 +31,8 @@ public class Client {
 		
 		try {
 			socket = new Socket(addr, port);
+			connected = true;
+			
 		} catch (UnknownHostException e) {
 			Utils.err("Unknown host");
 			return;
@@ -41,6 +47,7 @@ public class Client {
 	}
 
 	public void sendMessage(NetworkMessage msg){
-		socketHandler.sendMessage(msg);
+		if(connected)
+			socketHandler.sendMessage(msg);
 	}
 }
