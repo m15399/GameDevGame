@@ -25,7 +25,9 @@ public class MapEntity extends Entity {
 	}
 
 	public void update(double dt) {
-		super.setDrawOrder(mapDrawOrder + y / 1000000.0);
+		// Add 10 in case the object has a slightly negative y
+		// Things on the map usually have y > 0 though
+		super.setDrawOrder(mapDrawOrder + (y+10) / 1000000.0);
 	}
 
 	public void setDrawOrder(double o) {

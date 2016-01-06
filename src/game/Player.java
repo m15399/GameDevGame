@@ -25,7 +25,7 @@ public class Player extends MapEntity {
 	private int wallRadius = 20;
 	
 	// Radius of circle that must be off floor for player to fall
-	private int floorRadius = 16;
+	private int floorRadius = 17;
 
 	// Movement variables
 	private double maxV = 260;
@@ -75,12 +75,26 @@ public class Player extends MapEntity {
 	public FlameThrower getFlameThrower(){
 		return flameThrower;
 	}
+	
 
 	public void update(double dt) {
 		super.update(dt);
+				
+		updateFalling(dt);
+		updateWalkAnimation(dt);
+		updateMovement(dt);
+		updateJumping(dt);
+		checkCollisions(dt);
+		updateFlameThrower(dt);
 		
-		// Falling
-		
+		// Press 1 to test getting stuck in a wall
+		if (Game.DEBUG && Input.isPressed(KeyEvent.VK_1)) {
+			x = 32 + 64 * 5;
+			y = 32;
+		}
+	}
+	
+	private void updateFalling(double dt){
 		if(falling){
 			fallTime += dt;
 			
@@ -94,9 +108,9 @@ public class Player extends MapEntity {
 				respawn();
 			}
 		} 
-		
-		// Walk cycle
-		
+	}
+	
+	private void updateWalkAnimation(double dt){
 		if (walking){
 			// Walk cycle goes from 0 to STEP_DURATION and wraps around
 			walkTime += dt;
@@ -115,9 +129,9 @@ public class Player extends MapEntity {
 					walkTime = 0;
 			}
 		}
-		
-		// Movement
-
+	}
+	
+	private void updateMovement(double dt){
 		walking = false;
 
 		if(!falling){
@@ -139,9 +153,6 @@ public class Player extends MapEntity {
 				walking = true;
 			}
 			
-			if(!jumping && Input.isPressed(KeyEvent.VK_SPACE)){
-				jumping = true;
-			}
 		} 
 
 		// Cap velocity
@@ -159,8 +170,13 @@ public class Player extends MapEntity {
 		// Friction
 		vx *= 1 - (dt * fric);
 		vy *= 1 - (dt * fric);
+	}
+	
+	private void updateJumping(double dt){
+		if(!falling && !jumping && Input.isPressed(KeyEvent.VK_SPACE)){
+			jumping = true;
+		}
 		
-		// Jumping
 		if(jumping){
 			jumpTime += dt;
 			if(jumpTime >= JUMP_DURATION){
@@ -170,9 +186,9 @@ public class Player extends MapEntity {
 			
 			walking = false;
 		}
-		
-		// Collisions with walls
+	}
 
+	private void checkCollisions(double dt){
 		/*
 		 * Right now here's what we're doing:
 		 * 
@@ -230,29 +246,28 @@ public class Player extends MapEntity {
 		if(!jumping && !map.isOnFloor(x-floorRadius, y-floorRadius, floorRadius*2, floorRadius*2)){
 			falling = true;
 		}
-		
-		// Flame thrower
-		
+	}
+	
+	private void updateFlameThrower(double dt){
 		boolean shouldBeFiring = false;
 		int xDir = 0;
 		int yDir = 0;
 		
 		if(Input.isDown(KeyEvent.VK_LEFT)){
-			shouldBeFiring = true;
 			xDir = -1;
 		}
 		if (Input.isDown(KeyEvent.VK_RIGHT)){
-			shouldBeFiring = true;
 			xDir = 1;
 		}
 		if(Input.isDown(KeyEvent.VK_UP)){
-			shouldBeFiring = true;
 			yDir = -1;
 		}
 		if (Input.isDown(KeyEvent.VK_DOWN)){
-			shouldBeFiring = true;
 			yDir = 1;
 		}
+
+		if(xDir != 0 || yDir != 0)
+			shouldBeFiring = true;
 		
 		boolean mouseFiring = false;
 		if(Input.isMouseDown()){
@@ -277,13 +292,6 @@ public class Player extends MapEntity {
 			} else {
 				flameThrower.setFiring(false);
 			}
-		}
-		
-		
-		// Press 1 to test getting stuck in a wall
-		if (Game.DEBUG && Input.isPressed(KeyEvent.VK_1)) {
-			x = 32 + 64 * 5;
-			y = 32;
 		}
 	}
 

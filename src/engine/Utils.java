@@ -4,6 +4,13 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.geom.AffineTransform;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.FloatControl;
 
 /**
  * Useful utility functions
@@ -127,5 +134,28 @@ public class Utils {
 		int w = fm.stringWidth(s);
 		int h = fm.getHeight();
 		g.drawString(s, x - w/2, y + h/3);
+	}
+	
+	public static void setClipVolume(Clip c, double volume){
+		FloatControl vol = (FloatControl) c.getControl(FloatControl.Type.MASTER_GAIN);
+		vol.setValue((float)volume);
+	}
+	
+	public static int calcNetworkSize(Serializable o) {
+		try {
+			ByteArrayOutputStream byteOutputStream = new ByteArrayOutputStream();
+			ObjectOutputStream objectOutputStream = new ObjectOutputStream(
+					byteOutputStream);
+
+			objectOutputStream.writeObject(o);
+
+			objectOutputStream.flush();
+			objectOutputStream.close();
+
+			return byteOutputStream.toByteArray().length;
+		} catch (IOException e) {
+			Utils.err("Couldn't calculate object size");
+			return 0;
+		}
 	}
 }

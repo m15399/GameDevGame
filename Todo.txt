@@ -7,16 +7,14 @@ Mark's To do list
 
 
 Milestones:
-	First - Player and Level:
-		Walking around, bumping into walls, falling through pits and dying
-		Flamethrower
-		Burning floor
-	Second - Playable with Bots:
-		Simple AI
+	Second - Playable one map multiplayer
+		Networking
 		Basic game mechanics done, can play the game
 		Should be fun at this point!
-	Third - Playable with Friends:
-		Get multiplayer working
+	Third - Feature complete
+		All weapons, powerups implemented
+		Map switching
+
 
 _______________________________________________________________________________
 
@@ -35,20 +33,25 @@ respawning tiles?
 	respawning tiles - 10-15 sec
 			small graphic in middle when half way through respawn time
 
-Better Map Editor
-	In-game editor? Tiled? Image file?
+Networking
+	test disconnects and playing offline
+	synchronize player movements
+
 
 
 
 Wishlist:
-Mouse breaks when resizing?
 Improve wall collisions
 Joystick/Gamepad control
 Test on Windows/Linux
-Hitting space .25 seconds before you hit the ground should still jump
 Custom mouse cursor(s)
 Add fade out and draw fn to Emitter to make it more useful
 Factor GameObject static methods into GameObjectManager
+	Make creation and deletion process more robust
+	Try to eliminate modification while iterating
+Better Map Editor
+	In-game editor? Tiled? Image file?
+
 
 
 Thoughts about networking (won't be coded for a while):
@@ -62,18 +65,26 @@ Network module
 			E.g. Player 4 object subscribes to "p04" network messages
 Server
 	Server forwards updates from each player to all other players
-	Global stuff like score, time left, map suggestions, starting the game
+		Ignore messages that contradict current map state
+	Stores
+		Persistent: Player names/Scores
+		In game: time left, list of destroyed tiles (for observers)
+		Voting: map suggestions, recent maps, num votes
 	Hosting
 		Run the server program seperately
 			Prints out the IP and port
 		Players join the host by IP
 	Game flow
-		Server chooses a selection of maps based on num players
-		Players vote on a map (maybe they vote by moving around on a wait map?)
-		Server starts the map
+		Vote map
+			Server chooses a selection of maps based on num players
+			Players vote on a map by moving onto 3 voting areas
+			Displays a thumbnail, name, and number of votes
+			Chooses the one with the most votes when timer runs out
+		Server starts the chosen map
 		Game over
 			Game is over when condition is met (e.g. 100 points or 1 survivor)
 			Also a clock to prevent stalemates
+		Server starts voting map
 Updates
 	Each client owns their Player (and maybe some bots)
 		Owned players - can heat tiles, pick up stuff, die, respawn
@@ -82,13 +93,30 @@ Updates
 		Owned projectiles - can change a tile's state
 		Unowned projectiles - look pretty, can hit the owned players
 	Tiles are not owned
-		When a player heats a tile up enough to change its stage
-			The tile changes states and updates the server
+		When a player heats a tile up to a multiple of 5, update the server
+		If you heat it up to the last level, mark it as owned
+			When an owned tile dies, tell the server
+			When tile respawns, tell the server again, then release ownership
 	Chat
 		Client sends strings to server
 	Menu options
 		Vote to end round - only living players count
 		Exit game
+
+
+Sendng objects vs sending data
+	Size vs processing
+	Sending objects
+		recieve a stream of objects
+		send them to subscribers based on their types
+	Sending data
+		recieve a stream of data
+		turn data into objects based on a protocol
+		then do the same thing
+		how to reminder:
+			dataoutput(bufferedoutput(os))
+				dataoutput.write, buf.flush()
+			datainput(is)
 
 
 
@@ -98,6 +126,8 @@ _______________________________________________________________________________
 Art:
 
 Have people replace the placeholders
+	Character left,right,up,down
+	Map - tileset & background
 
 
 _______________________________________________________________________________
@@ -105,6 +135,10 @@ _______________________________________________________________________________
 Audio:
 
 Get a couple background music's
+Sound effects
+	Flamethrower loop
+	Fall
+	Jump
 
 
 _______________________________________________________________________________
@@ -113,6 +147,7 @@ Design:
 
 What are the "core pillars" of our game?
 Define the theme better
+Game name?
 
 Differentiate from Spleef
 	Pizza Spleef: https://www.youtube.com/watch?v=L_39RxKj0pk
