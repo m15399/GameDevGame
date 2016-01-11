@@ -29,11 +29,13 @@ public class ObjectStreamHandler extends StreamHandler {
 		}
 	}
 	
-	public void sendMessage(NetworkMessage msg){
+	public int sendMessage(NetworkMessage msg){
 		try {
 			output.writeObject(msg);
+			return 0;
 		} catch (IOException e2) {
 			Utils.err("Unable to send message");
+			return 1;
 		}
 	}
 	

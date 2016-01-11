@@ -24,10 +24,12 @@ public class Client {
 	
 	private static boolean connected = false;
 	
-	public static void connect(String addr, int port){
-				
+	public static void setAddress(String addr, int port){
 		Client.addr = addr;
-		Client.port = port;
+		Client.port = port;		
+	}
+	
+	public static void connect(){
 		
 		connected = false;
 		

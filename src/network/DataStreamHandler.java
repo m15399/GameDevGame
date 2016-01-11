@@ -5,8 +5,6 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import engine.Utils;
-
 /**
  * Uses the DataTranslator to send and interpret NetworkMessage objects over a 
  * DataStream (stream of bytes, floats, UTF strings, etc)
@@ -26,12 +24,13 @@ public class DataStreamHandler extends StreamHandler {
 
 	}
 	
-	public void sendMessage(NetworkMessage msg){
+	public int sendMessage(NetworkMessage msg){
 		try {
 			getTranslator().writeMessage(msg, dataOut);
 			bufOut.flush();
+			return 0;
 		} catch (IOException e2) {
-			Utils.err("Unable to send message");
+			return 1;
 		}
 	}
 	

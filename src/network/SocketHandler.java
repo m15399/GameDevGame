@@ -18,12 +18,20 @@ public class SocketHandler implements Runnable {
 	private StreamHandler streamHandler;
 	
 	private NetworkMessagePublisher publisher;
+	
+	private boolean connected;
 
 	public SocketHandler(Socket sock, NetworkMessagePublisher publisher, DataTranslator translator) {
 		socket = sock;
 		this.publisher = publisher;
 
 		streamHandler = new DataStreamHandler(this, translator);
+		
+		connected = true;
+	}
+	
+	public boolean isConnected(){
+		return connected;
 	}
 	
 	public OutputStream getOutputStream(){
@@ -48,7 +56,20 @@ public class SocketHandler implements Runnable {
 	 * Send a message through the output socket
 	 */
 	public synchronized void sendMessage(NetworkMessage msg){
-		streamHandler.sendMessage(msg);
+		int err = streamHandler.sendMessage(msg);
+		if(err != 0){
+			Utils.err("Failed to send message, disconnecting");
+			disconnect();
+		}
+	}
+	
+	private void disconnect(){
+		try {
+			socket.close();
+		} catch (IOException e) {
+			Utils.err("Failed to close socket");
+		}
+		connected = false;
 	}
 	
 	public void run() {
@@ -59,13 +80,9 @@ public class SocketHandler implements Runnable {
 			if(msg != null){
 				publisher.takeMessage(msg);
 			} else {
-				try {
-					Utils.err("Disconnecting (closing socket)");
-					socket.close();
-					return;
-				} catch (IOException e1) {
-					Utils.err("Failed to close socket");
-				}
+				Utils.err("Failed to read message, disconnecting");
+				disconnect();
+				return;
 			}
 		}
 	}

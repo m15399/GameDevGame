@@ -57,7 +57,7 @@ public class DataTranslator {
 				Utils.fatal("Unable to translate opcode: " + opcode);
 			}
 		} catch (IOException e) {
-			Utils.err("Stream was closed");
+			// stream was likely closed, ignore and return null
 		} catch (InstantiationException e) {
 			Utils.err("Unable to instantiate class, possibly no empty constructor");
 		} catch (IllegalAccessException e) {

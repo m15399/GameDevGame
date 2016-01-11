@@ -129,6 +129,9 @@ public class Utils {
 		return (a % b + b) % b;
 	}
 	
+	/**
+	 * Draw the string centered, instead of left justified
+	 */
 	public static void drawStringCentered(Graphics2D g, String s, int x, int y){
 		FontMetrics fm = g.getFontMetrics();
 		int w = fm.stringWidth(s);
@@ -136,11 +139,17 @@ public class Utils {
 		g.drawString(s, x - w/2, y + h/3);
 	}
 	
+	/**
+	 * Set the volume of the audio clip
+	 */
 	public static void setClipVolume(Clip c, double volume){
 		FloatControl vol = (FloatControl) c.getControl(FloatControl.Type.MASTER_GAIN);
 		vol.setValue((float)volume);
 	}
 	
+	/**
+	 * Calculate the size of the object after being serialized
+	 */
 	public static int calcNetworkSize(Serializable o) {
 		try {
 			ByteArrayOutputStream byteOutputStream = new ByteArrayOutputStream();
@@ -157,5 +166,53 @@ public class Utils {
 			Utils.err("Couldn't calculate object size");
 			return 0;
 		}
+	}
+	
+	/**
+	 * Pack a double into a byte. This is useful for sending doubles over the network when 
+	 * you don't need 64 bits of precision. You must supply a min and max value of the double,
+	 * so that it can be packed into a smaller space. 
+	 * @return A byte representing the double's location between min and max, packed in the 
+	 * lower 'nBits' bits of the byte. 
+	 */
+	public static byte packRange(double val, double min, double max, int nBits){
+		if(val < min || val > max){
+			Utils.err("Couldn't pack byte, value was outside of range! Fix immediately");
+			return 0;
+		}
+		
+		double ratio = (val - min)/(max - min);
+		int maxBitVal = (int)Math.pow(2, nBits)-1;
+		byte ret = (byte)Math.round(ratio * maxBitVal);
+		
+		return ret;
+	}
+	
+	/**
+	 * Unpack a double that has been packed using 'packRange'. Note that precision is
+	 * lost when packing and unpacking, so if you packed 0, for example, don't expect 
+	 * this method to return exactly 0 when unpacked. 
+	 */
+	public static double unpackRange(byte val, double min, double max, int nBits){
+		int maxBitVal = (int)Math.pow(2, nBits)-1;
+		int vali = val & 0xFF;
+		double ratio = (double)vali/maxBitVal;
+		double ret = ratio * (max-min) + min;
+		return ret;
+	}
+	
+	/**
+	 * Pack and unpack a double, then return it. Lets you see how much precision
+	 * is lost when packing/unpacking the value. 
+	 */
+	public static double testCompression(double val, double min, double max, int nBits){
+		return unpackRange(packRange(val, min, max, nBits), min, max, nBits);
+	}
+	
+	/**
+	 * Smallest difference between 2 angles. 
+	 */
+	public static double angleDifference(double a, double b){
+		return Utils.mod((b-a) + 180, 360) - 180;
 	}
 }

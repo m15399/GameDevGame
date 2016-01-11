@@ -22,9 +22,9 @@ public abstract class StreamHandler {
 	}
 	
 	/**
-	 * Send a message over the socket
+	 * Send a message over the socket. Returns 0 if successful, else returns 1
 	 */
-	public abstract void sendMessage(NetworkMessage msg);
+	public abstract int sendMessage(NetworkMessage msg);
 
 	/**
 	 * Read a message from the socket

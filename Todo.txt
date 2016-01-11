@@ -34,15 +34,19 @@ respawning tiles?
 			small graphic in middle when half way through respawn time
 
 Networking
-	what if no one's suscribed to an opcode but they will be soon?
-		do nothing and wait for someone to subscribe to it...
-	make networkmessage an interface, incorporate into code of object?
-		Player saying Client.send(this) calls Player.writeData
-		publisher calls PlayerManager.readData which forwards to Player4.readData
+	synchronize players
+		weapon info - 1 byte?
+			type - 4 bits, charge amount/state - 4 bits 
 
-	synchronize player movements
-	
+		space = 20
+		10 updates/sec = 200 bytes/sec = .2 kB/s
+		want < 500 kB/sec for each player and server
 
+
+	make server rotate around 1 byte player nums, not int
+		convert player numbers to be bytes everywhere
+	handle disconnects from server better
+		server sends "player dc'd messages"
 
 
 Wishlist:
@@ -99,6 +103,11 @@ Updates
 	Menu options
 		Vote to end round - only living players count
 		Exit game
+Map switching
+	destroy everything but GameDevGame
+	remember to unsubscribe everything when destroyed
+	GameDevGame recreates everything, which subscribes again
+
 
 
 

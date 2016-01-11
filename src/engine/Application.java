@@ -86,7 +86,7 @@ public class Application extends JFrame implements Runnable {
 		
 		
 		// Fit on screen
-		double desiredHeight = screenHeight * .8;
+		double desiredHeight = screenHeight * Game.DESIRED_HEIGHT_OF_WINDOW;
 		
 		double scale = desiredHeight/(Game.HEIGHT);
 		setGameSize(Game.WIDTH * scale, Game.HEIGHT * scale);

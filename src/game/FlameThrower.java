@@ -3,7 +3,6 @@ package game;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-import engine.Entity;
 import engine.Game;
 import engine.Utils;
 
@@ -30,13 +29,13 @@ public class FlameThrower extends Emitter {
 	 */
 	public static final double Y_OFFS = -10;
 	
-	private Entity parent; // spatial parent
+	private Player parent; 
 	private double xo, yo; // offset from parent
 	
 	private double overheatTime;
 	private double heat; 
 	
-	public FlameThrower(Entity parent){
+	public FlameThrower(Player parent){
 		this.parent = parent;
 		xo = 0;
 		yo = Y_OFFS;
@@ -83,7 +82,8 @@ public class FlameThrower extends Emitter {
 	public void update(double dt){
 		super.update(dt);
 		
-		if(getEnabled()){
+		// Don't overheat if we're on a dummy player
+		if(getEnabled() && !parent.isDummy()){
 			// Heat up
 			heat += HEATUP_RATE * dt;
 			
@@ -134,7 +134,11 @@ public class FlameThrower extends Emitter {
 		/**
 		 * Apply a small amount of heat to the tile we're on
 		 */
-		private void tickHeat(){			
+		private void tickHeat(){
+			// Don't heat tiles if we're on a dummy player
+			if(parent.isDummy())
+				return; 
+			
 			Map m = GameDevGame.map;
 			Tile t = m.tileAt(x, y);
 			if(t != null)

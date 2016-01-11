@@ -53,10 +53,15 @@ public class NetworkMessagePublisher {
 		translator.registerClass(theClass);
 	}
 	
+	public void clearSubscription(Class<? extends NetworkMessage> theClass){
+		subscribers.remove(theClass);
+	}
+	
 	private void forward(NetworkMessage msg){
 		Observer reciever = subscribers.get(msg.getClass());
 		if(reciever == null){
-			Utils.err("No reciever for message: " + msg);
+			Utils.err("No reciever for message: " + msg + 
+					" - You should make sure to be subscribed to all possible messages!");
 		} else {
 			reciever.notify(msg);
 		}

@@ -35,6 +35,8 @@ public class Camera extends GameObject {
 		cts = new CameraTransformStart();
 		cte = new CameraTransformEnd();
 		
+		target = null;
+		
 		currCamera = this;
 	}
 
@@ -48,8 +50,12 @@ public class Camera extends GameObject {
 	public double[] getPos(){
 		double[] pos = new double[2];
 		
-		pos[0] = target.x - Game.WIDTH / 2;
-		pos[1] = target.y - Game.HEIGHT / 2;
+		if(target != null){
+			pos[0] = target.x - Game.WIDTH / 2;
+			pos[1] = target.y - Game.HEIGHT / 2;
+		} else {
+			pos[0] = pos[1] = 0;
+		}
 		
 		return pos;
 	}

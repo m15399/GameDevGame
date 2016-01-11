@@ -12,7 +12,11 @@ import java.awt.event.KeyEvent;
 public class Game {
 
 	public static final int WIDTH = 800, HEIGHT = 600;
-
+	
+	// How big, in relation to the screen, should the window be when the game starts?
+	// (Don't make it much bigger than .8, might make the window bigger than the screen)
+	public static final double DESIRED_HEIGHT_OF_WINDOW = .8;
+	
 	/**
 	 * Debug mode?
 	 */
@@ -22,6 +26,7 @@ public class Game {
 	 * Time passed since start of game
 	 */
 	public static double time;
+	public static int frameNumber;
 	
 	// FPS stuff
 	public static double fps;
@@ -32,6 +37,8 @@ public class Game {
 	
 	public Game() {
 		time = 0;
+		frameNumber = 0;
+		
 		lastFpsCheck = time;
 		fps = 0;
 		framesThisCheck = 0;
@@ -48,6 +55,7 @@ public class Game {
 	
 	public void update(double dt) {
 		time += dt;
+		frameNumber++;
 		
 		if(Input.isPressed(KeyEvent.VK_BACK_QUOTE)){
 			DEBUG = !DEBUG;

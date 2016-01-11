@@ -6,7 +6,7 @@ import java.awt.Graphics2D;
 import javax.sound.sampled.Clip;
 
 import network.Client;
-import network.TestNetworkMessage;
+import network.ServerGreetingMessage;
 
 import engine.*;
 
@@ -24,6 +24,7 @@ public class GameDevGame extends GameObject {
 	
 	public static Player player;
 	public static Map map;
+	public static PlayerManager playerManager;
 	
 	private Camera camera;
 		
@@ -31,7 +32,9 @@ public class GameDevGame extends GameObject {
 		// Play some music
 		Clip c = Resources.getSound("test.wav");
 		Utils.setClipVolume(c, -5f);
-//		c.loop(Clip.LOOP_CONTINUOUSLY);
+		c.loop(Clip.LOOP_CONTINUOUSLY);
+		
+		playerManager = new PlayerManager();
 		
 		camera = new Camera();
 		new Background("background.png");
@@ -39,8 +42,8 @@ public class GameDevGame extends GameObject {
 		// Load level from file
 		map = new Map("TestLevel.txt");
 		
-		player = new Player();
-		
+		player = new Player(-1);
+				
 		// Tell camera to follow the player
 		camera.setTarget(player);
 		
@@ -50,17 +53,22 @@ public class GameDevGame extends GameObject {
 
 		
 		// Network stuff
-		Client.subscribe(TestNetworkMessage.class, new Observer(){
+		Client.setAddress("localhost", 8000);
+		
+		Client.subscribe(ServerGreetingMessage.class, new Observer(){
 			public void notify(Object arg){
-				TestNetworkMessage msg = (TestNetworkMessage) arg;
-				System.out.println("GameDevGame recieved test message: " + msg);
+				ServerGreetingMessage msg = (ServerGreetingMessage)arg;
+				System.out.println("I am player number " + msg.playerNumber);
+				
+				// Recreate the player with the correct playerNumber
+				player.destroy();
+				player = new Player(msg.playerNumber);
+				camera.setTarget(player);
 			}
 		});
 		
-		Client.connect("localhost", 8000);
-		
-		// Send test message
-		Client.sendMessage(new TestNetworkMessage("Hello from GameDevGame!", 42.42f));
+		Client.connect();
+
 	}
 	
 	public void update(double dt){

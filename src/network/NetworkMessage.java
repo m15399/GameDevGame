@@ -17,7 +17,8 @@ public abstract class NetworkMessage implements Serializable {
 	 * you must create a new OpCode so we don't have collisions
 	 */
 	public static enum OpCode {
-		TEST_MESSAGE;
+		SERVER_GREETING,
+		PLAYER_MESSAGE;
 		
 		public byte getValue(){
 			return (byte)ordinal();
