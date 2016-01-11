@@ -25,10 +25,6 @@ public class Application extends JFrame implements Runnable {
 		Application app = new Application(title);
 		new Thread(app).start(); // thread.start calls our run method
 	}
-
-	public static void quit(){
-		System.exit(0);
-	}
 	
 	// Panel to draw stuff on
 	private class DrawPanel extends JPanel {
@@ -114,7 +110,7 @@ public class Application extends JFrame implements Runnable {
 		setSize(width, height);
 		setPreferredSize(new Dimension(width, height));
 		pack();
-		System.out.println("Setting window size: " + width + " " + height);
+		Utils.log("Setting window size: " + width + " " + height);
 	}
 
 	// Called about 60 times a second

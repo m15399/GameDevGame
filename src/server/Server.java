@@ -20,11 +20,22 @@ import engine.Utils;
 public class Server implements Runnable {
 
 	public static void main(String[] args){
+		
+		boolean gui = true;
+		
+		// Parse command line args
+		for(String arg : args){
+			if(arg.equals("-nogui")){
+				gui = false;
+			}
+		}
+				
+		new Logger(gui);
+		
 		Server server = new Server(8000);
 		new Thread(server).start();
 	}
-	
-	
+		
 	public int port;
 	private ServerSocket serverSocket;
 	
@@ -56,7 +67,7 @@ public class Server implements Runnable {
 		});
 		
 		
-		System.out.println("Starting server on port: " + port);
+		Utils.log("Starting server on port: " + port);
 		try {
 			serverSocket = new ServerSocket(port);
 		} catch (IOException e) {
@@ -80,7 +91,7 @@ public class Server implements Runnable {
 		
 		if(remove != null){
 			handlers.remove(remove);
-			System.out.println("Detected disconnect: player #" + remove.getPlayerNumber());
+			Utils.log("Detected disconnect: player #" + remove.getPlayerNumber());
 		}
 	}
 	
@@ -98,7 +109,7 @@ public class Server implements Runnable {
 			Socket sock;
 			try {
 				sock = serverSocket.accept();
-				System.out.println("A user connected");
+				Utils.log("A user connected");
 
 				currPlayerNumber++;
 

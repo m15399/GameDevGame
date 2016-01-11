@@ -77,7 +77,7 @@ public class Map extends GameObject {
 			}
 		}
 
-		System.out.println("Created map of size " + w + " x " + h);
+		Utils.log("Created map of size " + w + " x " + h);
 	}
 
 	/**

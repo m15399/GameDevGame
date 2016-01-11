@@ -110,16 +110,39 @@ public class Utils {
 		return (1 - t) * a + t * b;
 	}
 	
+	// Utils.log, Utils.err, and Utils.fatal will pass their string arg
+	// to these observers when used
+	public static Observer logObserver = null;
+	public static Observer errObserver = null;
+	public static Observer fatalObserver = null;
+	
+	public static void log(String msg){
+		System.out.println(msg);
+		if(logObserver != null)
+			logObserver.notify(msg);
+	}
+	
 	/**
 	 * Log a fatal error and quit
 	 */
 	public static void fatal(String msg){
-		System.err.println("Fatal error: " + msg);
-		Application.quit();
+		String errMsg = "Fatal error: " + msg;
+		System.err.println(errMsg);
+		if(errObserver != null)
+			errObserver.notify(errMsg);
+		
+		if(fatalObserver != null){
+			fatalObserver.notify(null);
+		} else {
+			System.exit(1);
+		}
 	}
 	
 	public static void err(String msg){
-		System.err.println("Error: " + msg);
+		String errMsg = "Error: " + msg;
+		System.err.println(errMsg);
+		if(errObserver != null)
+			errObserver.notify(errMsg);
 	}
 	
 	/**

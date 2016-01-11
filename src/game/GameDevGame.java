@@ -58,7 +58,7 @@ public class GameDevGame extends GameObject {
 		Client.subscribe(ServerGreetingMessage.class, new Observer(){
 			public void notify(Object arg){
 				ServerGreetingMessage msg = (ServerGreetingMessage)arg;
-				System.out.println("I am player number " + msg.playerNumber);
+				Utils.log("I am player number " + msg.playerNumber);
 				
 				// Recreate the player with the correct playerNumber
 				player.destroy();

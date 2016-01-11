@@ -60,8 +60,8 @@ Factor GameObject static methods into GameObjectManager
 	Try to eliminate modification while iterating
 Better Map Editor
 	In-game editor? Tiled? Image file?
-
-
+More useful server logs
+	Write periodically instead of just on close
 
 Thoughts about networking (won't be coded for a while):
 Server

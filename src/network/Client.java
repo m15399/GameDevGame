@@ -33,7 +33,7 @@ public class Client {
 		
 		connected = false;
 		
-		System.out.println("Client connecting to: " + addr + ":" + port);
+		Utils.log("Client connecting to: " + addr + ":" + port);
 		
 		Socket socket;
 		
