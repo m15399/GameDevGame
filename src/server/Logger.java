@@ -130,7 +130,7 @@ public class Logger {
 	
 	private void log(String s){
 		Date date = new Date();
-		String dateString = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S").format(date);
+		String dateString = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(date);
 		String logString = "[" + dateString + "]: " + s + "\n";
 		
 		if(textArea != null){
@@ -138,8 +138,10 @@ public class Logger {
 			textArea.setCaretPosition(textArea.getDocument().getLength());
 		}
 		
-		if(logFile != null)
+		if(logFile != null){
 			logFile.print(logString);
+			logFile.flush();
+		}
 	}
 
 }

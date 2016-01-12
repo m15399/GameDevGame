@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
+import engine.Observer;
 import engine.Utils;
 
 /**
@@ -20,6 +21,8 @@ public class SocketHandler implements Runnable {
 	private NetworkMessagePublisher publisher;
 	
 	private boolean connected;
+	
+	public Observer onDisconnect;
 
 	public SocketHandler(Socket sock, NetworkMessagePublisher publisher, DataTranslator translator) {
 		socket = sock;
@@ -28,6 +31,8 @@ public class SocketHandler implements Runnable {
 		streamHandler = new DataStreamHandler(this, translator);
 		
 		connected = true;
+		
+		onDisconnect = null;
 	}
 	
 	public boolean isConnected(){
@@ -58,18 +63,26 @@ public class SocketHandler implements Runnable {
 	public synchronized void sendMessage(NetworkMessage msg){
 		int err = streamHandler.sendMessage(msg);
 		if(err != 0){
-			Utils.err("Failed to send message, disconnecting");
+			Utils.err("Failed to send message to socket, disconnecting");
 			disconnect();
 		}
 	}
 	
 	private void disconnect(){
+		if(!connected)
+			return;
+		
 		try {
 			socket.close();
 		} catch (IOException e) {
 			Utils.err("Failed to close socket");
 		}
 		connected = false;
+		
+		
+		if(onDisconnect != null){
+			onDisconnect.notify(null);
+		}
 	}
 	
 	public void run() {
@@ -80,7 +93,7 @@ public class SocketHandler implements Runnable {
 			if(msg != null){
 				publisher.takeMessage(msg);
 			} else {
-				Utils.err("Failed to read message, disconnecting");
+				Utils.err("Failed to read message from socket, disconnecting");
 				disconnect();
 				return;
 			}

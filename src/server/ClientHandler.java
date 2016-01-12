@@ -2,32 +2,43 @@ package server;
 
 import java.net.Socket;
 
-import network.DataTranslator;
 import network.NetworkMessage;
-import network.NetworkMessagePublisher;
 import network.SocketHandler;
+import engine.Observer;
 
 /**
  * Stores information about the client and handles messages from it
  */
 public class ClientHandler {
 	
-	private int playerNumber;
+	private short playerNumber;
 	private SocketHandler socketHandler;
 	
-	public ClientHandler(int playerNumber, Socket sock, NetworkMessagePublisher pub, DataTranslator translator){
+	private Server server;
+	
+	public ClientHandler(Server theServer, Socket sock, short playerNumber){
 		this.playerNumber = playerNumber;
+		server = theServer;
 
 		// Start a socket handler to receive incoming messages
-		socketHandler = new SocketHandler(sock, pub, translator);
+		socketHandler = new SocketHandler(sock, theServer.getPublisher(), theServer.getTranslator());
+		socketHandler.onDisconnect = new Observer(){
+			public void notify(Object arg){
+				wasDisconnected();
+			}
+		};
 		new Thread(socketHandler).start();
+	}
+	
+	public void wasDisconnected(){
+		server.disconnectClient(this);
 	}
 	
 	public boolean isConnected(){
 		return socketHandler.isConnected();
 	}
 	
-	public int getPlayerNumber(){
+	public short getPlayerNumber(){
 		return playerNumber;
 	}
 	

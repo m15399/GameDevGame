@@ -66,13 +66,13 @@ public class Player extends MapEntity {
 	private FlameThrower flameThrower;
 	
 	// Network info
-	private int playerNumber;
+	private short playerNumber;
 	private boolean dummy;
 	private PlayerUpdateMessage lastMessage;
 	private double lastMessageTime;
 	
 	
-	public Player(int playerNumber){
+	public Player(short playerNumber){
 		flameThrower = new FlameThrower(this);
 		dummy = false;
 		this.playerNumber = playerNumber;
@@ -85,7 +85,7 @@ public class Player extends MapEntity {
 		GameDevGame.playerManager.addPlayer(this);
 	}
 	
-	public int getPlayerNumber(){
+	public short getPlayerNumber(){
 		return playerNumber;
 	}
 	

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import network.DataTranslator;
 import network.NetworkMessage;
 import network.NetworkMessagePublisher;
+import network.PlayerDisconnectMessage;
 import network.PlayerUpdateMessage;
 import network.ServerGreetingMessage;
 
@@ -44,7 +45,7 @@ public class Server implements Runnable {
 	
 	private ArrayList<ClientHandler> handlers;
 	
-	private int currPlayerNumber = 0;
+	private short currPlayerNumber = 0;
 
 	public Server(int port) {
 		this.port = port;
@@ -75,10 +76,25 @@ public class Server implements Runnable {
 		}
 	}
 	
+	public DataTranslator getTranslator(){
+		return translator;
+	}
+	
+	public NetworkMessagePublisher getPublisher(){
+		return serverPub;
+	}
+	
+	public void disconnectClient(ClientHandler client){
+		handlers.remove(client);
+		Utils.log("Disconnecting player #" + client.getPlayerNumber());
+		
+		forwardToAll(new PlayerDisconnectMessage(client.getPlayerNumber()));
+	}
+	
 	/**
 	 * Forward the message to all players, except the one with playerNumber == except
 	 */
-	private void forwardToAll(NetworkMessage msg, int except){
+	private void forwardToAll(NetworkMessage msg, short except){
 		ClientHandler remove = null;
 		
 		for(ClientHandler h : handlers){
@@ -90,8 +106,7 @@ public class Server implements Runnable {
 		}
 		
 		if(remove != null){
-			handlers.remove(remove);
-			Utils.log("Detected disconnect: player #" + remove.getPlayerNumber());
+			disconnectClient(remove);
 		}
 	}
 	
@@ -99,7 +114,7 @@ public class Server implements Runnable {
 	 * Forward the message to all players
 	 */
 	public void forwardToAll(NetworkMessage msg){
-		forwardToAll(msg, -1); // playerNumber should never be -1
+		forwardToAll(msg, (short)-1); // playerNumber should never be -1
 	}
 	
 	public void run() {
@@ -109,12 +124,14 @@ public class Server implements Runnable {
 			Socket sock;
 			try {
 				sock = serverSocket.accept();
-				Utils.log("A user connected");
 
 				currPlayerNumber++;
 
+				Utils.log("A user connected: player #" + currPlayerNumber);
+
+
 				// Start a handler for each user
-				ClientHandler handler = new ClientHandler(currPlayerNumber, sock, serverPub, translator);
+				ClientHandler handler = new ClientHandler(this, sock, currPlayerNumber);
 				handlers.add(handler);
 				
 				// Greeting message				

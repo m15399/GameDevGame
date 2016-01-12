@@ -45,8 +45,7 @@ Networking
 
 	make server rotate around 1 byte player nums, not int
 		convert player numbers to be bytes everywhere
-	handle disconnects from server better
-		server sends "player dc'd messages"
+		just use shorts?
 
 
 Wishlist:
@@ -61,7 +60,7 @@ Factor GameObject static methods into GameObjectManager
 Better Map Editor
 	In-game editor? Tiled? Image file?
 More useful server logs
-	Write periodically instead of just on close
+
 
 Thoughts about networking (won't be coded for a while):
 Server

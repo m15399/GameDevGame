@@ -4,25 +4,21 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-/**
- * Server sends this greeting to clients when they join. Contains their 
- * playerNumber
- */
-public class ServerGreetingMessage extends NetworkMessage {
+public class PlayerDisconnectMessage extends NetworkMessage {
 
-	private static final long serialVersionUID = 3563739124719660308L;
+	private static final long serialVersionUID = 4808794145615085747L;
 
 	public short playerNumber;
 	
-	public ServerGreetingMessage(){}
+	public PlayerDisconnectMessage(){}
 	
-	public ServerGreetingMessage(short pNum){
+	public PlayerDisconnectMessage(short pNum){
 		playerNumber = pNum;
 	}
 	
 	@Override
 	public OpCode getOpcode() {
-		return NetworkMessage.OpCode.SERVER_GREETING;
+		return NetworkMessage.OpCode.PLAYER_DC;
 	}
 
 	@Override

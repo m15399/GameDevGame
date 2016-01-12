@@ -13,7 +13,7 @@ public class PlayerUpdateMessage extends NetworkMessage {
 
 	private static final long serialVersionUID = -4545974954407059370L;
 
-	public int playerNumber;
+	public short playerNumber;
 	public double x, y;
 	public double vx, vy;
 	public double inputX, inputY;
@@ -23,7 +23,7 @@ public class PlayerUpdateMessage extends NetworkMessage {
 	
 	public PlayerUpdateMessage(){}
 	
-	public PlayerUpdateMessage(int playerNumber, double x, double y, double vx, double vy,
+	public PlayerUpdateMessage(short playerNumber, double x, double y, double vx, double vy,
 			double inputX, double inputY, double angle, boolean firing, boolean jumping, boolean falling){
 		this.playerNumber = playerNumber;
 		this.x = x;
@@ -44,7 +44,7 @@ public class PlayerUpdateMessage extends NetworkMessage {
 	
 	@Override
 	public OpCode getOpcode() {
-		return NetworkMessage.OpCode.PLAYER_MESSAGE;
+		return NetworkMessage.OpCode.PLAYER_UPDATE;
 	}
 
 	private byte inToByte(double in){
@@ -62,7 +62,7 @@ public class PlayerUpdateMessage extends NetworkMessage {
 	
 	@Override
 	public void readData(DataInputStream input) throws IOException {
-		playerNumber = input.readInt();
+		playerNumber = input.readShort();
 		x = input.readDouble();	
 		y = input.readDouble();	
 		vx = input.readDouble();
@@ -82,7 +82,7 @@ public class PlayerUpdateMessage extends NetworkMessage {
 
 	@Override
 	public void writeData(DataOutputStream output) throws IOException {
-		output.writeInt(playerNumber);
+		output.writeShort(playerNumber);
 		output.writeDouble(x);
 		output.writeDouble(y);
 		output.writeDouble(vx);
