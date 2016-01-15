@@ -68,7 +68,7 @@ public class SocketHandler implements Runnable {
 		}
 	}
 	
-	private void disconnect(){
+	private synchronized void disconnect(){
 		if(!connected)
 			return;
 		

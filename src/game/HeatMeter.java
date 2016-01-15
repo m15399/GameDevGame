@@ -17,7 +17,7 @@ public class HeatMeter extends Meter {
 	}
 	
 	private FlameThrower findFt(){
-		Player p = GameDevGame.player;
+		Player p = Globals.player;
 		if(p != null)
 			return p.getFlameThrower();
 		return null;

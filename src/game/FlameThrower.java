@@ -139,10 +139,10 @@ public class FlameThrower extends Emitter {
 			if(parent.isDummy())
 				return; 
 			
-			Map m = GameDevGame.map;
+			Map m = Globals.map;
 			Tile t = m.tileAt(x, y);
 			if(t != null)
-				t.addHeat(AMT_HEAT);
+				t.playerAddsHeat(AMT_HEAT);
 		}
 		
 		public void update(double dt){

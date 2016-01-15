@@ -82,7 +82,7 @@ public class Player extends MapEntity {
 		
 		lastMessage = null;
 		
-		GameDevGame.playerManager.addPlayer(this);
+		Globals.playerManager.addPlayer(this);
 	}
 	
 	public short getPlayerNumber(){
@@ -102,7 +102,7 @@ public class Player extends MapEntity {
 	}
 
 	public void onDestroy(){
-		GameDevGame.playerManager.removePlayer(this);
+		Globals.playerManager.removePlayer(this);
 	}
 	
 	public void respawn(){
@@ -350,7 +350,7 @@ public class Player extends MapEntity {
 		 * pretty simple and works for now
 		 */
 
-		Map map = GameDevGame.map;
+		Map map = Globals.map;
 		boolean lpInsideTile = map.isWallAt(x - wallRadius, y);
 		boolean rpInsideTile = map.isWallAt(x + wallRadius, y);
 		boolean tpInsideTile = map.isWallAt(x, y - wallRadius);

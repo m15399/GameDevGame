@@ -27,6 +27,9 @@ public class Tile extends Entity {
 
 	private TileFire tileFire;
 	private WallVisual wallVisual;
+	
+	// What we think the server sees
+	private double serverHeat;
 
 	/**
 	 * Decide how to create a tile based on a given token string
@@ -40,6 +43,8 @@ public class Tile extends Entity {
 		y = yc * SIZE;
 		
 		tileFire = null;
+		
+		serverHeat = 0;
 		
 		char c = token.charAt(0);
 		switch (c) {
@@ -81,14 +86,67 @@ public class Tile extends Entity {
 		type = t;
 	}
 	
-	public void addHeat(double amt){
+	/** 
+	 * Get what WE see as the heat
+	 */
+	public double getPlayerHeat(){
+		if(tileFire == null)
+			return 0;
+		else
+			return tileFire.getHeat();
+	}
+	
+	/**
+	 * Get what the server probably thinks is the heat
+	 */
+	public double getServerHeat(){
+		return serverHeat;
+	}
+	
+	/**
+	 * Have we heated the tile up enough to warrant updating the server?
+	 * Returns 0 if no, returns our current heat if yes. 
+	 */
+	public double shouldUpdateServerHeat(){
+		// E.g. if heatPerSection is 5, we update the server
+		// if our heat is in the bracket of 5 above the server's heat. 
+		// (2 and 4 are same section, 2 and 6 are different sections)
+		int heatPerSection = 5;
+		
+		int serverSection = ((int)getServerHeat()) / heatPerSection;
+		int playerSection = ((int)getPlayerHeat()) / heatPerSection;
+		
+		if(playerSection > serverSection){
+			return getPlayerHeat();
+		} else if (playerSection < serverSection){
+			Utils.err("Player thinks tile is cooler than server, how did you do this??");
+			return 0;
+		} 
+		return 0;
+	}
+	
+	/**
+	 * Set our current heat and our serverHeat
+	 */
+	public void serverSetsHeat(double heat){
+		if(tileFire != null)
+			tileFire.setHeat(heat);
+		serverHeat = heat;
+	}
+	
+	/**
+	 * Update our heat, but not the serverHeat
+	 */
+	public void playerAddsHeat(double amt){
 		if(amt < 0){
 			Utils.err("Heat passed to addHeat should always be positive");
 			return;
 		}
 		
-		if(tileFire != null)
-			tileFire.addHeat(amt);
+		// tileFire might be null if we are a wall/empty tile
+		if(tileFire != null){
+			tileFire.changeHeat(amt);
+		}
 	}
 	
 	public void burnUp(){
@@ -99,7 +157,7 @@ public class Tile extends Entity {
 		
 		// Draw the tile's image from the tileset
 		
-		Image tileset = GameDevGame.map.tileset;
+		Image tileset = Globals.map.tileset;
 		
 		int xi = (int)x;
 		int yi = (int)y;

@@ -35,14 +35,9 @@ public class Resources {
 
 	};
 
-	private static final String[] preloadFiles = {
-
-	};
-
 	// Library of reources
 	private static HashMap<String, BufferedImage> images = new HashMap<String, BufferedImage>();
 	private static HashMap<String, Clip> sounds = new HashMap<String, Clip>();
-	private static HashMap<String, Scanner> files = new HashMap<String, Scanner>();
 
 	// Preload all resources
 	public static void preloadResources() {
@@ -51,9 +46,6 @@ public class Resources {
 		}
 		for (int i = 0; i < preloadSounds.length; i++) {
 			loadSound(preloadSounds[i]);
-		}
-		for (int i = 0; i < preloadFiles.length; i++) {
-			loadFile(preloadFiles[i]);
 		}
 	}
 
@@ -95,21 +87,18 @@ public class Resources {
 	}
 
 	/**
-	 * @return A reference to the file located in Resources/filename. The file
-	 *         will be loaded if it's not already
+	 * Open a text file and create a Scanner for it. You should be sure to 
+	 * close the Scanner when done.
 	 */
-	public static Scanner getFile(String filename) {
-		if (!files.containsKey(filename))
-			loadFile(filename);
-		Scanner reader = files.get(filename);
-
-		if (reader == null) {
-			Utils.fatal("Couldn't get file: " + filename);
+	public static Scanner openFile(String filename) {
+		try {
+			Scanner s = new Scanner(new File("Resources/" + filename));
+			return s;
+		} catch (FileNotFoundException e) {
+			Utils.fatal("Couldn't load clip: " + filename);
+			return null;
 		}
-		return reader;
 	}
-
-	
 	
 	private static void loadImage(String filename) {
 		try {
@@ -147,15 +136,6 @@ public class Resources {
 
 		sounds.put(filename, clip);
 
-	}
-
-	private static void loadFile(String filename) {
-		try {
-			Scanner s = new Scanner(new File("Resources/" + filename));
-			files.put(filename, s);
-		} catch (FileNotFoundException e) {
-			Utils.fatal("Couldn't load clip: " + filename);
-		}
 	}
 
 }

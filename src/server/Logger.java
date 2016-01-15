@@ -118,7 +118,6 @@ public class Logger {
 			Utils.err("Unable to create logs/ directory, running without log file");
 		}
 		
-		
 	}
 	
 	private void quit(int status){

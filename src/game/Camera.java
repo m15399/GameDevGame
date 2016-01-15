@@ -50,9 +50,12 @@ public class Camera extends GameObject {
 	public double[] getPos(){
 		double[] pos = new double[2];
 		
-		if(target != null){
-			pos[0] = target.x - Game.WIDTH / 2;
-			pos[1] = target.y - Game.HEIGHT / 2;
+		// If no target, just follow Globals.player
+		Entity theTarget = (target != null ? target : Globals.player);
+		
+		if(theTarget != null){
+			pos[0] = theTarget.x - Game.WIDTH / 2;
+			pos[1] = theTarget.y - Game.HEIGHT / 2;
 		} else {
 			pos[0] = pos[1] = 0;
 		}

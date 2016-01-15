@@ -33,19 +33,58 @@ respawning tiles?
 	respawning tiles - 10-15 sec
 			small graphic in middle when half way through respawn time
 
+split Map.java into servermap clientmap
+
 Networking
-	synchronize players
+	players
 		weapon info - 1 byte?
 			type - 4 bits, charge amount/state - 4 bits 
 
-		space = 20
-		10 updates/sec = 200 bytes/sec = .2 kB/s
-		want < 500 kB/sec for each player and server
+	map - runs on server
+		updates
+			players update the map on the server if they heated a tile
+			the map sends a updates to each player about what changed
+			server is authoritative - decides what happens
+				handle all race conditions with rules
+					if two updates have diff temps, favor hotter one
+			server
+				mark the time
+				write all changes down in mmCurr (map message) 
+					tile heat > old tile heat + 2
+					tile heat < old tile heat - 2
+				when .25 sec passed, mark the time, mmSend = mmCurr
+				send mmSend out, write messages to new mmCurr
+					maybe stagger the sending (1-2 players each update)
+			client
+				don't do passive heat gain or loss when online
+				recieve updates
+					apply the updates with a few conditions
+						if we heated it in the last 1.5 sec and it's low
+							favor our version
+				updates
+					every .25 sec, client sees if it should update map
+					check curr heats vs server heats and curr state vs server state
+					if local player changed heat to another bracket of 5
+						(via flamethrower OR passive change)
+					or if local player changed a tile's state (empty/wood)
+						1. send update:
+							tx ty state/heat
+							byte byte 2/6-bits
+						2. mark as owned and set lastOwnedTime?
+		joining observers
+			server keeps a list of tiles that are broken
+				or just iterate through
+			nTiles tx ty tx ty tx ty tx ty ...
+			byte byte byte...
+			(max 16 at a time or so)
+			or send whole map state?
+				64 x 64 = 4096 bytes
 
+	space = 20
+	10 player updates/sec = 200 bytes/sec = .2 kB/s
+	4 map updates/sec = 10 bytes/sec * 16 players = 160 bytes/sec = .16 kB/sec
+	want < ? kB/sec for each player and server
 
-	make server rotate around 1 byte player nums, not int
-		convert player numbers to be bytes everywhere
-		just use shorts?
 
 
 Wishlist:
@@ -60,6 +99,14 @@ Factor GameObject static methods into GameObjectManager
 Better Map Editor
 	In-game editor? Tiled? Image file?
 More useful server logs
+	Able to close windows without quitting
+	Able to have fatal errors without closing console
+Single player
+	Tutorial mission
+	Coop missions? 
+		Enemies? How do you fight them?
+Set buffered stream size so we don't cut messages
+Use timer instead of frameNumber % 15 in Map.java
 
 
 Thoughts about networking (won't be coded for a while):
@@ -104,6 +151,7 @@ Updates
 		Exit game
 Map switching
 	destroy everything but GameDevGame
+		destroy everything but tag?
 	remember to unsubscribe everything when destroyed
 	GameDevGame recreates everything, which subscribes again
 

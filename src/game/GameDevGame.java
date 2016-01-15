@@ -16,17 +16,11 @@ public class GameDevGame extends GameObject {
 	
 	// Starts the game!
 	public static void main(String[] args) {
-		Application.launch("GameDevGame");
+		Application.launch("GameDevGame", true, .8);
 		new GameDevGame();
 	}
 
 	// Global variables - it's likely these will be moved later
-	
-	public static Player player;
-	public static Map map;
-	public static PlayerManager playerManager;
-	
-	private Camera camera;
 		
 	public void onStart() {
 		// Play some music
@@ -34,18 +28,11 @@ public class GameDevGame extends GameObject {
 		Utils.setClipVolume(c, -5f);
 		c.loop(Clip.LOOP_CONTINUOUSLY);
 		
-		playerManager = new PlayerManager();
+		// Create globals like map, player
+		Globals.initGlobals();
 		
-		camera = new Camera();
+		new Camera();
 		new Background("background.png");
-		
-		// Load level from file
-		map = new Map("TestLevel.txt");
-		
-		player = new Player((short)-1);
-				
-		// Tell camera to follow the player
-		camera.setTarget(player);
 		
 		new HeatMeter();
 		
@@ -53,7 +40,6 @@ public class GameDevGame extends GameObject {
 
 		
 		// Network stuff
-		Client.setAddress("localhost", 8000);
 		
 		Client.subscribe(ServerGreetingMessage.class, new Observer(){
 			public void notify(Object arg){
@@ -61,12 +47,12 @@ public class GameDevGame extends GameObject {
 				Utils.log("I am player number " + msg.playerNumber);
 				
 				// Recreate the player with the correct playerNumber
-				player.destroy();
-				player = new Player(msg.playerNumber);
-				camera.setTarget(player);
+				Globals.player.destroy();
+				Globals.player = new Player(msg.playerNumber);
 			}
 		});
 		
+		Client.setAddress("localhost", 8000);
 		Client.connect();
 
 	}

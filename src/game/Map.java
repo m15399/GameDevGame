@@ -6,6 +6,9 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
 
+import network.Client;
+import network.TileHeatUpdatesMessage;
+
 import engine.*;
 import game.Tile.Type;
 
@@ -18,7 +21,7 @@ public class Map extends GameObject {
 	public Image tileset;
 	
 	private Tile[][] tiles;
-
+	private int width, height;
 	
 	/**
 	 * Create a map from a text file
@@ -29,10 +32,11 @@ public class Map extends GameObject {
 		
 		// Read the file, keep track of width and height, and store each token
 
-		Scanner s = Resources.getFile(textFileName);
+		Scanner s = Resources.openFile(textFileName);
 
 		Queue<String> tokens = new LinkedList<String>();
-		int w = 0, h = 0;
+		width = 0;
+		height = 0;
 
 		while (s.hasNextLine()) {
 			String line = s.nextLine();
@@ -55,13 +59,13 @@ public class Map extends GameObject {
 				// It's a line of tile tokens, add them to 'tokens'
 
 				tokens.add(firstToken);
-				w = 1;
+				width = 1;
 				
 				while (l.hasNext()) {
 					tokens.add(l.next());
-					w++;
+					width++;
 				}
-				h++;
+				height++;
 			}
 			l.close();
 		}
@@ -69,15 +73,15 @@ public class Map extends GameObject {
 
 		// Create the map using the tokens we collected
 		
-		tiles = new Tile[h][w];
-		for (int i = 0; i < h; i++) {
-			for (int j = 0; j < w; j++) {
+		tiles = new Tile[height][width];
+		for (int i = 0; i < height; i++) {
+			for (int j = 0; j < width; j++) {
 				String token = tokens.poll();
 				tiles[i][j] = new Tile(token, j, i);					
 			}
 		}
 
-		Utils.log("Created map of size " + w + " x " + h);
+		Utils.log("Created map of size " + width + " x " + height);
 	}
 
 	/**
@@ -137,6 +141,57 @@ public class Map extends GameObject {
 			return true;
 		} else {
 			return false;
+		}
+	}
+	
+	/**
+	 * Update the map to reflect the changes in the message
+	 */
+	public void updateTileHeats(TileHeatUpdatesMessage msg){
+		int size = msg.xCoords.size();
+
+		for(int i = 0; i < size; i++){
+			int tx = msg.xCoords.get(i);
+			int ty = msg.yCoords.get(i);
+			int heat = msg.heats.get(i);
+			
+			Tile tile = tiles[ty][tx];
+			tile.serverSetsHeat(heat);
+		}
+	}
+	
+	/**
+	 * Send all tiles that have been heated up enough to be updates on the server
+	 */
+	private void sendHeatedTilesToServer(){	
+		TileHeatUpdatesMessage updateMsg = new TileHeatUpdatesMessage();
+		
+		for(int ty = 0; ty < height; ty++){
+			for(int tx = 0; tx < width; tx++){
+				Tile tile = tiles[ty][tx];
+				
+				double tileHeatSet = tile.shouldUpdateServerHeat();
+				if(tileHeatSet > 0){
+					updateMsg.addHeat(tx, ty, tileHeatSet);
+					
+					// We are sending this info to the server, so go ahead
+					// and update our idea of what the server has
+					tile.serverSetsHeat(tileHeatSet);
+				}
+			}
+		}
+		
+		// If any changes to send, send them
+		if(updateMsg.xCoords.size() > 0){
+			Client.sendMessage(updateMsg);
+		}
+	}
+	
+	public void update(double dt){
+		// Periodically send heated tiles to server
+		if(Globals.isOnlineGame()){
+			if(Game.frameNumber % 15 == 0)
+				sendHeatedTilesToServer();			
 		}
 	}
 

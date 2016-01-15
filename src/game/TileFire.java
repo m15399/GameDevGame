@@ -14,21 +14,21 @@ import engine.Utils;
 public class TileFire extends Entity {
 	
 	// How fast the heat passively changes
-	private static final double HEAT_CHANGE_SPEED = 1;
+	private static final double PASSIVE_HEAT_CHANGE_SPEED = 0; // temporarily disabled
 	
 	// On the final stage, tile will burn up and disappear after this amount of time
 	private static final double FINAL_STAGE_TIME = 1.15;
 	
-	// How much extra heat is required to bump up/down to the next stage of heat.
-	private static final double TOLERANCE = 2;
+	// How much extra heat is required to bump down to the next stage of heat.
+	private static final double TOLERANCE = 5;
 	
 	private enum Stage {
 		NONE, EMBER, BURN, FLAME
 	}
 	
-	// Heat required to reach each stage 	
+	// Heat required to reach each stage 
 	private static final double[] STAGE_HEATS = {
-		0, 8, 25, 45
+		0, 10, 25, 45
 	};
 	
 	// Max heat possible
@@ -89,53 +89,66 @@ public class TileFire extends Entity {
 		}
 	}
 	
+	public void setHeat(double heat){
+		changeHeat(heat - this.heat);
+	}
+	
+	public double getHeat(){
+		return heat;
+	}
+	
 	public void changeHeat(double amt){
+		heat += amt;
+		heat = Utils.clamp(heat, 0, HEAT_CAP);
+				
 		if(amt >= 0){
-			addHeat(amt);
+			tryHeatUp();
 		} else {
-			subtractHeat(-amt);
+			tryCoolDown();
 		}
 	}
 	
-	public void addHeat(double amt){
-		if(amt < 0){
-			Utils.err("addHeat argument must be positive");
-		}
-		
-		heat += amt;
-		heat = Utils.clamp(heat, 0, HEAT_CAP);
-			
+	/**
+	 * Moves up stages until we're on the correct stage for current heat
+	 */
+	private void tryHeatUp(){
 		// Do not bump up to next stage if we're on the final stage
 		if(stage.ordinal() == Stage.values().length-1)
 			return;
 			
 		// Should we bump up to next stage?
-		double checkHeat = STAGE_HEATS[stage.ordinal()+1] + TOLERANCE;
-		if(heat > checkHeat)
+		double checkHeat = STAGE_HEATS[stage.ordinal()+1];
+		if(heat >= checkHeat){
 			setStage(Stage.values()[stage.ordinal()+1]);
+			tryHeatUp();
+		} else {
+			return;
+		}
 	}
 	
-	public void subtractHeat(double amt){
-		if(amt < 0){
-			Utils.err("subtractHeat argument must be positive");
-		}
-		
-		heat -= amt;
-		heat = Utils.clamp(heat, 0, HEAT_CAP);
-		
+	/**
+	 * Moves down stages until we're on the correct stage for current heat
+	 */
+	private void tryCoolDown(){
 		// Should we bump down to previous stage?
 		double checkHeat = STAGE_HEATS[stage.ordinal()] - TOLERANCE;
-		if(heat < checkHeat)
+		if(heat <= checkHeat){
 			setStage(Stage.values()[stage.ordinal()-1]);
+			tryCoolDown();
+		}
 	}
+	
 	
 	public void onDestroy(){
 		currEmitter.destroy();
 	}
 	
 	public void update(double dt){
+		if(Globals.isOnlineGame())
+			return;
+		
 		// Passive heat gain/loss
-		double mod = STAGE_HEAT_MODIFY[stage.ordinal()] * HEAT_CHANGE_SPEED;
+		double mod = STAGE_HEAT_MODIFY[stage.ordinal()] * PASSIVE_HEAT_CHANGE_SPEED;
 		changeHeat(mod * dt);
 		
 		// Burn up if long enough time on final stage

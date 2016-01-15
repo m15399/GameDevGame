@@ -54,6 +54,16 @@ public class Client {
 		new Thread(socketHandler).start();
 	}
 	
+	private static void checkConnection(){
+		if(connected && !socketHandler.isConnected())
+			connected = false;
+	}
+	
+	public static boolean isConnected(){
+		Client.checkConnection();
+		return connected;
+	}
+	
 	public static void update(){
 		publisher.forwardQueuedMessages();
 	}
@@ -71,7 +81,7 @@ public class Client {
 	 * Send the message to the server
 	 */
 	public static void sendMessage(NetworkMessage msg){
-		if(connected)
+		if(isConnected())
 			socketHandler.sendMessage(msg);
 	}
 }

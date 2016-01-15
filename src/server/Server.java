@@ -1,5 +1,6 @@
 package server;
 
+import java.awt.Graphics2D;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -11,32 +12,56 @@ import network.NetworkMessagePublisher;
 import network.PlayerDisconnectMessage;
 import network.PlayerUpdateMessage;
 import network.ServerGreetingMessage;
+import network.TileHeatUpdatesMessage;
 
+import engine.Application;
+import engine.GameObject;
 import engine.Observer;
 import engine.Utils;
+import game.Globals;
+import game.Tile;
 
 /**
  * Server main class - runs the Server.
  */
-public class Server implements Runnable {
+public class Server extends GameObject implements Runnable {
 
 	public static void main(String[] args){
 		
-		boolean gui = true;
+		boolean launchGui = true;
 		
 		// Parse command line args
 		for(String arg : args){
 			if(arg.equals("-nogui")){
-				gui = false;
+				launchGui = false;
 			}
 		}
-				
-		new Logger(gui);
+		
+		// Launch a server log window 
+		new Logger(launchGui);
+
+		// Launch the game engine
+		Application.launch("Server Monitor", launchGui, .4);
+		
 		
 		Server server = new Server(8000);
 		new Thread(server).start();
 	}
+	
+	public void onStart(){
+		setDrawOrder(-1000);
 		
+		// Start the game simulation
+		Globals.initGlobalsForServer();
+	}
+	
+	public void draw(Graphics2D g){
+		// Draw the game zoomed out so we can see the whole map
+		double scaleFac = .5;
+		g.scale(scaleFac, scaleFac);
+		g.translate(Tile.SIZE, Tile.SIZE);
+	}
+	
 	public int port;
 	private ServerSocket serverSocket;
 	
@@ -67,6 +92,14 @@ public class Server implements Runnable {
 			}
 		});
 		
+		// Update our map when players heat up tiles
+		serverPub.subscribe(TileHeatUpdatesMessage.class, new Observer(){
+			public void notify(Object arg){
+				TileHeatUpdatesMessage msg = (TileHeatUpdatesMessage) arg;
+				Globals.map.updateTileHeats(msg);
+			}
+		});
+		
 		
 		Utils.log("Starting server on port: " + port);
 		try {
@@ -84,7 +117,7 @@ public class Server implements Runnable {
 		return serverPub;
 	}
 	
-	public void disconnectClient(ClientHandler client){
+	public synchronized void disconnectClient(ClientHandler client){
 		handlers.remove(client);
 		Utils.log("Disconnecting player #" + client.getPlayerNumber());
 		

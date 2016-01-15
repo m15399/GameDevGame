@@ -19,7 +19,8 @@ public abstract class NetworkMessage implements Serializable {
 	public static enum OpCode {
 		SERVER_GREETING,
 		PLAYER_UPDATE,
-		PLAYER_DC;
+		PLAYER_DC,
+		TILE_HEAT_UPDATES;
 		
 		public byte getValue(){
 			return (byte)ordinal();
