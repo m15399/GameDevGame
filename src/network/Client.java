@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-import engine.Observer;
 import engine.Utils;
 
 /**
@@ -66,15 +65,6 @@ public class Client {
 	
 	public static void update(){
 		publisher.forwardQueuedMessages();
-	}
-
-	/**
-	 * Subscribe the observer to messages of the given class. Cannot have multiple observers subscribed
-	 * to one class, and must subscribe to all messages the Server might send before connecting. 
-	 * Otherwise you won't be able to translate some of the incoming messages. 
-	 */
-	public static void subscribe(Class <? extends NetworkMessage> theClass, Observer observer){
-		publisher.subscribe(theClass, observer);
 	}
 	
 	/**

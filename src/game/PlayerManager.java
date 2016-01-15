@@ -19,13 +19,13 @@ public class PlayerManager extends GameObject {
 	
 	public PlayerManager(){
 		
-		Client.subscribe(PlayerUpdateMessage.class, new Observer(){
+		Client.publisher.subscribe(PlayerUpdateMessage.class, new Observer(){
 			public void notify(Object arg){
 				PlayerUpdateMessage msg = (PlayerUpdateMessage) arg;
 				processUpdateMessage(msg);
 			}
 		});
-		Client.subscribe(PlayerDisconnectMessage.class, new Observer(){
+		Client.publisher.subscribe(PlayerDisconnectMessage.class, new Observer(){
 			public void notify(Object arg){
 				PlayerDisconnectMessage msg = (PlayerDisconnectMessage) arg;
 				destroyAndRemovePlayer(msg.playerNumber);

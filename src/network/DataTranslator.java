@@ -54,7 +54,8 @@ public class DataTranslator {
 				return msg;
 			} else {
 				// At this point we don't know how to read the stream and it is unusable
-				Utils.fatal("Unable to translate opcode: " + opcode);
+				Utils.fatal("Unable to translate opcode: " + opcode + 
+						". You might need to subscribe to it.");
 			}
 		} catch (IOException e) {
 			// stream was likely closed, ignore and return null

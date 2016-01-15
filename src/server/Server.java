@@ -24,7 +24,7 @@ import game.Tile;
 /**
  * Server main class - runs the Server.
  */
-public class Server extends GameObject implements Runnable {
+public class Server {
 
 	public static void main(String[] args){
 		
@@ -43,44 +43,27 @@ public class Server extends GameObject implements Runnable {
 		// Launch the game engine
 		Application.launch("Server Monitor", launchGui, .4);
 		
-		
-		Server server = new Server(8000);
-		new Thread(server).start();
+		// Start server
+		Server.initServer(8000);
 	}
 	
-	public void onStart(){
-		setDrawOrder(-1000);
-		
-		// Start the game simulation
-		Globals.initGlobalsForServer();
-	}
 	
-	public void draw(Graphics2D g){
-		// Draw the game zoomed out so we can see the whole map
-		double scaleFac = .5;
-		g.scale(scaleFac, scaleFac);
-		g.translate(Tile.SIZE, Tile.SIZE);
-	}
 	
-	public int port;
-	private ServerSocket serverSocket;
+	private static ServerSocket serverSocket;
 	
-	private NetworkMessagePublisher serverPub;
-	private DataTranslator translator;
+	private static NetworkMessagePublisher serverPub;
+	private static DataTranslator translator;
 	
-	private ArrayList<ClientHandler> handlers;
+	private static ArrayList<ClientHandler> handlers;
 	
-	private short currPlayerNumber = 0;
+	private static short currPlayerNumber = 0;
 
-	public Server(int port) {
-		this.port = port;
-		
+	public static void initServer(int port) {		
 		translator = new DataTranslator();
 		serverPub = new NetworkMessagePublisher(translator);
 		serverPub.forwardImmediately = true;
 		
 		handlers = new ArrayList<ClientHandler>();
-		
 		
 		// Forward PlayerUpdateMessages to everyone except that player
 		serverPub.subscribe(PlayerUpdateMessage.class, new Observer(){
@@ -107,17 +90,47 @@ public class Server extends GameObject implements Runnable {
 		} catch (IOException e) {
 			Utils.fatal("Failed to create server socket");
 		}
+		
+		// Create the server's game simulation
+		new ServerGameObject();
+		
+		// Start a thread listening for connections
+		new Thread(new Runnable(){
+			public void run() {
+				// Listen for new connections
+				while (true) {
+					Socket sock;
+					try {
+						sock = serverSocket.accept();
+
+						currPlayerNumber++;
+
+						Utils.log("A user connected: player #" + currPlayerNumber);
+
+						// Start a handler for each user
+						ClientHandler handler = new ClientHandler(sock, currPlayerNumber);
+						handlers.add(handler);
+						
+						// Greeting message				
+						handler.sendMessage(new ServerGreetingMessage(currPlayerNumber));
+						
+					} catch (IOException e) {
+						Utils.err("Failed to accept socket");
+					}
+				}
+			}
+		}).start();
 	}
 	
-	public DataTranslator getTranslator(){
+	public static DataTranslator getTranslator(){
 		return translator;
 	}
 	
-	public NetworkMessagePublisher getPublisher(){
+	public static NetworkMessagePublisher getPublisher(){
 		return serverPub;
 	}
 	
-	public synchronized void disconnectClient(ClientHandler client){
+	public static synchronized void disconnectClient(ClientHandler client){
 		handlers.remove(client);
 		Utils.log("Disconnecting player #" + client.getPlayerNumber());
 		
@@ -127,7 +140,7 @@ public class Server extends GameObject implements Runnable {
 	/**
 	 * Forward the message to all players, except the one with playerNumber == except
 	 */
-	private void forwardToAll(NetworkMessage msg, short except){
+	private static void forwardToAll(NetworkMessage msg, short except){
 		ClientHandler remove = null;
 		
 		for(ClientHandler h : handlers){
@@ -146,33 +159,27 @@ public class Server extends GameObject implements Runnable {
 	/**
 	 * Forward the message to all players
 	 */
-	public void forwardToAll(NetworkMessage msg){
+	public static void forwardToAll(NetworkMessage msg){
 		forwardToAll(msg, (short)-1); // playerNumber should never be -1
 	}
 	
-	public void run() {
+	
+	
+	private static class ServerGameObject extends GameObject {
 		
-		// Listen for new connections
-		while (true) {
-			Socket sock;
-			try {
-				sock = serverSocket.accept();
-
-				currPlayerNumber++;
-
-				Utils.log("A user connected: player #" + currPlayerNumber);
-
-
-				// Start a handler for each user
-				ClientHandler handler = new ClientHandler(this, sock, currPlayerNumber);
-				handlers.add(handler);
-				
-				// Greeting message				
-				handler.sendMessage(new ServerGreetingMessage(currPlayerNumber));
-				
-			} catch (IOException e) {
-				Utils.err("Failed to accept socket");
-			}
+		public void onStart(){
+			setDrawOrder(-1000);
+			
+			// Start the game simulation
+			Globals.initGlobalsForServer();
+		}
+		
+		public void draw(Graphics2D g){
+			// Draw the game zoomed out so we can see the whole map
+			double scaleFac = .5;
+			g.scale(scaleFac, scaleFac);
+			g.translate(Tile.SIZE, Tile.SIZE);
 		}
 	}
+	
 }

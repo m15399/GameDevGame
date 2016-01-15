@@ -1,6 +1,8 @@
 package game;
 
+import server.Server;
 import network.Client;
+import network.NetworkMessagePublisher;
 
 /**
  * Place where we put globals. While it's bad practice to have
@@ -11,6 +13,8 @@ public class Globals {
 	public static Map map;
 	public static PlayerManager playerManager;
 	
+	private static boolean isServer;
+	
 	public static void initGlobals(){
 		playerManager = new PlayerManager();
 		
@@ -18,6 +22,8 @@ public class Globals {
 		Globals.map = new Map("TestLevel.txt");
 		
 		Globals.player = new Player((short)-1);
+		
+		isServer = false;
 	}
 	
 	/**
@@ -25,9 +31,32 @@ public class Globals {
 	 */
 	public static void initGlobalsForServer(){
 		Globals.map = new Map("TestLevel.txt");
+		isServer = true;
 	}
 	
-	public static boolean isOnlineGame(){
+	/**
+	 * Are we a client who is online?
+	 */
+	public static boolean isOnlineClient(){
 		return Client.isConnected();
+	}
+	
+	/**
+	 * Are we the server?
+	 */
+	public static boolean isServer(){
+		return isServer;
+	}
+	
+	/**
+	 * Get the global Network Publisher from either Client or Server, 
+	 * depending on which one we are
+	 */
+	public static NetworkMessagePublisher publisher(){
+		if(isServer()){
+			return Server.getPublisher();
+		} else {
+			return Client.publisher;
+		}
 	}
 }

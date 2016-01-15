@@ -7,6 +7,7 @@ import javax.sound.sampled.Clip;
 
 import network.Client;
 import network.ServerGreetingMessage;
+import network.TileHeatUpdatesMessage;
 
 import engine.*;
 
@@ -15,7 +16,7 @@ public class GameDevGame extends GameObject {
 	public static final String VERSION = "0.1";
 	
 	// Starts the game!
-	public static void main(String[] args) {
+	public static void main(String[] args) {		
 		Application.launch("GameDevGame", true, .8);
 		new GameDevGame();
 	}
@@ -41,7 +42,7 @@ public class GameDevGame extends GameObject {
 		
 		// Network stuff
 		
-		Client.subscribe(ServerGreetingMessage.class, new Observer(){
+		Client.publisher.subscribe(ServerGreetingMessage.class, new Observer(){
 			public void notify(Object arg){
 				ServerGreetingMessage msg = (ServerGreetingMessage)arg;
 				Utils.log("I am player number " + msg.playerNumber);
@@ -52,9 +53,16 @@ public class GameDevGame extends GameObject {
 			}
 		});
 		
+		// Update our map when server changes tiles
+		Client.publisher.subscribe(TileHeatUpdatesMessage.class, new Observer(){
+			public void notify(Object arg){
+				TileHeatUpdatesMessage msg = (TileHeatUpdatesMessage) arg;
+				Globals.map.updateTileHeats(msg);
+			}
+		});
+		
 		Client.setAddress("localhost", 8000);
 		Client.connect();
-
 	}
 	
 	public void update(double dt){

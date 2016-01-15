@@ -6,6 +6,8 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
 
+import server.Server;
+
 import network.Client;
 import network.TileHeatUpdatesMessage;
 
@@ -147,7 +149,7 @@ public class Map extends GameObject {
 	/**
 	 * Update the map to reflect the changes in the message
 	 */
-	public void updateTileHeats(TileHeatUpdatesMessage msg){
+	public synchronized void updateTileHeats(TileHeatUpdatesMessage msg){
 		int size = msg.xCoords.size();
 
 		for(int i = 0; i < size; i++){
@@ -156,43 +158,40 @@ public class Map extends GameObject {
 			int heat = msg.heats.get(i);
 			
 			Tile tile = tiles[ty][tx];
-			tile.serverSetsHeat(heat);
+			tile.networkSetsHeat(heat);
 		}
 	}
 	
 	/**
-	 * Send all tiles that have been heated up enough to be updates on the server
+	 * Send all tiles that have been heated up enough to be updates on the network
 	 */
-	private void sendHeatedTilesToServer(){	
+	private void sendHeatedTilesToNetwork(){	
 		TileHeatUpdatesMessage updateMsg = new TileHeatUpdatesMessage();
 		
 		for(int ty = 0; ty < height; ty++){
 			for(int tx = 0; tx < width; tx++){
 				Tile tile = tiles[ty][tx];
 				
-				double tileHeatSet = tile.shouldUpdateServerHeat();
-				if(tileHeatSet > 0){
+				int tileHeatSet = tile.getNextHeatUpdate();
+				if(tileHeatSet >= 0){
 					updateMsg.addHeat(tx, ty, tileHeatSet);
-					
-					// We are sending this info to the server, so go ahead
-					// and update our idea of what the server has
-					tile.serverSetsHeat(tileHeatSet);
 				}
 			}
 		}
 		
 		// If any changes to send, send them
 		if(updateMsg.xCoords.size() > 0){
-			Client.sendMessage(updateMsg);
+			if(Globals.isOnlineClient())
+				Client.sendMessage(updateMsg);
+			else if(Globals.isServer())
+				Server.forwardToAll(updateMsg);
 		}
 	}
 	
 	public void update(double dt){
-		// Periodically send heated tiles to server
-		if(Globals.isOnlineGame()){
-			if(Game.frameNumber % 15 == 0)
-				sendHeatedTilesToServer();			
-		}
+		// Periodically send heated tiles to network
+		if(Game.frameNumber % 15 == 0)
+			sendHeatedTilesToNetwork();			
 	}
 
 	public void draw(Graphics2D g) {

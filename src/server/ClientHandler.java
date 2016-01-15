@@ -13,15 +13,12 @@ public class ClientHandler {
 	
 	private short playerNumber;
 	private SocketHandler socketHandler;
-	
-	private Server server;
-	
-	public ClientHandler(Server theServer, Socket sock, short playerNumber){
+		
+	public ClientHandler(Socket sock, short playerNumber){
 		this.playerNumber = playerNumber;
-		server = theServer;
 
 		// Start a socket handler to receive incoming messages
-		socketHandler = new SocketHandler(sock, theServer.getPublisher(), theServer.getTranslator());
+		socketHandler = new SocketHandler(sock, Server.getPublisher(), Server.getTranslator());
 		socketHandler.onDisconnect = new Observer(){
 			public void notify(Object arg){
 				wasDisconnected();
@@ -31,7 +28,7 @@ public class ClientHandler {
 	}
 	
 	public void wasDisconnected(){
-		server.disconnectClient(this);
+		Server.disconnectClient(this);
 	}
 	
 	public boolean isConnected(){

@@ -4,7 +4,6 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 
 import engine.Entity;
-import engine.Utils;
 
 /**
  * Represents a single Tile on the map. Holds its Tile type and determines how
@@ -27,9 +26,6 @@ public class Tile extends Entity {
 
 	private TileFire tileFire;
 	private WallVisual wallVisual;
-	
-	// What we think the server sees
-	private double serverHeat;
 
 	/**
 	 * Decide how to create a tile based on a given token string
@@ -43,9 +39,7 @@ public class Tile extends Entity {
 		y = yc * SIZE;
 		
 		tileFire = null;
-		
-		serverHeat = 0;
-		
+				
 		char c = token.charAt(0);
 		switch (c) {
 		case '1':
@@ -85,68 +79,35 @@ public class Tile extends Entity {
 		
 		type = t;
 	}
-	
-	/** 
-	 * Get what WE see as the heat
-	 */
-	public double getPlayerHeat(){
-		if(tileFire == null)
-			return 0;
-		else
-			return tileFire.getHeat();
-	}
+
 	
 	/**
-	 * Get what the server probably thinks is the heat
+	 * Network is updating us, set our current heat and our networkHeat
 	 */
-	public double getServerHeat(){
-		return serverHeat;
-	}
-	
-	/**
-	 * Have we heated the tile up enough to warrant updating the server?
-	 * Returns 0 if no, returns our current heat if yes. 
-	 */
-	public double shouldUpdateServerHeat(){
-		// E.g. if heatPerSection is 5, we update the server
-		// if our heat is in the bracket of 5 above the server's heat. 
-		// (2 and 4 are same section, 2 and 6 are different sections)
-		int heatPerSection = 5;
-		
-		int serverSection = ((int)getServerHeat()) / heatPerSection;
-		int playerSection = ((int)getPlayerHeat()) / heatPerSection;
-		
-		if(playerSection > serverSection){
-			return getPlayerHeat();
-		} else if (playerSection < serverSection){
-			Utils.err("Player thinks tile is cooler than server, how did you do this??");
-			return 0;
-		} 
-		return 0;
-	}
-	
-	/**
-	 * Set our current heat and our serverHeat
-	 */
-	public void serverSetsHeat(double heat){
+	public void networkSetsHeat(double heat){
 		if(tileFire != null)
-			tileFire.setHeat(heat);
-		serverHeat = heat;
+			tileFire.networkSetsHeat(heat);
 	}
 	
 	/**
-	 * Update our heat, but not the serverHeat
+	 * Update our heat, but not the networkHeat
 	 */
-	public void playerAddsHeat(double amt){
-		if(amt < 0){
-			Utils.err("Heat passed to addHeat should always be positive");
-			return;
-		}
-		
+	public void localPlayerAddsHeat(double amt){
 		// tileFire might be null if we are a wall/empty tile
 		if(tileFire != null){
-			tileFire.changeHeat(amt);
+			tileFire.localPlayerAddsHeat(amt);
 		}
+	}
+	
+	/**
+	 * Get the heat we should send to the network. Returns -1 if not enough heat change,
+	 * otherwise returns the current heat we shoudl send
+	 */
+	public int getNextHeatUpdate(){
+		if(tileFire == null)
+			return -1;
+		else 
+			return tileFire.getNextHeatUpdate();
 	}
 	
 	public void burnUp(){

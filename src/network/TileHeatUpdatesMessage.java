@@ -29,10 +29,10 @@ public class TileHeatUpdatesMessage extends NetworkMessage {
 	/**
 	 * Add an entry of tileX, tileY, heat to be sent in the message
 	 */
-	public void addHeat(int tx, int ty, double heat){
+	public void addHeat(int tx, int ty, int heat){
 		xCoords.add(tx);
 		yCoords.add(ty);
-		heats.add((int)Math.floor(heat));
+		heats.add(heat);
 	}
 	
 	@Override

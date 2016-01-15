@@ -21,6 +21,11 @@ public class FlameThrower extends Emitter {
 	private static final double COOLDOWN_RATE = HEATUP_RATE;
 	private static final double OVERHEAT_DURATION = 3;
 	
+	// Particle settings
+	private static final double FLAME_LIFE = .5; // How long until particle dies
+	private static final double TICK_TIME = .15; // Time between ticks of heat
+	private static final double PARTICLE_HEAT_AMT = TICK_TIME * FlameThrower.POWER; // Strength of heat
+
 	
 	
 	/**
@@ -114,11 +119,6 @@ public class FlameThrower extends Emitter {
 	 * Flame particle - flies around and heats up tiles underneath it. 
 	 */
 	private class FlameParticle extends Particle {
-
-		private static final double FLAME_LIFE = .5; // How long until particle dies
-		
-		private static final double TICK_TIME = .15; // Time between ticks of heat
-		private static final double AMT_HEAT = TICK_TIME * FlameThrower.POWER; // Strength of heat
 		
 		private double lastTick;
 		
@@ -142,7 +142,7 @@ public class FlameThrower extends Emitter {
 			Map m = Globals.map;
 			Tile t = m.tileAt(x, y);
 			if(t != null)
-				t.playerAddsHeat(AMT_HEAT);
+				t.localPlayerAddsHeat(PARTICLE_HEAT_AMT);
 		}
 		
 		public void update(double dt){
