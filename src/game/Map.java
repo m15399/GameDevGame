@@ -9,7 +9,7 @@ import java.util.Scanner;
 import server.Server;
 
 import network.Client;
-import network.TileHeatUpdatesMessage;
+import network.TileUpdatesMessage;
 
 import engine.*;
 import game.Tile.Type;
@@ -149,33 +149,31 @@ public class Map extends GameObject {
 	/**
 	 * Update the map to reflect the changes in the message
 	 */
-	public synchronized void updateTileHeats(TileHeatUpdatesMessage msg){
+	public synchronized void updateTileStates(TileUpdatesMessage msg){
 		int size = msg.xCoords.size();
 
 		for(int i = 0; i < size; i++){
 			int tx = msg.xCoords.get(i);
 			int ty = msg.yCoords.get(i);
+			Type type = msg.types.get(i);
 			int heat = msg.heats.get(i);
 			
 			Tile tile = tiles[ty][tx];
-			tile.networkSetsHeat(heat);
+			
+			tile.receiveUpdate(type, heat);
 		}
 	}
 	
 	/**
 	 * Send all tiles that have been heated up enough to be updates on the network
 	 */
-	private void sendHeatedTilesToNetwork(){	
-		TileHeatUpdatesMessage updateMsg = new TileHeatUpdatesMessage();
+	private void sendChangedTilesToNetwork(){	
+		TileUpdatesMessage updateMsg = new TileUpdatesMessage();
 		
 		for(int ty = 0; ty < height; ty++){
 			for(int tx = 0; tx < width; tx++){
 				Tile tile = tiles[ty][tx];
-				
-				int tileHeatSet = tile.getNextHeatUpdate();
-				if(tileHeatSet >= 0){
-					updateMsg.addHeat(tx, ty, tileHeatSet);
-				}
+				tile.writeUpdate(updateMsg);
 			}
 		}
 		
@@ -191,7 +189,7 @@ public class Map extends GameObject {
 	public void update(double dt){
 		// Periodically send heated tiles to network
 		if(Game.frameNumber % 15 == 0)
-			sendHeatedTilesToNetwork();			
+			sendChangedTilesToNetwork();			
 	}
 
 	public void draw(Graphics2D g) {

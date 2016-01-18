@@ -12,7 +12,7 @@ import network.NetworkMessagePublisher;
 import network.PlayerDisconnectMessage;
 import network.PlayerUpdateMessage;
 import network.ServerGreetingMessage;
-import network.TileHeatUpdatesMessage;
+import network.TileUpdatesMessage;
 
 import engine.Application;
 import engine.GameObject;
@@ -29,6 +29,7 @@ public class Server {
 	public static void main(String[] args){
 		
 		boolean launchGui = true;
+		boolean createLogFile = false;
 		
 		// Parse command line args
 		for(String arg : args){
@@ -38,7 +39,7 @@ public class Server {
 		}
 		
 		// Launch a server log window 
-		new Logger(launchGui);
+		new Logger(launchGui, createLogFile);
 
 		// Launch the game engine
 		Application.launch("Server Monitor", launchGui, .4);
@@ -76,10 +77,10 @@ public class Server {
 		});
 		
 		// Update our map when players heat up tiles
-		serverPub.subscribe(TileHeatUpdatesMessage.class, new Observer(){
+		serverPub.subscribe(TileUpdatesMessage.class, new Observer(){
 			public void notify(Object arg){
-				TileHeatUpdatesMessage msg = (TileHeatUpdatesMessage) arg;
-				Globals.map.updateTileHeats(msg);
+				TileUpdatesMessage msg = (TileUpdatesMessage) arg;
+				Globals.map.updateTileStates(msg);
 			}
 		});
 		

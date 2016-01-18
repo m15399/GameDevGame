@@ -20,7 +20,7 @@ public abstract class NetworkMessage implements Serializable {
 		SERVER_GREETING,
 		PLAYER_UPDATE,
 		PLAYER_DC,
-		TILE_HEAT_UPDATES;
+		TILE_UPDATES;
 		
 		public byte getValue(){
 			return (byte)ordinal();

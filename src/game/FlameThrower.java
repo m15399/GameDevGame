@@ -14,7 +14,7 @@ public class FlameThrower extends Emitter {
 	/**
 	 * How powerful the flamethrower is
 	 */
-	private static final double POWER = 5.5; 
+	private static final double POWER = 2.25; 
 	
 	// Overheat controls
 	private static final double HEATUP_RATE = .15;

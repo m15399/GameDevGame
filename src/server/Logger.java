@@ -26,7 +26,7 @@ public class Logger {
 	
 	private PrintWriter logFile;	
 	
-	public Logger(boolean gui){
+	public Logger(boolean gui, boolean writeToFile){
 		
 		// Redirect Utils.log and Utils.err to here
 		Utils.logObserver = new Observer(){
@@ -94,29 +94,31 @@ public class Logger {
 		}
 		
 		// Create log file
-		
-		Date date = new Date();
-		String dateString = new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss").format(date);
-		String filename = "ServerLog_" + dateString + ".txt";
-		
 		logFile = null;
 		
-		// Make the logs/ directory if not there
-		File logsDir = new File("logs/");
-		boolean dirExists = logsDir.exists();
-		if(!dirExists)
-			dirExists = logsDir.mkdir();
-		
-		// Make the file
-		if(dirExists){
-			try {
-				logFile = new PrintWriter(new File("logs/" + filename));
-			} catch (FileNotFoundException e) {
-				Utils.err("Unable to create log file");
+		if(writeToFile){
+			Date date = new Date();
+			String dateString = new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss").format(date);
+			String filename = "ServerLog_" + dateString + ".txt";
+						
+			// Make the logs/ directory if not there
+			File logsDir = new File("logs/");
+			boolean dirExists = logsDir.exists();
+			if(!dirExists)
+				dirExists = logsDir.mkdir();
+			
+			// Make the file
+			if(dirExists){
+				try {
+					logFile = new PrintWriter(new File("logs/" + filename));
+				} catch (FileNotFoundException e) {
+					Utils.err("Unable to create log file");
+				}
+			} else {
+				Utils.err("Unable to create logs/ directory, running without log file");
 			}
-		} else {
-			Utils.err("Unable to create logs/ directory, running without log file");
 		}
+
 		
 	}
 	

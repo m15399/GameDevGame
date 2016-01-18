@@ -7,7 +7,7 @@ import javax.sound.sampled.Clip;
 
 import network.Client;
 import network.ServerGreetingMessage;
-import network.TileHeatUpdatesMessage;
+import network.TileUpdatesMessage;
 
 import engine.*;
 
@@ -21,7 +21,6 @@ public class GameDevGame extends GameObject {
 		new GameDevGame();
 	}
 
-	// Global variables - it's likely these will be moved later
 		
 	public void onStart() {
 		// Play some music
@@ -54,10 +53,10 @@ public class GameDevGame extends GameObject {
 		});
 		
 		// Update our map when server changes tiles
-		Client.publisher.subscribe(TileHeatUpdatesMessage.class, new Observer(){
+		Client.publisher.subscribe(TileUpdatesMessage.class, new Observer(){
 			public void notify(Object arg){
-				TileHeatUpdatesMessage msg = (TileHeatUpdatesMessage) arg;
-				Globals.map.updateTileHeats(msg);
+				TileUpdatesMessage msg = (TileUpdatesMessage) arg;
+				Globals.map.updateTileStates(msg);
 			}
 		});
 		

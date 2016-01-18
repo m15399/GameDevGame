@@ -20,7 +20,7 @@ public class TileFire extends Entity {
 	private static final double FINAL_STAGE_TIME = 1.15;
 	
 	// How much extra heat is required to bump down to the next stage of heat.
-	private static final double TOLERANCE = 5;
+	private static final double TOLERANCE = 3;
 	
 	private enum Stage {
 		NONE, EMBER, BURN, FLAME
@@ -28,7 +28,7 @@ public class TileFire extends Entity {
 	
 	// Heat required to reach each stage 
 	private static final double[] STAGE_HEATS = {
-		0, 10, 25, 45
+		0, 6, 12, 21
 	};
 	
 	// Max heat possible
@@ -36,7 +36,7 @@ public class TileFire extends Entity {
 
 	// Passive heat gain/loss at each stage (in heat per second, but multiplied by HEAT_CHANGE_SPEED)
 	private static final double[] STAGE_HEAT_MODIFY = {
-		-2, -2, +2, +1
+		-1, -1, +1, +1
 	};
 
 	
@@ -194,7 +194,7 @@ public class TileFire extends Entity {
 		// between heat = 4 and heat = 0 is quite significant and we would want to update
 		// the network to heat = 0. 
 		
-		int heatPerSection = 5;
+		int heatPerSection = 3;
 		int localSection, networkSection;
 		
 		if(networkHeat == 0)
@@ -256,7 +256,10 @@ public class TileFire extends Entity {
 	}
 	
 	public void onDestroy(){
-		currEmitter.destroy();
+		if(currEmitter != null){
+			currEmitter.destroy();
+			currEmitter = null;
+		}
 	}
 	
 	public void update(double dt){
