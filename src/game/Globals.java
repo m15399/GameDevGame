@@ -15,23 +15,35 @@ public class Globals {
 	
 	private static boolean isServer;
 	
+	private static void initAll(){
+		playerManager = null;
+		player = null;
+		map = null;
+		isServer = false;
+	}
+	
 	public static void initGlobals(){
+		initAll();
+		
 		playerManager = new PlayerManager();
 		
 		// Load level from file
 		Globals.map = new Map("TestLevel.txt");
 		
 		Globals.player = new Player((short)-1);
-		
-		isServer = false;
 	}
 	
 	/**
 	 * Create only the globals we need to run the server (no player, etc)
 	 */
-	public static void initGlobalsForServer(){
-		Globals.map = new Map("TestLevel.txt");
+	public static void initGlobalsForServer(boolean simulatePlayers){
+		initAll();
 		isServer = true;
+		
+		if(simulatePlayers)
+			playerManager = new PlayerManager();
+
+		Globals.map = new Map("TestLevel.txt");
 	}
 	
 	/**

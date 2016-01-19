@@ -9,6 +9,7 @@ import java.util.Scanner;
 import server.Server;
 
 import network.Client;
+import network.MapStateMessage;
 import network.TileUpdatesMessage;
 
 import engine.*;
@@ -29,6 +30,13 @@ public class Map extends GameObject {
 	 * Create a map from a text file
 	 */
 	public Map(String textFileName) {
+		
+		Globals.publisher().subscribe(MapStateMessage.class, new Observer(){
+			public void notify(Object arg){
+				MapStateMessage msg = (MapStateMessage) arg;
+				readEntireMapState(msg);
+			}
+		});
 		
 		tileset = null;
 		
@@ -84,6 +92,10 @@ public class Map extends GameObject {
 		}
 
 		Utils.log("Created map of size " + width + " x " + height);
+	}
+	
+	public int getNumTiles(){
+		return width * height;
 	}
 
 	/**
@@ -167,7 +179,7 @@ public class Map extends GameObject {
 	/**
 	 * Send all tiles that have been heated up enough to be updates on the network
 	 */
-	private void sendChangedTilesToNetwork(){	
+	private synchronized void sendChangedTilesToNetwork(){	
 		TileUpdatesMessage updateMsg = new TileUpdatesMessage();
 		
 		for(int ty = 0; ty < height; ty++){
@@ -183,6 +195,27 @@ public class Map extends GameObject {
 				Client.sendMessage(updateMsg);
 			else if(Globals.isServer())
 				Server.forwardToAll(updateMsg);
+		}
+	}
+	
+	public synchronized void writeEntireMapState(MapStateMessage msg){
+		for(int ty = 0; ty < height; ty++){
+			for(int tx = 0; tx < width; tx++){
+				Tile tile = tiles[ty][tx];
+				tile.writeState(msg);
+			}
+		}
+	}
+	
+	private synchronized void readEntireMapState(MapStateMessage msg){
+		int i = 0;
+		for(int ty = 0; ty < height; ty++){
+			for(int tx = 0; tx < width; tx++){
+				Tile tile = tiles[ty][tx];
+				tile.receiveUpdate(msg.types.get(i), msg.heats.get(i));
+				
+				i++;
+			}
 		}
 	}
 	

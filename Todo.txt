@@ -23,10 +23,11 @@ Code:
 2nd Milestone Features:
 	Respawning tiles
 	Bow and arrow weapon
-	Scoreboard (deaths per minute or something)
-	Basic menu for join game, play offline
-		Type name, address/port, join game
-	Running on Amazon server
+	Make distributable:
+		Scoreboard (deaths per minute or something)
+		Basic menu for join game, play offline
+			Type name, address/port, join game
+		Running on Amazon server
 
 
 
@@ -39,7 +40,9 @@ Character
 
 respawning tiles
 	respawning tiles - 10-15 sec
-			small graphic in middle when half way through respawn time
+		small graphic in middle when half way through respawn time
+	respawning state
+		server / offline players keep track and change tiles to respawning
 
 Networking
 	players
@@ -47,10 +50,6 @@ Networking
 			type - 4 bits, charge amount/state - 4 bits 
 
 	map - runs on server
-		steps:
-			4. Server sends full map state to joining players
-				be careful about joining player recieving messages before
-				the intro message with whole map
 		updates
 			server is authoritative - decides what happens
 				handle all race conditions with rules
@@ -97,6 +96,8 @@ Test with simulated lag
 Test with simulated low framerate
 Test very large maps
 Cache enum.values()
+Why are the black bars inaccurate sometimes?
+Make interaction between classes and messages more consistent
 
 
 

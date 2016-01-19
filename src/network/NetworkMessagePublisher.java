@@ -1,5 +1,6 @@
 package network;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -14,7 +15,7 @@ import engine.Utils;
  */
 public class NetworkMessagePublisher {
 
-	private HashMap<Class<? extends NetworkMessage>, Observer> subscribers;
+	private HashMap<Class<? extends NetworkMessage>, ArrayList<Observer>> subscribers;
 	
 	/**
 	 * Should we forward messages when recieved, or hold until 
@@ -27,7 +28,7 @@ public class NetworkMessagePublisher {
 	private DataTranslator translator;
 	
 	public NetworkMessagePublisher(DataTranslator translator){
-		subscribers = new HashMap<Class<? extends NetworkMessage>, Observer>();
+		subscribers = new HashMap<Class<? extends NetworkMessage>, ArrayList<Observer>>();
 		queuedMessages = new LinkedList<NetworkMessage>();
 		forwardImmediately = false;
 		this.translator = translator;
@@ -49,21 +50,23 @@ public class NetworkMessagePublisher {
 	 * Also registers the class in the translator
 	 */
 	public void subscribe(Class<? extends NetworkMessage> theClass, Observer observer){
-		subscribers.put(theClass, observer);
+		ArrayList<Observer> observers = subscribers.get(theClass);
+		if(observers == null){
+			observers = new ArrayList<Observer>();
+			subscribers.put(theClass, observers);
+		}
+		observers.add(observer);
 		translator.registerClass(theClass);
 	}
 	
-	public void clearSubscription(Class<? extends NetworkMessage> theClass){
-		subscribers.remove(theClass);
-	}
-	
 	private void forward(NetworkMessage msg){
-		Observer reciever = subscribers.get(msg.getClass());
-		if(reciever == null){
+		ArrayList<Observer> observers = subscribers.get(msg.getClass());
+		if(observers == null){
 			Utils.err("No reciever for message: " + msg + 
 					" - You should make sure to be subscribed to all possible messages!");
 		} else {
-			reciever.notify(msg);
+			for(Observer reciever : observers)
+				reciever.notify(msg);
 		}
 	}
 	

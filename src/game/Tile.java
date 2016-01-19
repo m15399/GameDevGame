@@ -3,6 +3,7 @@ package game;
 import java.awt.Graphics2D;
 import java.awt.Image;
 
+import network.MapStateMessage;
 import network.TileUpdatesMessage;
 
 import engine.Entity;
@@ -95,6 +96,13 @@ public class Tile extends Entity {
 		type = t;
 	}
 	
+	public double getHeat(){
+		if(tileFire != null)
+			return tileFire.getHeat();
+		else
+			return 0;
+	}
+	
 	private void networkSetsType(Type t){
 		if(t == Type.NO_CHANGE || t == type)
 			return;
@@ -145,9 +153,14 @@ public class Tile extends Entity {
 			msg.addUpdate(xc, yc, sendType, tileHeatSet);
 	}
 	
+	public void writeState(MapStateMessage msg){
+		msg.types.add(getType());
+		msg.heats.add((int)getHeat());
+	}
+	
 	public void receiveUpdate(Type t, int h){
-		networkSetsHeat(h);
 		networkSetsType(t);
+		networkSetsHeat(h);
 	}
 	
 	/**

@@ -2,7 +2,6 @@ package game;
 
 import java.util.HashMap;
 
-import network.Client;
 import network.PlayerDisconnectMessage;
 import network.PlayerUpdateMessage;
 import engine.GameObject;
@@ -19,23 +18,27 @@ public class PlayerManager extends GameObject {
 	
 	public PlayerManager(){
 		
-		Client.publisher.subscribe(PlayerUpdateMessage.class, new Observer(){
+		Globals.publisher().subscribe(PlayerUpdateMessage.class, new Observer(){
 			public void notify(Object arg){
 				PlayerUpdateMessage msg = (PlayerUpdateMessage) arg;
 				processUpdateMessage(msg);
 			}
 		});
-		Client.publisher.subscribe(PlayerDisconnectMessage.class, new Observer(){
+		Globals.publisher().subscribe(PlayerDisconnectMessage.class, new Observer(){
 			public void notify(Object arg){
 				PlayerDisconnectMessage msg = (PlayerDisconnectMessage) arg;
 				destroyAndRemovePlayer(msg.playerNumber);
 			}
 		});
-		
+				
 		players = new HashMap<Short, Player>();
 	}
 	
 	private void processUpdateMessage(PlayerUpdateMessage msg){
+		if(msg.playerNumber < 0){
+			return;
+		}
+		
 		Player p = players.get(msg.playerNumber);
 		
 		if(p == null){ 
@@ -44,6 +47,7 @@ public class PlayerManager extends GameObject {
 			p = new Player(msg.playerNumber);
 			p.makeDummy();
 		}
+
 		// Send the update to the Player
 		p.recieveUpdateFromServer(msg);
 	}
@@ -56,7 +60,7 @@ public class PlayerManager extends GameObject {
 		players.remove(p.getPlayerNumber());
 	}
 	
-	private void destroyAndRemovePlayer(short num){
+	public void destroyAndRemovePlayer(short num){
 		Player removed = players.remove(num);
 		if(removed != null && removed.isDummy()){
 			removed.destroy();

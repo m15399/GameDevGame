@@ -11,6 +11,37 @@ import game.Tile.Type;
 
 public class TileUpdatesMessage extends NetworkMessage {
 
+	// Helper methods for translating tiles into bytes
+
+	public static byte toByte(Type type, int heat){
+		if(heat >= (2 << 5) - 1){
+			// 11111 is -1, so we can't send 31
+			Utils.fatal("Cannot send a heat value >= 31, takes too many bits");
+		}
+		int typeInt = type.ordinal();
+		if(typeInt >= 2 << 3){
+			Utils.fatal("Cannot write tile type >= 8 in 3 bits");
+		}
+
+		byte dataByte = (byte)((typeInt << 5) | (heat & 0x1F));
+	
+		return dataByte;
+	}
+	
+	public static Type getType(byte dataByte){
+		int typeInt = ((int)(dataByte & 0xE0)) >> 5;
+		return Type.values()[typeInt];
+	}
+
+	public static int getHeat(byte dataByte){
+		int heat = dataByte & 0x1F;
+		if(heat == 0x1F)
+			heat = -1;
+		return heat;
+	}
+	
+	
+	
 	private static final long serialVersionUID = -1339144518186379042L;
 	
 	public ArrayList<Integer> xCoords;
@@ -39,7 +70,7 @@ public class TileUpdatesMessage extends NetworkMessage {
 	public OpCode getOpcode() {
 		return OpCode.TILE_UPDATES;
 	}
-
+	
 	@Override
 	public void readData(DataInputStream input) throws IOException {
 		int size = input.readByte() & 0xFF;
@@ -49,13 +80,8 @@ public class TileUpdatesMessage extends NetworkMessage {
 			
 			byte dataByte = input.readByte();
 			
-			int typeInt = ((int)(dataByte & 0xE0)) >> 5;
-			types.add(Type.values()[typeInt]);
-			
-			int heat = dataByte & 0x1F;
-			if(heat == 0x1F)
-				heat = -1;
-			heats.add(heat);
+			types.add(getType(dataByte));
+			heats.add(getHeat(dataByte));
 		}
 	}
 
@@ -71,19 +97,7 @@ public class TileUpdatesMessage extends NetworkMessage {
 			output.writeByte(xCoords.get(i).byteValue());
 			output.writeByte(yCoords.get(i).byteValue());
 			
-			int heat = heats.get(i);
-			if(heat >= (2 << 5) - 1){
-				// 11111 is -1, so we can't send 31
-				Utils.fatal("Cannot send a heat value >= 31, takes too many bits");
-			}
-			int typeInt = types.get(i).ordinal();
-			if(typeInt >= 2 << 3){
-				Utils.fatal("Cannot write tile type >= 8 in 3 bits");
-			}
-
-			byte dataByte = (byte)((typeInt << 5) | (heat & 0x1F));
-			
-			output.writeByte(dataByte);
+			output.writeByte(toByte(types.get(i), heats.get(i)));
 		}
 	}
 

@@ -7,6 +7,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 import network.DataTranslator;
+import network.MapStateMessage;
 import network.NetworkMessage;
 import network.NetworkMessagePublisher;
 import network.PlayerDisconnectMessage;
@@ -30,6 +31,7 @@ public class Server {
 		
 		boolean launchGui = true;
 		boolean createLogFile = false;
+		simulatePlayers = true;
 		
 		// Parse command line args
 		for(String arg : args){
@@ -57,6 +59,8 @@ public class Server {
 	
 	private static ArrayList<ClientHandler> handlers;
 	
+	private static boolean simulatePlayers;
+
 	private static short currPlayerNumber = 0;
 
 	public static void initServer(int port) {		
@@ -69,7 +73,7 @@ public class Server {
 		// Forward PlayerUpdateMessages to everyone except that player
 		serverPub.subscribe(PlayerUpdateMessage.class, new Observer(){
 			public void notify(Object arg){
-				PlayerUpdateMessage msg = (PlayerUpdateMessage) arg;
+				PlayerUpdateMessage msg = (PlayerUpdateMessage) arg;				
 				if(msg.playerNumber >= 0){
 					forwardToAll(msg, msg.playerNumber);
 				}
@@ -103,17 +107,7 @@ public class Server {
 					Socket sock;
 					try {
 						sock = serverSocket.accept();
-
-						currPlayerNumber++;
-
-						Utils.log("A user connected: player #" + currPlayerNumber);
-
-						// Start a handler for each user
-						ClientHandler handler = new ClientHandler(sock, currPlayerNumber);
-						handlers.add(handler);
-						
-						// Greeting message				
-						handler.sendMessage(new ServerGreetingMessage(currPlayerNumber));
+						playerConnected(sock);
 						
 					} catch (IOException e) {
 						Utils.err("Failed to accept socket");
@@ -121,6 +115,24 @@ public class Server {
 				}
 			}
 		}).start();
+	}
+	
+	public static synchronized void playerConnected(Socket sock){
+		currPlayerNumber++;
+
+		Utils.log("A user connected: player #" + currPlayerNumber);
+
+		// Start a handler for each user
+		ClientHandler handler = new ClientHandler(sock, currPlayerNumber);
+		handlers.add(handler);
+		
+		// Greeting message				
+		handler.sendMessage(new ServerGreetingMessage(currPlayerNumber));
+		
+		// Send the entire map state to new player
+		MapStateMessage mapState = new MapStateMessage();
+		Globals.map.writeEntireMapState(mapState);
+		handler.sendMessage(mapState);
 	}
 	
 	public static DataTranslator getTranslator(){
@@ -135,13 +147,17 @@ public class Server {
 		handlers.remove(client);
 		Utils.log("Disconnecting player #" + client.getPlayerNumber());
 		
+		if(Globals.playerManager != null){
+			Globals.playerManager.destroyAndRemovePlayer(client.getPlayerNumber());
+		}
+		
 		forwardToAll(new PlayerDisconnectMessage(client.getPlayerNumber()));
 	}
 	
 	/**
 	 * Forward the message to all players, except the one with playerNumber == except
 	 */
-	private static void forwardToAll(NetworkMessage msg, short except){
+	private static synchronized void forwardToAll(NetworkMessage msg, short except){
 		ClientHandler remove = null;
 		
 		for(ClientHandler h : handlers){
@@ -160,7 +176,7 @@ public class Server {
 	/**
 	 * Forward the message to all players
 	 */
-	public static void forwardToAll(NetworkMessage msg){
+	public static synchronized void forwardToAll(NetworkMessage msg){
 		forwardToAll(msg, (short)-1); // playerNumber should never be -1
 	}
 	
@@ -172,7 +188,7 @@ public class Server {
 			setDrawOrder(-1000);
 			
 			// Start the game simulation
-			Globals.initGlobalsForServer();
+			Globals.initGlobalsForServer(simulatePlayers);
 		}
 		
 		public void draw(Graphics2D g){
