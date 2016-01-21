@@ -21,7 +21,6 @@ _______________________________________________________________________________
 Code:
 
 2nd Milestone Features:
-	Respawning tiles
 	Bow and arrow weapon
 	Make distributable:
 		Scoreboard (deaths per minute or something)
@@ -37,12 +36,6 @@ Character
 		Flame placeholder image
 	Aiming
 		Camera follows cursor a bit?
-
-respawning tiles
-	respawning tiles - 10-15 sec
-		small graphic in middle when half way through respawn time
-	respawning state
-		server / offline players keep track and change tiles to respawning
 
 Networking
 	players

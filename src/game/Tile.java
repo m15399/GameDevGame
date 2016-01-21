@@ -16,11 +16,15 @@ public class Tile extends Entity {
 
 	public static final int SIZE = 64;
 	
+	private static final double RESPAWN_DELAY = 15;
+	private static final double RESPAWN_GRAPHIC_TIME = 3;
+	private static final int RESPAWN_GRAPHIC_SIZE = 8;
+	
 	/**
 	 * Type of a tile
 	 */
 	public enum Type {
-		EMPTY, FLOOR, FLOOR_UNBURNABLE, WALL, NO_CHANGE
+		EMPTY, RESPAWNING, FLOOR, FLOOR_UNBURNABLE, WALL, NO_CHANGE
 	}
 	
 	private Type type;
@@ -34,7 +38,14 @@ public class Tile extends Entity {
 
 	private TileFire tileFire;
 	private WallVisual wallVisual;
-
+	
+	/**
+	 * Should we respawn if we're empty? This usually means the tile was
+	 * originally set to FLOOR, and should respawn after burning up
+	 */
+	private boolean shouldRespawn;
+	private double respawnTime;
+	
 	/**
 	 * Decide how to create a tile based on a given token string
 	 */
@@ -47,11 +58,14 @@ public class Tile extends Entity {
 		y = yc * SIZE;
 		
 		tileFire = null;
+		
+		shouldRespawn = false;
 				
 		char c = token.charAt(0);
 		switch (c) {
 		case '1':
 			setType(Type.FLOOR);
+			shouldRespawn = true;
 			break;
 		case '2':
 			setType(Type.FLOOR_UNBURNABLE);
@@ -90,6 +104,9 @@ public class Tile extends Entity {
 			break;
 		case WALL:
 			wallVisual = new WallVisual(xc, yc);
+			break;
+		case EMPTY:
+			respawnTime = RESPAWN_DELAY;
 			break;
 		}
 		
@@ -198,9 +215,37 @@ public class Tile extends Entity {
 		case WALL:
 			g.drawImage(tileset, xi, yi, xi + w, yi + h, 64 * 3, 64, 64 * 4, 64 + 76, null);
 			break;
-			
+		
+		case RESPAWNING:
+			// Draw a shrunken version of the tile
+			int xShrink = (SIZE - RESPAWN_GRAPHIC_SIZE);
+			int yShrink = (int)(xShrink * ((double)h / w));
+			w -= xShrink;
+			h -= yShrink;
+			xi += xShrink/2;
+			yi += yShrink/2;
+			g.drawImage(tileset, xi, yi, xi + w, yi + h, 64 * 1, 64, 64 * 2, 64 + 76, null);
+			break;
+		
 		default:
 			break;
+		}
+	}
+	
+	public void update(double dt){
+		// Respawn timer
+		// We go from empty -> respawning -> floor
+		if(shouldRespawn && !Globals.isOnlineClient()){
+			if(type == Type.EMPTY){
+				respawnTime -= dt;
+				if(respawnTime <= RESPAWN_GRAPHIC_TIME)
+					setType(Type.RESPAWNING);	
+				
+			} else if (type == Type.RESPAWNING){
+				respawnTime -= dt;
+				if(respawnTime <= 0)
+					setType(Type.FLOOR);
+			}
 		}
 	}
 

@@ -142,7 +142,7 @@ public class Map extends GameObject {
 	public boolean isFloorAt(double x, double y) {
 		Tile t = tileAt(x, y);
 		if (t != null)
-			return (t.getType() != Type.EMPTY);
+			return (t.getType() != Type.EMPTY && t.getType() != Type.RESPAWNING);
 		else
 			return false;
 	}
