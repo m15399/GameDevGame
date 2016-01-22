@@ -120,11 +120,16 @@ public class Application implements Runnable {
 	}
 	
 	private void setGameSize(double w, double h){
+		
+		frame.setVisible(true); // Need this or insets will be wrong
 		Insets insets = frame.getInsets();
+		
 		int vertInsets = insets.top + insets.bottom;
 		int horizInsets = insets.left + insets.right;
+		
 		int width = (int)(w + horizInsets);
 		int height = (int)(h + vertInsets);
+		
 		frame.setSize(width, height);
 		frame.setPreferredSize(new Dimension(width, height));
 		frame.pack();
