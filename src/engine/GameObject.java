@@ -190,11 +190,14 @@ public class GameObject {
 	}
 
 	// Delete all current GameObjects, e.g. when starting a new level
-	public static void clearAllObjects() {
-		allObjects.clear();
-		newObjects.clear();
-		freeSpots.clear();
-		toDestroy.clear();
+	public static void destroyAllObjects() {
+		for(GameObject o : allObjects){
+			if(o != null)
+				o.destroy();
+		}
+		for(GameObject o : newObjects){
+			o.destroy();
+		}
 	}
 
 }

@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 
 import javax.sound.sampled.Clip;
 
+import main_menu.MainMenu;
 import network.Client;
 import network.ServerGreetingMessage;
 import network.TileUpdatesMessage;
@@ -15,18 +16,48 @@ public class GameDevGame extends GameObject {
 
 	public static final String VERSION = "0.1";
 	
+	// Default startup settings
+	private static double WINDOW_HEIGHT = -1;
+	private static String AUTO_JOIN_ADDR = "";
+	private static int AUTO_JOIN_PORT = -1;
+	private static boolean MUSIC = true;
+	
 	// Starts the game!
-	public static void main(String[] args) {		
-		Application.launch("GameDevGame", true, .8);
-		new GameDevGame();
-	}
-
+	public static void main(String[] args) {
 		
-	public void onStart() {
+		// Set debug options here
+//		WINDOW_HEIGHT = .4;
+//		MUSIC = false;
+//		AUTO_JOIN_ADDR = "localhost";
+//		AUTO_JOIN_PORT = 8000;
+		
+		if(WINDOW_HEIGHT > 0)
+			Application.launch("GameDevGame", true, WINDOW_HEIGHT);
+		else
+			Application.launch("GameDevGame", true);
+		
+		if(AUTO_JOIN_ADDR.length() > 0){
+			new GameDevGame(AUTO_JOIN_ADDR, AUTO_JOIN_PORT);		
+		} else {
+			new MainMenu();
+		}
+	}
+		
+	public GameDevGame(){
+		init("", -1);
+	}
+	
+	public GameDevGame(String address, int port) {
+		init(address, port);
+	}
+	
+	private void init(String address, int port){
 		// Play some music
-		Clip c = Resources.getSound("test.wav");
-		Utils.setClipVolume(c, -5f);
-		c.loop(Clip.LOOP_CONTINUOUSLY);
+		if(MUSIC){
+			Clip c = Resources.getSound("test.wav");
+			Utils.setClipVolume(c, -5f);
+			c.loop(Clip.LOOP_CONTINUOUSLY);			
+		}
 		
 		// Create globals like map, player
 		Globals.initGlobals();
@@ -60,8 +91,11 @@ public class GameDevGame extends GameObject {
 			}
 		});
 		
-		Client.setAddress("localhost", 8000);
-		Client.connect();
+		// Connect if ip address was set
+		if(address.length() > 0){
+			Client.setAddress(address, port);
+			Client.connect();
+		}
 	}
 	
 	public void update(double dt){

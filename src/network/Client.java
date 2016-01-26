@@ -54,7 +54,7 @@ public class Client {
 	}
 	
 	private static void checkConnection(){
-		if(connected && !socketHandler.isConnected())
+		if(connected && socketHandler != null && !socketHandler.isConnected())
 			connected = false;
 	}
 	

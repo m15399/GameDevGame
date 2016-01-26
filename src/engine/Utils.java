@@ -92,14 +92,23 @@ public class Utils {
 		return Math.max(Math.min(val, max), min);
 	}
 
+//	/**
+//	 * @return True if the rect (x, y, xs, ys) collides with the rect (x2, y2,
+//	 *         xs2, ys2). (x, y) is the top left
+//	 */
+//	public static boolean rectsCollide(double x, double y, double xs,
+//			double ys, double x2, double y2, double xs2, double ys2) {
+//		return (x + xs > x2) && (x < x2 + xs2)
+//				&& (y + ys > y2) && (y < y2 + ys2);
+//	}
+	
 	/**
-	 * @return True if the rect (x, y, xs, ys) collides with the rect (x2, y2,
-	 *         xs2, ys2)
+	 * @return whether the point is inside the rect defined by rx, ry, rw, rh.
+	 * (rx, ry) is the top left corner. 
 	 */
-	public static boolean rectsCollide(double x, double y, double xs,
-			double ys, double x2, double y2, double xs2, double ys2) {
-		return (x + xs / 2 > x2 - xs2 / 2) && (x - xs / 2 < x2 + xs2 / 2)
-				&& (y + ys / 2 > y2 - ys2 / 2) && (y - ys / 2 < y2 + ys2 / 2);
+	public static boolean pointInRect(double x, double y, double rx, double ry, 
+			double rw,double rh){
+		return (x >= rx && y >= ry && x <= rx + rw && y <= ry + rh);
 	}
 
 	/**

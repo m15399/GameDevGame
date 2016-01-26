@@ -17,6 +17,8 @@ public class Input {
 	private static boolean mousePressed; 
 	private static boolean mouseDown; 
 	private static Point mouseLoc = new Point(0, 0);
+	
+	private static Observer textInputInterceptor = null; 
 
 	
 	//
@@ -57,6 +59,24 @@ public class Input {
 	public static boolean isDown(int keyCode) {
 		return keysDown.containsKey(keyCode) && keysDown.get(keyCode);
 	}
+	
+	/**
+	 * Set an observer to intercept text input (typing). The observer
+	 * will be sent a notification every time a character is typed, with the 
+	 * character being typed as the argument. While there is an observer
+	 * intercepting text input, other forms of key input will not work.
+	 */
+	public static void interceptTextInput(Observer o){
+		textInputInterceptor = o;
+	}
+	
+	/**
+	 * Go back to standard key input instead of intercepting it with
+	 * an observer. 
+	 */
+	public static void releaseInterceptTextInput(){
+		textInputInterceptor = null;
+	}
 
 	public static void update() {
 		keysPressed.clear();
@@ -77,14 +97,21 @@ public class Input {
 		
 		@Override
 		public void keyTyped(KeyEvent e) {
-
+			if(textInputInterceptor != null){
+				
+				Character c = e.getKeyChar();
+				textInputInterceptor.notify(c);
+				
+			}
 		}
 
 		@Override
 		public void keyPressed(KeyEvent e) {
-			if(!isDown(e.getKeyCode()))
-				keysPressed.put(e.getKeyCode(), true);
-			keysDown.put(e.getKeyCode(), true);
+			if(textInputInterceptor == null){
+				if(!isDown(e.getKeyCode()))
+					keysPressed.put(e.getKeyCode(), true);
+				keysDown.put(e.getKeyCode(), true);	
+			}			
 		}
 
 		@Override

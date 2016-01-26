@@ -22,11 +22,14 @@ Code:
 
 2nd Milestone Features:
 	Bow and arrow weapon
-	Make distributable:
-		Scoreboard (deaths per minute or something)
-		Basic menu for join game, play offline
-			Type name, address/port, join game
-		Running on Amazon server
+	Running on Amazon server
+
+
+Pushes:
+
+show name in game
+chat
+___
 
 
 
@@ -54,8 +57,7 @@ Networking
 							tx ty state/heat
 							byte byte 2/6-bits
 		joining observers
-			send whole map state
-			filename... state/heat bytes
+			send filename
 			can send whole map without causing lag?
 
 	space = 20
