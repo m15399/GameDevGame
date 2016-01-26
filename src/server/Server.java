@@ -6,6 +6,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
+import network.ChatMessage;
 import network.DataTranslator;
 import network.MapStateMessage;
 import network.NetworkMessage;
@@ -74,6 +75,10 @@ public class Server {
 		serverPub.subscribe(PlayerUpdateMessage.class, new Observer(){
 			public void notify(Object arg){
 				PlayerUpdateMessage msg = (PlayerUpdateMessage) arg;				
+				
+				if(Globals.playerManager != null)
+					Globals.playerManager.processUpdateMessage(msg);
+				
 				if(msg.playerNumber >= 0){
 					forwardToAll(msg, msg.playerNumber);
 				}
@@ -85,6 +90,14 @@ public class Server {
 			public void notify(Object arg){
 				TileUpdatesMessage msg = (TileUpdatesMessage) arg;
 				Globals.map.updateTileStates(msg);
+			}
+		});
+		
+		serverPub.subscribe(ChatMessage.class, new Observer(){
+			public void notify(Object arg){
+				ChatMessage msg = (ChatMessage) arg;
+				Utils.log(msg.name + " says: " + msg.message);
+				forwardToAll(msg);
 			}
 		});
 		
@@ -120,7 +133,7 @@ public class Server {
 	public static synchronized void playerConnected(Socket sock){
 		currPlayerNumber++;
 
-		Utils.log("A user connected: player #" + currPlayerNumber);
+		Utils.log("A user connected (player #" + currPlayerNumber + ")");
 
 		// Start a handler for each user
 		ClientHandler handler = new ClientHandler(sock, currPlayerNumber);

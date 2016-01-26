@@ -9,22 +9,15 @@ import network.NetworkMessagePublisher;
  * a lot of global variables, it's useful to have these things in one place
  */
 public class Globals {
-	public static Player player;
-	public static Map map;
-	public static PlayerManager playerManager;
+	public static Player player = null;
+	public static Map map = null;
+	public static PlayerManager playerManager = null;
+	public static String desiredPlayerName = "";
 	
-	private static boolean isServer;
+	private static boolean isServer = false;
 	
-	private static void initAll(){
-		playerManager = null;
-		player = null;
-		map = null;
-		isServer = false;
-	}
 	
-	public static void initGlobals(){
-		initAll();
-		
+	public static void initGlobals(){		
 		playerManager = new PlayerManager();
 		
 		// Load level from file
@@ -37,7 +30,7 @@ public class Globals {
 	 * Create only the globals we need to run the server (no player, etc)
 	 */
 	public static void initGlobalsForServer(boolean simulatePlayers){
-		initAll();
+
 		isServer = true;
 		
 		if(simulatePlayers)

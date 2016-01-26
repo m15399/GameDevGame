@@ -1,6 +1,6 @@
 package engine;
 
-public abstract class Observer {
+public interface Observer {
 	
 	public abstract void notify(Object arg);
 

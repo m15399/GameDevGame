@@ -24,13 +24,10 @@ Code:
 	Bow and arrow weapon
 	Running on Amazon server
 
-
-Pushes:
-
-show name in game
-chat
-___
-
+Server keeps track of names
+	always simulate players
+	look up name by player number in player manager
+	observer for renames
 
 
 Character
@@ -93,7 +90,7 @@ Test very large maps
 Cache enum.values()
 Why are the black bars inaccurate sometimes?
 Make interaction between classes and messages more consistent
-
+Cache "new font" fonts
 
 
 Thoughts about networking (won't be coded for a while):

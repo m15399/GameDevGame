@@ -28,6 +28,8 @@ public class Player extends MapEntity {
 	private static final double MAX_VELOCITY = 260;
 	
 	private int width = 40, height = 50;
+	
+	private String name;
 
 	// This makes the player appeared to be centered at his feet
 	private static final double Y_DRAW_OFFSET = 10;
@@ -73,16 +75,31 @@ public class Player extends MapEntity {
 	
 	
 	public Player(short playerNumber){
+				
 		flameThrower = new FlameThrower(this);
 		dummy = false;
 		this.playerNumber = playerNumber;
-		
+				
 		firing = false;
 		flameAngle = 0;
 		
 		lastMessage = null;
 		
+		setName("");
+		
 		Globals.playerManager.addPlayer(this);
+	}
+	
+	public void setName(String theName){
+		if(theName.length() == 0 && playerNumber != -1){
+			name = "Player " + playerNumber;
+		} else {
+			name = theName;			
+		}
+	}
+	
+	public String getName(){
+		return name;
 	}
 	
 	public short getPlayerNumber(){
@@ -145,6 +162,12 @@ public class Player extends MapEntity {
 		
 		// Update the server
 		if(shouldUpdate){
+			
+			// Send our name every so often (not every update though)
+			if(Math.random() < .2){
+				currMessage.name = name;
+			}
+			
 			Client.sendMessage(currMessage);
 			lastMessage = currMessage;
 			lastMessageTime = Game.time;
@@ -170,6 +193,10 @@ public class Player extends MapEntity {
 		
 		setFalling(msg.falling);
 		setJumping(msg.jumping);
+		
+		if(msg.name.length() > 0){
+			setName(msg.name);
+		}
 	}
 	
 	public void update(double dt) {
@@ -479,7 +506,11 @@ public class Player extends MapEntity {
 		int left = (int)(-width/2);
 		int top = (int) (-width / 2 - (height - width) + yo);
 		g.fillRect(left, top, width, height);
-
+		
+		g.setColor(Color.white);
+		g.setFont( new Font("Arial", Font.BOLD, 12) );
+		Utils.drawStringCentered(g, name, 0, -height / 2 - 16);
+		
 		g.setTransform(prev);
 
 		if(Game.DEBUG){

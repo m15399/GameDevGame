@@ -13,6 +13,7 @@ public class PlayerUpdateMessage extends NetworkMessage {
 
 	private static final long serialVersionUID = -4545974954407059370L;
 
+	public String name;
 	public short playerNumber;
 	public double x, y;
 	public double vx, vy;
@@ -36,6 +37,7 @@ public class PlayerUpdateMessage extends NetworkMessage {
 		this.firing = firing;
 		this.jumping = jumping;
 		this.falling = falling;
+		name = "";
 	}
 	
 	public String toString(){
@@ -62,6 +64,7 @@ public class PlayerUpdateMessage extends NetworkMessage {
 	
 	@Override
 	public void readData(DataInputStream input) throws IOException {
+		name = input.readUTF();
 		playerNumber = input.readShort();
 		x = input.readDouble();	
 		y = input.readDouble();	
@@ -82,6 +85,7 @@ public class PlayerUpdateMessage extends NetworkMessage {
 
 	@Override
 	public void writeData(DataOutputStream output) throws IOException {
+		output.writeUTF(name);
 		output.writeShort(playerNumber);
 		output.writeDouble(x);
 		output.writeDouble(y);

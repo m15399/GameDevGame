@@ -4,6 +4,7 @@ import engine.Game;
 import engine.GameObject;
 import engine.Observer;
 import game.GameDevGame;
+import game.Globals;
 
 /**
  * Menu where players join the game
@@ -43,6 +44,8 @@ public class JoinGameMenu extends GameObject {
 
 							// Destroy everything and start the game
 							GameObject.destroyAllObjects();
+							
+							Globals.desiredPlayerName = nameField.getText();
 
 							// Figure out the ip:port entered in the field
 							String address = field.substring(0, semi);

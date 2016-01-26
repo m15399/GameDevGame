@@ -29,7 +29,7 @@ public class GameDevGame extends GameObject {
 //		WINDOW_HEIGHT = .4;
 //		MUSIC = false;
 //		AUTO_JOIN_ADDR = "localhost";
-//		AUTO_JOIN_PORT = 8000;
+		AUTO_JOIN_PORT = 8000;
 		
 		if(WINDOW_HEIGHT > 0)
 			Application.launch("GameDevGame", true, WINDOW_HEIGHT);
@@ -68,6 +68,8 @@ public class GameDevGame extends GameObject {
 		new HeatMeter();
 		
 		setDrawOrder(1000);
+		
+		new Chat();
 
 		
 		// Network stuff
@@ -80,6 +82,7 @@ public class GameDevGame extends GameObject {
 				// Recreate the player with the correct playerNumber
 				Globals.player.destroy();
 				Globals.player = new Player(msg.playerNumber);
+				Globals.player.setName(Globals.desiredPlayerName);
 			}
 		});
 		

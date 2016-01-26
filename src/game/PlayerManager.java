@@ -18,23 +18,25 @@ public class PlayerManager extends GameObject {
 	
 	public PlayerManager(){
 		
-		Globals.publisher().subscribe(PlayerUpdateMessage.class, new Observer(){
-			public void notify(Object arg){
-				PlayerUpdateMessage msg = (PlayerUpdateMessage) arg;
-				processUpdateMessage(msg);
-			}
-		});
-		Globals.publisher().subscribe(PlayerDisconnectMessage.class, new Observer(){
-			public void notify(Object arg){
-				PlayerDisconnectMessage msg = (PlayerDisconnectMessage) arg;
-				destroyAndRemovePlayer(msg.playerNumber);
-			}
-		});
+		if(!Globals.isServer()){
+			Globals.publisher().subscribe(PlayerUpdateMessage.class, new Observer(){
+				public void notify(Object arg){
+					PlayerUpdateMessage msg = (PlayerUpdateMessage) arg;
+					processUpdateMessage(msg);
+				}
+			});
+			Globals.publisher().subscribe(PlayerDisconnectMessage.class, new Observer(){
+				public void notify(Object arg){
+					PlayerDisconnectMessage msg = (PlayerDisconnectMessage) arg;
+					destroyAndRemovePlayer(msg.playerNumber);
+				}
+			});
+		}
 				
 		players = new HashMap<Short, Player>();
 	}
 	
-	private void processUpdateMessage(PlayerUpdateMessage msg){
+	public void processUpdateMessage(PlayerUpdateMessage msg){		
 		if(msg.playerNumber < 0){
 			return;
 		}
