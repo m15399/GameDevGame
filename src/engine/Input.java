@@ -139,6 +139,7 @@ public class Input {
 				}
 			} else if(e.getKeyCode() == KeyEvent.VK_PASTE){
 				// Ignore real pastes just in case
+				return;
 			}
 			
 			int code = e.getKeyCode();
