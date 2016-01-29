@@ -6,6 +6,8 @@ import java.awt.geom.AffineTransform;
 
 import javax.swing.*;
 
+import utils.Utils;
+
 import engine.Input.InputListener;
 
 /**
@@ -18,6 +20,8 @@ public class Application implements Runnable {
 	// (Don't make it much bigger than .8, might make the window bigger than the screen)
 	// This value can be overridden in Application.launch method
 	public static final double DESIRED_HEIGHT_OF_WINDOW = .8;
+	
+	public static JFrame gameFrame = null;
 	
 	public static void launch(){
 		launch("Game"); // default title
@@ -117,6 +121,9 @@ public class Application implements Runnable {
 		} else {
 			frame = null;
 		}
+		
+		// Set global frame 
+		gameFrame = frame;
 	}
 	
 	private void setGameSize(double w, double h){

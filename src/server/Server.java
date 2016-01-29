@@ -6,6 +6,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
+import utils.Observer;
+import utils.Utils;
+
 import network.ChatMessage;
 import network.DataTranslator;
 import network.MapStateMessage;
@@ -18,8 +21,6 @@ import network.TileUpdatesMessage;
 
 import engine.Application;
 import engine.GameObject;
-import engine.Observer;
-import engine.Utils;
 import game.Globals;
 import game.Tile;
 
@@ -32,7 +33,6 @@ public class Server {
 		
 		boolean launchGui = true;
 		boolean createLogFile = false;
-		simulatePlayers = true;
 		
 		// Parse command line args
 		for(String arg : args){
@@ -46,6 +46,7 @@ public class Server {
 
 		// Launch the game engine
 		Application.launch("Server Monitor", launchGui, .4);
+		Application.gameFrame.setLocation(100, 350);
 		
 		// Start server
 		Server.initServer(8000);
@@ -60,13 +61,11 @@ public class Server {
 	
 	private static ArrayList<ClientHandler> handlers;
 	
-	private static boolean simulatePlayers;
-
 	private static short currPlayerNumber = 0;
 
 	public static void initServer(int port) {		
 		translator = new DataTranslator();
-		serverPub = new NetworkMessagePublisher(translator);
+		serverPub = new NetworkMessagePublisher();
 		serverPub.forwardImmediately = true;
 		
 		handlers = new ArrayList<ClientHandler>();
@@ -133,7 +132,7 @@ public class Server {
 	public static synchronized void playerConnected(Socket sock){
 		currPlayerNumber++;
 
-		Utils.log("A user connected (player #" + currPlayerNumber + ")");
+		Utils.log("A user connected: Player #" + currPlayerNumber);
 
 		// Start a handler for each user
 		ClientHandler handler = new ClientHandler(sock, currPlayerNumber);
@@ -201,7 +200,7 @@ public class Server {
 			setDrawOrder(-1000);
 			
 			// Start the game simulation
-			Globals.initGlobalsForServer(simulatePlayers);
+			Globals.initGlobalsForServer();
 		}
 		
 		public void draw(Graphics2D g){

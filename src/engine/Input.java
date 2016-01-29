@@ -4,6 +4,8 @@ import java.awt.Point;
 import java.awt.event.*;
 import java.util.HashMap;
 
+import utils.Observer;
+
 /**
  * Keeps track of keyboard and mouse. Can check what keys were pressed this
  * frame and what keys are being held down. Also can check mouse location and

@@ -4,7 +4,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import engine.Utils;
+import utils.Utils;
+
 
 /**
  * Sends objects over a socket. Currently not being used, but we might have to fall back on it later,
@@ -15,8 +16,8 @@ public class ObjectStreamHandler extends StreamHandler {
 	private ObjectOutputStream output;
 	private ObjectInputStream input;
 	
-	public ObjectStreamHandler(SocketHandler socketHandler, DataTranslator translator){
-		super(socketHandler, translator);
+	public ObjectStreamHandler(SocketHandler socketHandler){
+		super(socketHandler);
 		
 		Utils.err("ObjectStreamHandler should not be used (it's just a fallback) - use DataStreamHandler instead");
 		

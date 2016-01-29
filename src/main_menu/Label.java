@@ -5,9 +5,10 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 
+import utils.Utils;
+
 import engine.Entity;
 import engine.Input;
-import engine.Utils;
 
 /** 
  * Displays text centered around a point, inside the bounds of a rect. 

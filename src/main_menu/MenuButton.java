@@ -2,8 +2,9 @@ package main_menu;
 
 import java.awt.Color;
 
+import utils.Observer;
+
 import engine.Input;
-import engine.Observer;
 
 /**
  * Button that can be clicked on. Will notify an observer when clicked. 

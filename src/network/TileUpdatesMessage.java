@@ -5,12 +5,13 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import engine.Utils;
+import utils.Utils;
+
 import game.Tile;
 import game.Tile.Type;
 
 public class TileUpdatesMessage extends NetworkMessage {
-
+	
 	// Helper methods for translating tiles into bytes
 
 	public static byte toByte(Type type, int heat){
@@ -42,8 +43,6 @@ public class TileUpdatesMessage extends NetworkMessage {
 	
 	
 	
-	private static final long serialVersionUID = -1339144518186379042L;
-	
 	public ArrayList<Integer> xCoords;
 	public ArrayList<Integer> yCoords;
 	public ArrayList<Tile.Type> types;
@@ -66,12 +65,6 @@ public class TileUpdatesMessage extends NetworkMessage {
 		heats.add(heat);
 	}
 	
-	@Override
-	public OpCode getOpcode() {
-		return OpCode.TILE_UPDATES;
-	}
-	
-	@Override
 	public void readData(DataInputStream input) throws IOException {
 		int size = input.readByte() & 0xFF;
 		for(int i = 0; i < size; i++){
@@ -85,7 +78,6 @@ public class TileUpdatesMessage extends NetworkMessage {
 		}
 	}
 
-	@Override
 	public void writeData(DataOutputStream output) throws IOException {
 		if(xCoords.size() > Byte.MAX_VALUE){
 			Utils.fatal("Trying to send too many tile updates! Cannot write this many");

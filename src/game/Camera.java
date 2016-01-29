@@ -3,10 +3,11 @@ package game;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
+import utils.Utils;
+
 import engine.Entity;
 import engine.Game;
 import engine.GameObject;
-import engine.Utils;
 
 /**
  * Controls the camera. You can set a target object for it to follow.

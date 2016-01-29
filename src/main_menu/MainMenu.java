@@ -1,8 +1,8 @@
 package main_menu;
 
+import utils.Observer;
 import engine.Game;
 import engine.GameObject;
-import engine.Observer;
 import game.GameDevGame;
 
 /**

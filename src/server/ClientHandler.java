@@ -2,9 +2,10 @@ package server;
 
 import java.net.Socket;
 
+import utils.Observer;
+
 import network.NetworkMessage;
 import network.SocketHandler;
-import engine.Observer;
 
 /**
  * Stores information about the client and handles messages from it
@@ -18,7 +19,7 @@ public class ClientHandler {
 		this.playerNumber = playerNumber;
 
 		// Start a socket handler to receive incoming messages
-		socketHandler = new SocketHandler(sock, Server.getPublisher(), Server.getTranslator());
+		socketHandler = new SocketHandler(sock, Server.getPublisher());
 		socketHandler.onDisconnect = new Observer(){
 			public void notify(Object arg){
 				wasDisconnected();

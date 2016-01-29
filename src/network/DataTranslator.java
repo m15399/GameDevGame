@@ -3,44 +3,86 @@ package network;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
-import engine.Utils;
+import utils.ClassToIntMapper;
+import utils.Utils;
+
 
 /**
  * Translates NetworkMessages to a DataStream and vice-versa. You must register a valid NetworkMessage 
  * class before it can be translated. If the translator encounters an opcode for a message that hasn't
- * been registered, it will quit the program with a fatal error
+ * been registered, it will quit the program with a fatal error.
+ * Right now we're registering classes in a static block near the top of this class, just add
+ * any new network message classes there. 
  */
 public class DataTranslator {
 
-	/**
-	 * Maps byte codes to NetworkMessage classes
+	private static ClassToIntMapper networkMessageToIntMapper = new ClassToIntMapper();
+	private static HashMap<Byte, Class<? extends NetworkMessage> > byteToNetworkMessageMap = null;
+
+	/*
+	 * ALL NETWORK MESSAGE CLASSES MUST BE REGISTERED HERE
 	 */
-	private HashMap<Byte, Class<? extends NetworkMessage> > map;
-	
-	public DataTranslator(){
-		map = new HashMap<Byte, Class<? extends NetworkMessage>>();
-	}
-	
-	public void registerClass(Class<? extends NetworkMessage> theClass){
-		byte opcode = -1;
-		try {
-			opcode = theClass.newInstance().getOpcodeByte();
-		} catch (InstantiationException e) {
-			Utils.fatal("Could not instantiate class. Might not have a constructor with no args");
-		} catch (IllegalAccessException e) {
-			Utils.fatal("Could not instantiate class. Might not have a constructor with no args");			
-		}
+	static {
+		// Register classes
+		registerClass(ChatMessage.class);
+		registerClass(MapStateMessage.class);
+		registerClass(PlayerDisconnectMessage.class);
+		registerClass(PlayerUpdateMessage.class);
+		registerClass(ServerGreetingMessage.class);
+		registerClass(TileUpdatesMessage.class);
 		
-		map.put(opcode, theClass);
 	}
 	
-	public Class<? extends NetworkMessage> getClassForOpcode(byte opcode){
-		return map.get(opcode);
+	private static void registerClass(Class<? extends NetworkMessage> theClass){
+		networkMessageToIntMapper.registerClass(theClass);
 	}
 	
-	public NetworkMessage readMessage(DataInputStream input){
+	/**
+	 * Takes the networkMessageToIntMapper and creates a map going in the other direction.
+	 * Should be called after the first mapper has been totally filled up
+	 */
+	private static void initializeByteToNetworkMessageMap(){
+		byteToNetworkMessageMap = new HashMap<Byte, Class<? extends NetworkMessage>>();
+		
+		ArrayList<Class<?>> classes = networkMessageToIntMapper.getClassList();
+		
+		for(Class<?> theClass : classes){
+			int code = networkMessageToIntMapper.getClassNumber(theClass);
+			
+			@SuppressWarnings("unchecked")
+			Class<? extends NetworkMessage> networkMessageClass = (Class<? extends NetworkMessage>)theClass;
+			
+			byteToNetworkMessageMap.put((byte)code, networkMessageClass);
+		}
+	}
+
+	/**
+	 * Opcode -> Class
+	 */
+	private static Class<? extends NetworkMessage> getClassForOpcode(byte opcode){
+		if(byteToNetworkMessageMap == null)
+			initializeByteToNetworkMessageMap();
+		
+		return byteToNetworkMessageMap.get(opcode);
+	}
+	
+	/**
+	 * Class -> Opcode
+	 */
+	private static byte getOpcodeForClass(Class<? extends NetworkMessage> theClass){
+		int code = networkMessageToIntMapper.getClassNumber(theClass);
+		if(code < 0){
+			Utils.fatal("Network message class: " + theClass.getName() + 
+					" was never registered to DataTranslator.");
+		}
+		return (byte)code;
+	}
+	
+	
+	public static NetworkMessage readMessage(DataInputStream input){
 		try {
 			// The first byte is the opcode
 			byte opcode = input.readByte();
@@ -67,10 +109,10 @@ public class DataTranslator {
 		return null;
 	}
 	
-	public void writeMessage(NetworkMessage msg, DataOutputStream output){
+	public static void writeMessage(NetworkMessage msg, DataOutputStream output){
 		try {
 			// First write the opcode
-			output.writeByte(msg.getOpcodeByte());
+			output.writeByte(getOpcodeForClass(msg.getClass()));
 			
 			// Then use the NetworkMessage to write the rest of the data to output
 			msg.writeData(output);

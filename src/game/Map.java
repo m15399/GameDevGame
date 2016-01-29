@@ -7,6 +7,8 @@ import java.util.Queue;
 import java.util.Scanner;
 
 import server.Server;
+import utils.Observer;
+import utils.Utils;
 
 import network.Client;
 import network.MapStateMessage;

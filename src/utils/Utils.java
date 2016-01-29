@@ -1,4 +1,4 @@
-package engine;
+package utils;
 
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
@@ -11,6 +11,8 @@ import java.io.Serializable;
 
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.FloatControl;
+
+import engine.Resources;
 
 /**
  * Useful utility functions

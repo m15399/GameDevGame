@@ -2,8 +2,9 @@ package main_menu;
 
 import java.awt.Color;
 
+import utils.Observer;
+
 import engine.Input;
-import engine.Observer;
 
 /**
  * Text box where player can type stuff. When clicked, it gains focus and intercepts

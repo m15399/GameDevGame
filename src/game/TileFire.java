@@ -3,9 +3,10 @@ package game;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
+import utils.Utils;
+
 import engine.Entity;
 import engine.Game;
-import engine.Utils;
 
 
 /**

@@ -3,8 +3,9 @@ package game;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
+import utils.Utils;
+
 import engine.Game;
-import engine.Utils;
 
 /**
  * Shoots flames.
@@ -14,12 +15,12 @@ public class FlameThrower extends Emitter {
 	/**
 	 * How powerful the flamethrower is
 	 */
-	private static final double POWER = 2.25; 
+	private static final double POWER = 3.6;
 	
 	// Overheat controls
-	private static final double HEATUP_RATE = .15;
+	private static final double HEATUP_RATE = .23;
 	private static final double COOLDOWN_RATE = HEATUP_RATE;
-	private static final double OVERHEAT_DURATION = 3;
+	private static final double OVERHEAT_DURATION = 2;
 	
 	// Particle settings
 	private static final double FLAME_LIFE = .5; // How long until particle dies

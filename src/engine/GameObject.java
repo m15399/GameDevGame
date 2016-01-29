@@ -6,10 +6,18 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Stack;
 
+import utils.Utils;
+
 /**
  * GameObjects are automatically updated and drawn each frame. Most objects in
  * the game should extend from GameObject. (This is sort of modeled on how
- * Unity's GameObject system works)
+ * Unity's GameObject system works).
+ * 
+ * Some things to keep in mind:
+ * onStart for each object is called at the start of the frame AFTER it was 
+ * created.
+ * Objects are destroyed at the end of the frame they are destroyed on. This
+ * is also the point where their onDestroy methods are called. 
  */
 public class GameObject {
 	
@@ -153,7 +161,7 @@ public class GameObject {
 				o.update(dt);
 		}
 		
-		addNewObjects();	
+//		addNewObjects();
 		removeDestroyedObjects();
 	}
 

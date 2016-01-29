@@ -3,7 +3,8 @@ package game;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-import engine.Utils;
+import utils.Utils;
+
 
 /**
  * Generic bar meter for tracking a stat

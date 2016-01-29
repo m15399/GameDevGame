@@ -4,7 +4,8 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-import engine.Utils;
+import utils.Utils;
+
 
 /**
  * Handles network on the client side. You can subscribe to messages of a given class,
@@ -13,8 +14,7 @@ import engine.Utils;
  */
 public class Client {
 
-	private static DataTranslator translator = new DataTranslator();
-	public static NetworkMessagePublisher publisher = new NetworkMessagePublisher(translator);
+	public static NetworkMessagePublisher publisher = new NetworkMessagePublisher();
 	
 	private static SocketHandler socketHandler = null;
 	
@@ -49,7 +49,7 @@ public class Client {
 		}
 		
 		// Create a socket handler, forward messages to global clientPub, translate with the translator
-		socketHandler = new SocketHandler(socket, publisher, translator);
+		socketHandler = new SocketHandler(socket, publisher);
 		new Thread(socketHandler).start();
 	}
 	

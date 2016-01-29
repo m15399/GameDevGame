@@ -15,8 +15,8 @@ public class DataStreamHandler extends StreamHandler {
 	private BufferedOutputStream bufOut;
 	private DataInputStream dataIn;
 	
-	public DataStreamHandler(SocketHandler socketHandler, DataTranslator translator){
-		super(socketHandler, translator);
+	public DataStreamHandler(SocketHandler socketHandler){
+		super(socketHandler);
 		
 		bufOut = new BufferedOutputStream(socketHandler.getOutputStream());
 		dataOut = new DataOutputStream(bufOut);
@@ -26,7 +26,7 @@ public class DataStreamHandler extends StreamHandler {
 	
 	public int sendMessage(NetworkMessage msg){
 		try {
-			getTranslator().writeMessage(msg, dataOut);
+			DataTranslator.writeMessage(msg, dataOut);
 			bufOut.flush();
 			return 0;
 		} catch (IOException e2) {
@@ -36,7 +36,7 @@ public class DataStreamHandler extends StreamHandler {
 	
 	public NetworkMessage readObject(){
 		NetworkMessage msg = null;
-		msg = getTranslator().readMessage(dataIn);
+		msg = DataTranslator.readMessage(dataIn);
 		return msg;
 	}
 }

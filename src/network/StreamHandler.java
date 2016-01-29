@@ -6,19 +6,13 @@ package network;
 public abstract class StreamHandler {
 
 	private SocketHandler socketHandler;
-	private DataTranslator translator;
 
-	public StreamHandler(SocketHandler socketHandler, DataTranslator translator){
+	public StreamHandler(SocketHandler socketHandler){
 		this.socketHandler = socketHandler;
-		this.translator = translator;
 	}
 	
 	public SocketHandler getSocketHandler(){
 		return socketHandler;
-	}
-	
-	public DataTranslator getTranslator(){
-		return translator;
 	}
 	
 	/**

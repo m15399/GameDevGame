@@ -4,15 +4,14 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import engine.Utils;
+import utils.Utils;
+
 
 /**
  * Contains info about the state of a player. Position, velocity, etc
  */
 public class PlayerUpdateMessage extends NetworkMessage {
-
-	private static final long serialVersionUID = -4545974954407059370L;
-
+	
 	public String name;
 	public short playerNumber;
 	public double x, y;
@@ -43,11 +42,6 @@ public class PlayerUpdateMessage extends NetworkMessage {
 	public String toString(){
 		return "Player #" + playerNumber + ": (" + x + ", " + y + ")";
 	}
-	
-	@Override
-	public OpCode getOpcode() {
-		return NetworkMessage.OpCode.PLAYER_UPDATE;
-	}
 
 	private byte inToByte(double in){
 		byte b = Utils.packRange(in, -1, 1, 8);
@@ -62,7 +56,6 @@ public class PlayerUpdateMessage extends NetworkMessage {
 		return in;
 	}
 	
-	@Override
 	public void readData(DataInputStream input) throws IOException {
 		name = input.readUTF();
 		playerNumber = input.readShort();
@@ -83,7 +76,6 @@ public class PlayerUpdateMessage extends NetworkMessage {
 		angle = Utils.unpackRange(angleByte, -180, 180, 5);
 	}
 
-	@Override
 	public void writeData(DataOutputStream output) throws IOException {
 		output.writeUTF(name);
 		output.writeShort(playerNumber);

@@ -5,8 +5,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
-import engine.Observer;
-import engine.Utils;
+import utils.Observer;
+import utils.Utils;
+
 
 /**
  * Helps deal with Socket objects - sends outgoing messages, forwards 
@@ -24,11 +25,11 @@ public class SocketHandler implements Runnable {
 	
 	public Observer onDisconnect;
 
-	public SocketHandler(Socket sock, NetworkMessagePublisher publisher, DataTranslator translator) {
+	public SocketHandler(Socket sock, NetworkMessagePublisher publisher) {
 		socket = sock;
 		this.publisher = publisher;
 
-		streamHandler = new DataStreamHandler(this, translator);
+		streamHandler = new DataStreamHandler(this);
 		
 		connected = true;
 		

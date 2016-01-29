@@ -16,52 +16,62 @@ Milestones:
 		Map switching
 
 
+Amazon Server: 54.153.119.226:8000
+
 _______________________________________________________________________________
 
 Code:
 
-2nd Milestone Features:
-	Bow and arrow weapon
-	Running on Amazon server
 
 Server keeps track of names
-	always simulate players
+	name set message
+		n, pNum name, pNum name...
 	look up name by player number in player manager
-	observer for renames
+		playerManager.getName(int pNum) - null or name
+	When server gets greeting
+		send NameSetMessage(new pnum, new pname) to all clients
+	At the start of each round need to send greetings to server again
+		should already be happening in GameDevGame
+		make sure no players joining concurrently
+
+Join game menu displays error if unable to connect
+	join menu connects Client to test it, doesn't start game
+	get the player number in menu before gamedev game
+	start the GameDevGame
+	GDG sends player name indicating ready for game data
+	GreetingMessage
+		name
+
+Weapons
+	Pick up from ground
+		Second meter next to heat that's cyan
+	Bow and arrow weapon
+		charge increases range and power
+		can't press both buttons 
+		meter shows charge
+	Sword
+		180 degree arc in mouse direction
+		meter shows cooldown
+	weapon info - 1 byte?
+		type - 4 bits, charge amount/state - 4 bits 
 
 
-Character
-	Create placeholder sprite
-	Firing
-		Flame placeholder image
-	Aiming
-		Camera follows cursor a bit?
 
-Networking
-	players
-		weapon info - 1 byte?
-			type - 4 bits, charge amount/state - 4 bits 
+Sources of complexity:
+Object creation, destruction, updating workings unclear
+	onStart is called at the start of the next frame...
+Network messages 
+	Recieving when not subscribed?
+		Sign classes up for datatranslator seperately
+		Automate somehow, list classes <-> opcode table somewhere?
+	Multiple subscribers/unsubscribing?
+	Recieving at wrong time
+		If no subscribers, store until someone subscribes
 
-	map - runs on server
-		updates
-			server is authoritative - decides what happens
-				handle all race conditions with rules
-					if two updates have diff temps, favor hotter one
-			client
-				updates
-					if local player changed a tile's state (empty/wood)
-						1. send update:
-							tx ty state/heat
-							byte byte 2/6-bits
-		joining observers
-			send filename
-			can send whole map without causing lag?
 
-	space = 20
-	10 player updates/sec = 200 bytes/sec = .2 kB/s
-	4 map updates/sec = 10 bytes/sec * 16 players = 160 bytes/sec = .16 kB/sec
-	want < ? kB/sec for each player and server
-
+Misc Features:
+In game menu - dc, etc
+Settings menu - front and in game
 
 
 Wishlist:
@@ -76,9 +86,8 @@ Factor GameObject static methods into GameObjectManager
 Better Map Editor
 	In-game editor? Tiled? Image file?
 More useful server logs
-	Able to close windows without quitting
-	Able to have fatal errors without closing console
 Single player
+	Bots
 	Tutorial mission
 	Coop missions? 
 		Enemies? How do you fight them?
@@ -88,9 +97,15 @@ Test with simulated lag
 Test with simulated low framerate
 Test very large maps
 Cache enum.values()
-Why are the black bars inaccurate sometimes?
-Make interaction between classes and messages more consistent
 Cache "new font" fonts
+Make server program more command line friendly - help, specify port
+Paste ip address
+Camera follows cursor a bit?
+Reduce players ability to cheat
+	Move more responsibility to server - dying, respawning
+	Server checks what the player is doing and whether it's legal
+		e.g. can't go from falling state to not falling state
+
 
 
 Thoughts about networking (won't be coded for a while):
@@ -101,10 +116,6 @@ Server
 		Persistent: Player names/Scores
 		In game: time left, list of destroyed tiles (for observers)
 		Voting: map suggestions, recent maps, num votes
-	Hosting
-		Run the server program seperately
-			Prints out the IP and port
-		Players join the host by IP
 	Game flow
 		Vote map
 			Server chooses a selection of maps based on num players
@@ -117,25 +128,15 @@ Server
 			Also a clock to prevent stalemates
 		Server starts voting map
 Updates
-	Each client owns their Player (and maybe some bots)
-		Owned players - can heat tiles, pick up stuff, die, respawn
-		Unowned players - run around and look pretty
 	Projectiles and the like are also owned
 		Owned projectiles - can change a tile's state
 		Unowned projectiles - look pretty, can hit the owned players
-	Tiles are not owned
-		When a player heats a tile up to a multiple of 5, update the server
-		If you heat it up to the last level, mark it as owned
-			When an owned tile dies, tell the server
-			When tile respawns, tell the server again, then release ownership
-	Chat
-		Client sends strings to server
 	Menu options
 		Vote to end round - only living players count
 		Exit game
 Map switching
-	destroy everything but GameDevGame
-		destroy everything but tag?
+	destroy everything when SwitchMapMessage recieved
+		create a new GameDevGame
 	remember to unsubscribe everything when destroyed
 	GameDevGame recreates everything, which subscribes again
 

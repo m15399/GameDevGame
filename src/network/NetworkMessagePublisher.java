@@ -4,13 +4,13 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import engine.Observer;
-import engine.Utils;
+import utils.Observer;
+import utils.Utils;
+
 
 /**
  * Publish/subscribe system for network messages. You can subscribe an Observer 
  * object to updates from a specific class of NetworkMessage. 
- * Also registers the subscribed classes to the translator...
  */
 public class NetworkMessagePublisher {
 
@@ -23,14 +23,11 @@ public class NetworkMessagePublisher {
 	public boolean forwardImmediately; 
 	
 	private Queue<NetworkMessage> queuedMessages;
-	
-	private DataTranslator translator;
-	
-	public NetworkMessagePublisher(DataTranslator translator){
+		
+	public NetworkMessagePublisher(){
 		subscribers = new HashMap<Class<? extends NetworkMessage>, Observer>();
 		queuedMessages = new LinkedList<NetworkMessage>();
 		forwardImmediately = false;
-		this.translator = translator;
 	}
 	
 	/**
@@ -46,11 +43,9 @@ public class NetworkMessagePublisher {
 	/**
 	 * Subscribe the observer to get messages of a given class. Can
 	 * only have one observer per class right now.
-	 * Also registers the class in the translator
 	 */
 	public void subscribe(Class<? extends NetworkMessage> theClass, Observer observer){
 		subscribers.put(theClass, observer);
-		translator.registerClass(theClass);
 	}
 	
 	private void forward(NetworkMessage msg){

@@ -29,12 +29,10 @@ public class Globals {
 	/**
 	 * Create only the globals we need to run the server (no player, etc)
 	 */
-	public static void initGlobalsForServer(boolean simulatePlayers){
-
+	public static void initGlobalsForServer(){
 		isServer = true;
 		
-		if(simulatePlayers)
-			playerManager = new PlayerManager();
+		playerManager = new PlayerManager();
 
 		Globals.map = new Map("TestLevel.txt");
 	}

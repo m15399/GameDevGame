@@ -6,6 +6,8 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 
+import utils.Observer;
+
 import network.ChatMessage;
 import network.Client;
 
@@ -14,7 +16,6 @@ import aleksPack10.jdk.KeyEvent;
 import engine.Entity;
 import engine.Game;
 import engine.Input;
-import engine.Observer;
 
 /** 
  * Chat display during game

@@ -2,10 +2,11 @@ package game;
 
 import java.util.HashMap;
 
+import utils.Observer;
+
 import network.PlayerDisconnectMessage;
 import network.PlayerUpdateMessage;
 import engine.GameObject;
-import engine.Observer;
 
 /**
  * Manages the players on the map. Primarily handles network updates. 

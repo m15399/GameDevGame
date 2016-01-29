@@ -1,8 +1,8 @@
 package game;
 
+import utils.Utils;
 import engine.Entity;
 import engine.Game;
-import engine.Utils;
 
 /**
  * Generalized particle emitter. Extend from this to make your own emitters

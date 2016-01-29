@@ -12,8 +12,9 @@ import java.util.Date;
 
 import javax.swing.*;
 
-import engine.Observer;
-import engine.Utils;
+import utils.Observer;
+import utils.Utils;
+
 
 /**
  * Prints log info that would normally be written to stdout/stderr to a log file, 

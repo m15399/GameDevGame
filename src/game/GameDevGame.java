@@ -5,6 +5,9 @@ import java.awt.Graphics2D;
 
 import javax.sound.sampled.Clip;
 
+import utils.Observer;
+import utils.Utils;
+
 import main_menu.MainMenu;
 import network.Client;
 import network.ServerGreetingMessage;
@@ -42,35 +45,21 @@ public class GameDevGame extends GameObject {
 			new MainMenu();
 		}
 	}
-		
+	
+	private String connectAddress;
+	private int port;
+	
 	public GameDevGame(){
 		init("", -1);
 	}
 	
-	public GameDevGame(String address, int port) {
-		init(address, port);
+	public GameDevGame(String address, int thePort) {
+		init(address, thePort);
 	}
 	
-	private void init(String address, int port){
-		// Play some music
-		if(MUSIC){
-			Clip c = Resources.getSound("test.wav");
-			Utils.setClipVolume(c, -5f);
-			c.loop(Clip.LOOP_CONTINUOUSLY);			
-		}
-		
-		// Create globals like map, player
-		Globals.initGlobals();
-		
-		new Camera();
-		new Background("background.png");
-		
-		new HeatMeter();
-		
-		setDrawOrder(1000);
-		
-		new Chat();
-
+	private void init(String address, int thePort){
+		connectAddress = address;
+		port = thePort;
 		
 		// Network stuff
 		
@@ -93,10 +82,31 @@ public class GameDevGame extends GameObject {
 				Globals.map.updateTileStates(msg);
 			}
 		});
+	}
+	
+	public void onStart(){
+		// Play some music
+		if(MUSIC){
+			Clip c = Resources.getSound("test.wav");
+			Utils.setClipVolume(c, -5f);
+			c.loop(Clip.LOOP_CONTINUOUSLY);			
+		}
+		
+		// Create globals like map, player
+		Globals.initGlobals();
+		
+		new Camera();
+		new Background("background.png");
+		
+		new HeatMeter();
+		
+		setDrawOrder(1000);
+		
+		new Chat();
 		
 		// Connect if ip address was set
-		if(address.length() > 0){
-			Client.setAddress(address, port);
+		if(connectAddress.length() > 0){
+			Client.setAddress(connectAddress, port);
 			Client.connect();
 		}
 	}
