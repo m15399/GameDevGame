@@ -61,9 +61,7 @@ Sources of complexity:
 Object creation, destruction, updating workings unclear
 	onStart is called at the start of the next frame...
 Network messages 
-	Recieving when not subscribed?
-		Sign classes up for datatranslator seperately
-		Automate somehow, list classes <-> opcode table somewhere?
+	Still have to add to DataTranslator's list
 	Multiple subscribers/unsubscribing?
 	Recieving at wrong time
 		If no subscribers, store until someone subscribes
@@ -89,23 +87,21 @@ More useful server logs
 Single player
 	Bots
 	Tutorial mission
-	Coop missions? 
-		Enemies? How do you fight them?
-Set buffered stream size so we don't cut messages
+	Coop missions? Enemies? How do you fight them?
 Use timer instead of frameNumber % 15 in Map.java
-Test with simulated lag
-Test with simulated low framerate
-Test very large maps
+Testing
+	Test with simulated lag
+	Test with simulated low framerate
+	Test very large maps
+	Pasting on other OS's
 Cache enum.values()
 Cache "new font" fonts
 Make server program more command line friendly - help, specify port
-Paste ip address
 Camera follows cursor a bit?
 Reduce players ability to cheat
 	Move more responsibility to server - dying, respawning
 	Server checks what the player is doing and whether it's legal
 		e.g. can't go from falling state to not falling state
-
 
 
 Thoughts about networking (won't be coded for a while):

@@ -83,6 +83,9 @@ public class Input {
 	public static void update() {
 		keysPressed.clear();
 		mousePressed = false;
+		
+		// Stop pasting... (pasting is currently a hack)
+		keysDown.put(KeyEvent.VK_PASTE, false);
 	}
 
 	//
@@ -102,17 +105,46 @@ public class Input {
 			if(textInputInterceptor != null){
 				
 				Character c = e.getKeyChar();
-				textInputInterceptor.notify(c);
+				
+				// In case we're inputting data in a menu, we don't want to
+				// intercept keys like tab, enter
+				if(c == '\n'){
+					e.setKeyCode(KeyEvent.VK_ENTER);
+					handlePress(e);
+				
+				} else if (c == '\t'){
+					e.setKeyCode(KeyEvent.VK_TAB);
+					handlePress(e);
+					
+				} else {
+					textInputInterceptor.notify(c);					
+				}
 				
 			}
+		}
+		
+		private void handlePress(KeyEvent e){			
+			if(!isDown(e.getKeyCode()))
+				keysPressed.put(e.getKeyCode(), true);
+			keysDown.put(e.getKeyCode(), true);	
 		}
 
 		@Override
 		public void keyPressed(KeyEvent e) {
-			if(textInputInterceptor == null){
-				if(!isDown(e.getKeyCode()))
-					keysPressed.put(e.getKeyCode(), true);
-				keysDown.put(e.getKeyCode(), true);	
+			
+			// For some reason cant detect pasting, so I'm using a hack
+			if(e.getKeyCode() == 86){ // v
+				if(isDown(17) || isDown(157)){ // ctrl or command
+					e.setKeyCode(KeyEvent.VK_PASTE);
+				}
+			} else if(e.getKeyCode() == KeyEvent.VK_PASTE){
+				// Ignore real pastes just in case
+			}
+			
+			int code = e.getKeyCode();
+			
+			if(textInputInterceptor == null || code == KeyEvent.VK_PASTE || code == 17 || code == 157){
+				handlePress(e);
 			}			
 		}
 

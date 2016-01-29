@@ -1,5 +1,7 @@
 package engine;
 
+import game.Globals;
+
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
@@ -12,11 +14,6 @@ import java.awt.event.KeyEvent;
 public class Game {
 
 	public static final int WIDTH = 800, HEIGHT = 600;
-	
-	/**
-	 * Debug mode?
-	 */
-	public static boolean DEBUG = false;
 	
 	/**
 	 * Time passed since start of game
@@ -53,8 +50,8 @@ public class Game {
 		time += dt;
 		frameNumber++;
 		
-		if(Input.isPressed(KeyEvent.VK_BACK_QUOTE)){
-			DEBUG = !DEBUG;
+		if(Input.isPressed(KeyEvent.VK_BACK_QUOTE) && Globals.DEBUG){
+			Globals.DEV_MODE = !Globals.DEV_MODE;
 		}
 		
 		// update all gameobjects
@@ -72,7 +69,7 @@ public class Game {
 		// draw all gameobjects
 		GameObject.drawAll(g);
 		
-		if(DEBUG){
+		if(Globals.DEV_MODE){
 			g.setColor(Color.white);
 			g.drawString(String.format("%d", (int)fps), 10, 20);			
 		}

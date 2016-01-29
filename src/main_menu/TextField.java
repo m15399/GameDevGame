@@ -70,6 +70,12 @@ public class TextField extends Label {
 		return contents.substring(0, contents.length()-1);
 	}
 	
+	public void appendText(String s){
+		for(int i = 0; i < s.length(); i++){
+			addChar(s.charAt(i));
+		}
+	}
+	
 	/**
 	 * Add a character to the current cursor position. If there's not enough 
 	 * space (due to maxLength being exceeded) the character will not be
@@ -104,7 +110,7 @@ public class TextField extends Label {
 		}
 		
 		// Determine color based on selected or not
-		int regular = 200;
+		int regular = 180;
 
 		if(isSelected())
 			setColor(Color.white);

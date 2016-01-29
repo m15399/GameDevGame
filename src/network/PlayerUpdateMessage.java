@@ -59,10 +59,10 @@ public class PlayerUpdateMessage extends NetworkMessage {
 	public void readData(DataInputStream input) throws IOException {
 		name = input.readUTF();
 		playerNumber = input.readShort();
-		x = input.readDouble();	
-		y = input.readDouble();	
-		vx = input.readDouble();
-		vy = input.readDouble();
+		x = input.readFloat();	
+		y = input.readFloat();	
+		vx = input.readFloat();
+		vy = input.readFloat();
 		inputX = byteToIn(input.readByte());
 		inputY = byteToIn(input.readByte());
 		
@@ -79,10 +79,10 @@ public class PlayerUpdateMessage extends NetworkMessage {
 	public void writeData(DataOutputStream output) throws IOException {
 		output.writeUTF(name);
 		output.writeShort(playerNumber);
-		output.writeDouble(x);
-		output.writeDouble(y);
-		output.writeDouble(vx);
-		output.writeDouble(vy);
+		output.writeFloat((float)x);
+		output.writeFloat((float)y);
+		output.writeFloat((float)vx);
+		output.writeFloat((float)vy);
 		output.writeByte(inToByte(inputX));
 		output.writeByte(inToByte(inputY));
 

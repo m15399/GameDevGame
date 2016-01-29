@@ -116,6 +116,7 @@ public class Application implements Runnable {
 			// Add input listeners
 			InputListener inputListener = new Input.InputListener();
 			frame.addKeyListener(inputListener);
+			frame.setFocusTraversalKeysEnabled(false); // makes tabs work
 			panel.addMouseListener(inputListener);
 			panel.addMouseMotionListener(inputListener);
 		} else {

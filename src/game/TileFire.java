@@ -286,7 +286,7 @@ public class TileFire extends Entity {
 	}
 	
 	public void draw(Graphics2D g){
-		if(Game.DEBUG){
+		if(Globals.DEV_MODE){
 			g.setColor(Color.white);
 			g.drawString(String.format("%.1f", heat), (int)x-10, (int)y+4);
 		}

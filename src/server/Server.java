@@ -32,7 +32,7 @@ public class Server {
 	public static void main(String[] args){
 		
 		boolean launchGui = true;
-		boolean createLogFile = false;
+		boolean createLogFile = !Globals.DEBUG; 
 		
 		// Parse command line args
 		for(String arg : args){

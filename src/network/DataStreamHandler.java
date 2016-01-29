@@ -18,7 +18,8 @@ public class DataStreamHandler extends StreamHandler {
 	public DataStreamHandler(SocketHandler socketHandler){
 		super(socketHandler);
 		
-		bufOut = new BufferedOutputStream(socketHandler.getOutputStream());
+		// should never hit the 'size' param
+		bufOut = new BufferedOutputStream(socketHandler.getOutputStream(), 4096);
 		dataOut = new DataOutputStream(bufOut);
 		dataIn = new DataInputStream(socketHandler.getInputStream());
 

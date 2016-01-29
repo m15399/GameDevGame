@@ -9,6 +9,20 @@ import network.NetworkMessagePublisher;
  * a lot of global variables, it's useful to have these things in one place
  */
 public class Globals {
+	
+	/**
+	 * Debug mode, as opposed to release mode
+	 */
+	public static boolean DEBUG = true;
+	
+	/**
+	 * Debug mode - show fps, tile heats, collision boxes, misc info.
+	 * DEV_MODE is enabled by hitting ` on the keyboard.
+	 */
+	public static boolean DEV_MODE = false;
+	
+	// Global variables
+	
 	public static Player player = null;
 	public static Map map = null;
 	public static PlayerManager playerManager = null;
@@ -62,4 +76,5 @@ public class Globals {
 			return Client.publisher;
 		}
 	}
+
 }

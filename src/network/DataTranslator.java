@@ -76,7 +76,8 @@ public class DataTranslator {
 		int code = networkMessageToIntMapper.getClassNumber(theClass);
 		if(code < 0){
 			Utils.fatal("Network message class: " + theClass.getName() + 
-					" was never registered to DataTranslator.");
+					" is not registered. You need to register each NetworkMessage class in" + 
+					" DataTranslator.java.");
 		}
 		return (byte)code;
 	}

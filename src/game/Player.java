@@ -213,7 +213,7 @@ public class Player extends MapEntity {
 		
 		
 		// Press 1 to test getting stuck in a wall
-		if (Game.DEBUG && Input.isPressed(KeyEvent.VK_1)) {
+		if (Globals.DEV_MODE && Input.isPressed(KeyEvent.VK_1)) {
 			x = 32 + 64 * 5;
 			y = 32;
 		}
@@ -515,7 +515,7 @@ public class Player extends MapEntity {
 		
 		g.setTransform(prev);
 
-		if(Game.DEBUG){
+		if(Globals.DEV_MODE){
 			// Draw collision bounds (for debugging)
 			g.setColor(Color.green);
 			g.drawArc((int)(x-wallRadius), (int)(y-wallRadius), wallRadius*2,wallRadius*2, 0, 360);
