@@ -1,8 +1,10 @@
 package main_menu;
 
 import java.awt.Color;
+import java.awt.event.KeyEvent;
 
 import utils.Observer;
+import utils.Utils;
 
 import engine.Input;
 
@@ -18,6 +20,8 @@ public class TextField extends Label {
 	private int cursorPos;
 	private int maxLength;
 	
+	Observer enterPressedObserver;
+	
 	public TextField(double centerX, double centerY, double w, double h){
 		// We use a _ character to denote the cursor
 		super("_", centerX, centerY, w, h);
@@ -25,7 +29,13 @@ public class TextField extends Label {
 		cursorPos = 0;
 		maxLength = 64;
 		
+		enterPressedObserver = null;
+		
 		setOutlined(true);
+	}
+	
+	public void setEnterPressedObserver(Observer o){
+		enterPressedObserver = o;
 	}
 	
 	/**
@@ -70,7 +80,7 @@ public class TextField extends Label {
 		return contents.substring(0, contents.length()-1);
 	}
 	
-	public void appendText(String s){
+	private void appendText(String s){
 		for(int i = 0; i < s.length(); i++){
 			addChar(s.charAt(i));
 		}
@@ -83,6 +93,11 @@ public class TextField extends Label {
 	 */
 	private void addChar(char c){
 		String contents = getContents();
+		
+		if(c == '\n' && enterPressedObserver != null){
+			enterPressedObserver.notify(null);
+			return;
+		}
 
 		if(Character.isLetterOrDigit(c) || c == ' ' || c == ':' || c == '.'){
 			if(contents.length() < maxLength){
@@ -101,12 +116,23 @@ public class TextField extends Label {
 		}
 	}
 	
+	private void paste(){
+		String str = Utils.readClipboard();
+		if(str != null){
+			appendText(str);
+		}
+	}
+	
 	public void update(double dt){
 		// Select when clicked
 		if(isHovered()){
 			if(Input.isMousePressed()){
 				select();
 			}
+		}
+
+		if(Input.isPressed(KeyEvent.VK_PASTE) && isSelected()){
+			paste();
 		}
 		
 		// Determine color based on selected or not

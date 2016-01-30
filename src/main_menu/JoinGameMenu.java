@@ -1,11 +1,6 @@
 package main_menu;
 
-import java.awt.HeadlessException;
-import java.awt.Toolkit;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.KeyEvent;
-import java.io.IOException;
 
 import utils.Observer;
 import engine.Game;
@@ -29,18 +24,22 @@ public class JoinGameMenu extends GameObject {
 		int buttonHeight = MainMenu.BUTTON_HEIGHT;
 		int spacing = MainMenu.SPACING;
 		
+		EnterPressedObserver onEnterPress = new EnterPressedObserver();
+		
 		new Label("Display Name:", buttonX, buttonY, buttonWidth, buttonHeight);
 		buttonY += spacing;
 		
 		nameField = new TextField(buttonX, buttonY, buttonWidth, buttonHeight);
 		nameField.setMaxLength(16);
 		nameField.select();
+		nameField.setEnterPressedObserver(onEnterPress);
 		buttonY += spacing;
 
 		new Label("IP Address (ip:port):", buttonX, buttonY, buttonWidth, buttonHeight);
 		buttonY += spacing;
 		
 		addressField = new TextField(buttonX, buttonY, buttonWidth, buttonHeight);
+		addressField.setEnterPressedObserver(onEnterPress);
 		buttonY += spacing;
 		
 		new MenuButton("Join Game", buttonX, buttonY,
@@ -62,6 +61,12 @@ public class JoinGameMenu extends GameObject {
 		
 	}
 	
+	private class EnterPressedObserver implements Observer {
+		public void notify(Object arg) {
+			join();
+		}		
+	}
+	
 	private void join(){
 		String field = addressField.getText();
 		int semi = field.indexOf(':');
@@ -79,40 +84,7 @@ public class JoinGameMenu extends GameObject {
 		}
 	}
 	
-	private void paste(){
-		if(addressField.isSelected()){
-			String str = readClipboard();
-			if(str != null){
-				addressField.appendText(str);
-			}
-		}
-	}
-	
-	private String readClipboard(){
-		String str = null;
-		
-		try {
-			str = (String) Toolkit.getDefaultToolkit()
-			        .getSystemClipboard().getData(DataFlavor.stringFlavor);
-		} catch (HeadlessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (UnsupportedFlavorException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
-
-		return str;
-	}
-	
 	public void update(double dt){
-		
-		if(Input.isPressed(KeyEvent.VK_PASTE)){
-			paste();
-		}
 		
 		if(Input.isPressed(KeyEvent.VK_TAB)){
 			if(nameField.isSelected())

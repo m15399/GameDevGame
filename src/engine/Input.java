@@ -107,12 +107,8 @@ public class Input {
 				Character c = e.getKeyChar();
 				
 				// In case we're inputting data in a menu, we don't want to
-				// intercept keys like tab, enter
-				if(c == '\n'){
-					e.setKeyCode(KeyEvent.VK_ENTER);
-					handlePress(e);
-				
-				} else if (c == '\t'){
+				// intercept keys like tab
+				if (c == '\t'){
 					e.setKeyCode(KeyEvent.VK_TAB);
 					handlePress(e);
 					

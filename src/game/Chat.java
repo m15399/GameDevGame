@@ -3,15 +3,15 @@ package game;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 
 import utils.Observer;
+import utils.Utils;
 
 import network.ChatMessage;
 import network.Client;
-
-import aleksPack10.jdk.KeyEvent;
 
 import engine.Entity;
 import engine.Game;
@@ -111,10 +111,20 @@ public class Chat extends Entity {
 			
 			// Append the character to currMessage if the character is allowed
 			if(Character.isLetterOrDigit(ch) || ALLOWED_PUNCT.contains("" + ch)){
-				if(currMessage.length() < MAX_MESSAGE_LENGTH)
-					currMessage += ch;
+				addChar(ch);
 			}
 			
+		}
+	}
+	
+	private void addChar(char ch){
+		if(currMessage.length() < MAX_MESSAGE_LENGTH)
+			currMessage += ch;
+	}
+	
+	private void addString(String str){
+		for(int i = 0; i < str.length(); i++){
+			addChar(str.charAt(i));
 		}
 	}
 	
@@ -132,6 +142,10 @@ public class Chat extends Entity {
 	public void update(double dt){
 		if(!typing && Globals.isOnlineClient() && Input.isPressed(KeyEvent.VK_ENTER)){
 			startTypingMode();
+		}
+		
+		if(typing && Input.isPressed(KeyEvent.VK_PASTE)){
+			addString(Utils.readClipboard());
 		}
 	}
 	

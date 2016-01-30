@@ -2,7 +2,11 @@ package utils;
 
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
+import java.awt.HeadlessException;
 import java.awt.Image;
+import java.awt.Toolkit;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.geom.AffineTransform;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -248,5 +252,29 @@ public class Utils {
 	 */
 	public static double angleDifference(double a, double b){
 		return Utils.mod((b-a) + 180, 360) - 180;
+	}
+	
+
+	/**
+	 * @return the text in the clipboard, or null if couldn't get it. 
+	 */
+	public static String readClipboard(){
+		String str = null;
+		
+		try {
+			str = (String) Toolkit.getDefaultToolkit()
+			        .getSystemClipboard().getData(DataFlavor.stringFlavor);
+		} catch (HeadlessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnsupportedFlavorException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+
+		return str;
 	}
 }
