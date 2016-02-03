@@ -33,6 +33,7 @@ Server keeps track of names
 	At the start of each round need to send greetings to server again
 		should already be happening in GameDevGame
 		make sure no players joining concurrently
+		make players stand still for 3 sec so we don't have to send whole state
 
 Join game menu displays error if unable to connect
 	join menu connects Client to test it, doesn't start game
@@ -102,6 +103,9 @@ Reduce players ability to cheat
 	Move more responsibility to server - dying, respawning
 	Server checks what the player is doing and whether it's legal
 		e.g. can't go from falling state to not falling state
+Support mp3s
+Music system
+
 
 
 Thoughts about networking (won't be coded for a while):

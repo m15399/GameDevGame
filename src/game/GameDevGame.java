@@ -32,7 +32,7 @@ public class GameDevGame extends GameObject {
 //		WINDOW_HEIGHT = .4;
 //		MUSIC = false;
 //		AUTO_JOIN_ADDR = "localhost";
-		AUTO_JOIN_PORT = 8000;
+//		AUTO_JOIN_PORT = 8000;
 		
 		if(WINDOW_HEIGHT > 0)
 			Application.launch("GameDevGame", true, WINDOW_HEIGHT);

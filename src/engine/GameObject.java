@@ -139,8 +139,13 @@ public class GameObject {
 		o.onDestroy();
 
 		int i = o.objectIndex;
-		allObjects.set(i, null);
-		freeSpots.push(i);
+		if(i >= 0){
+			allObjects.set(i, null);
+			freeSpots.push(i);			
+		} else {
+			// Not created yet - probably created and destroyed in same frame
+			newObjects.remove(o);
+		}
 	}
 	
 	// Remove all objects waiting to be destroyed
