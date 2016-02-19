@@ -248,7 +248,7 @@ public class Utils {
 	}
 	
 	/**
-	 * Smallest difference between 2 angles. 
+	 * Smallest difference between 2 angles (in degrees). 
 	 */
 	public static double angleDifference(double a, double b){
 		return Utils.mod((b-a) + 180, 360) - 180;

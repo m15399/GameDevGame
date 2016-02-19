@@ -22,39 +22,52 @@ _______________________________________________________________________________
 
 Code:
 
+Milestone 2 features:
+	Melee and ranged - pickup, use, respawn
 
-Server keeps track of names
-	name set message
-		n, pNum name, pNum name...
-	look up name by player number in player manager
-		playerManager.getName(int pNum) - null or name
-	When server gets greeting
-		send NameSetMessage(new pnum, new pname) to all clients
-	At the start of each round need to send greetings to server again
-		should already be happening in GameDevGame
-		make sure no players joining concurrently
-		make players stand still for 3 sec so we don't have to send whole state
 
-Join game menu displays error if unable to connect
-	join menu connects Client to test it, doesn't start game
-	get the player number in menu before gamedev game
-	start the GameDevGame
-	GDG sends player name indicating ready for game data
-	GreetingMessage
-		name
 
 Weapons
 	Pick up from ground
-		Second meter next to heat that's cyan
+		Spawning
+			Set locations periodically
+			Each weapon spawn has a respawn time based on type
+				e.g. rocket launchers take a long time to spawn
+		Server tells you when you picked up a weapon
 	Bow and arrow weapon
-		charge increases range and power
-		can't press both buttons 
-		meter shows charge
+		sync
+		die when hit wall
 	Sword
-		180 degree arc in mouse direction
+		120 degree arc in mouse direction
 		meter shows cooldown
 	weapon info - 1 byte?
 		type - 4 bits, charge amount/state - 4 bits 
+
+
+
+Improve Networking:
+
+	Switch to UDP
+
+	Server keeps track of names
+		name set message
+			n, pNum name, pNum name...
+		look up name by player number in player manager
+			playerManager.getName(int pNum) - null or name
+		When server gets greeting
+			send NameSetMessage(new pnum, new pname) to all clients
+		At the start of each round need to send greetings to server again
+			should already be happening in GameDevGame
+			make sure no players joining concurrently
+			make players stand still for 3 sec so we don't have to send whole state
+
+	Join game menu displays error if unable to connect
+		join menu connects Client to test it, doesn't start game
+		get the player number in menu before gamedev game
+		start the GameDevGame
+		GDG sends player name indicating ready for game data
+		GreetingMessage
+			name
 
 
 
@@ -105,6 +118,9 @@ Reduce players ability to cheat
 		e.g. can't go from falling state to not falling state
 Support mp3s
 Music system
+Refactor player - PlayerMovement, PlayerController, etc
+Server handles all collisions
+Always draw player names on top
 
 
 

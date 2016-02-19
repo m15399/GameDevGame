@@ -16,8 +16,10 @@ public class Input {
 	private static HashMap<Integer, Boolean> keysPressed = new HashMap<Integer, Boolean>();
 	private static HashMap<Integer, Boolean> keysDown = new HashMap<Integer, Boolean>();
 
-	private static boolean mousePressed; 
+	private static boolean mousePressed;
 	private static boolean mouseDown; 
+	private static boolean rightMousePressed;
+	private static boolean rightMouseDown;
 	private static Point mouseLoc = new Point(0, 0);
 	
 	private static Observer textInputInterceptor = null; 
@@ -39,6 +41,13 @@ public class Input {
 	 */
 	public static boolean isMouseDown(){
 		return mouseDown;
+	}
+	
+	public static boolean isRightMousePressed(){
+		return rightMousePressed;
+	}
+	public static boolean isRightMouseDown(){
+		return rightMouseDown;
 	}
 	
 	/**
@@ -83,6 +92,7 @@ public class Input {
 	public static void update() {
 		keysPressed.clear();
 		mousePressed = false;
+		rightMousePressed = false;
 		
 		// Stop pasting... (pasting is currently a hack)
 		keysDown.put(KeyEvent.VK_PASTE, false);
@@ -168,13 +178,22 @@ public class Input {
 
 		@Override
 		public void mousePressed(MouseEvent e) {
-			mousePressed = true;
-			mouseDown = true;
+			if(e.getButton() == MouseEvent.BUTTON1){
+				mousePressed = true;
+				mouseDown = true;
+			} else if(e.getButton() == MouseEvent.BUTTON3){
+				rightMousePressed = true;
+				rightMouseDown = true;
+			}
 		}
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			mouseDown = false;
+			if(e.getButton() == MouseEvent.BUTTON1){
+				mouseDown = false;
+			} else if(e.getButton() == MouseEvent.BUTTON3){
+				rightMouseDown = false;
+			}
 		}
 
 		@Override

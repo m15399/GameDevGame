@@ -99,6 +99,7 @@ public class GameDevGame extends GameObject {
 		new Background("background.png");
 		
 		new HeatMeter();
+		new WeaponMeter();
 		
 		setDrawOrder(1000);
 		

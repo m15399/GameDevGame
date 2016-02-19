@@ -34,7 +34,7 @@ public class MapEntity extends Entity {
 		mapDrawOrder = o;
 	}
 
-	public double getDrawOrder() {
+	public double getMapDrawOrder() {
 		return mapDrawOrder;
 	}
 }

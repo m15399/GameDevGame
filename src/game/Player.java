@@ -41,10 +41,14 @@ public class Player extends MapEntity {
 	
 	// Radius of circle that must be off floor for player to fall
 	private int floorRadius = 17;
+	
+	// How far away do projectile hit boxes have to be to hit you
+	private int projectileRadius = 20;
 
 	// Movement variables
 	private double acc = 2600;
 	private double fric = 10;
+	private double speedMul = 1;
 	
 	// Move inputs
 	private double inputX, inputY;
@@ -66,8 +70,11 @@ public class Player extends MapEntity {
 	
 	// Flamthrower
 	private boolean firing;
-	private double flameAngle;
+	private double aimAngle;
 	private FlameThrower flameThrower;
+	
+	// Weapon
+	private Weapon currWeapon;
 	
 	// Network info
 	private short playerNumber;
@@ -79,11 +86,13 @@ public class Player extends MapEntity {
 	public Player(short playerNumber){
 				
 		flameThrower = new FlameThrower(this);
+		currWeapon = new BowAndArrow(this);
+		
 		dummy = false;
 		this.playerNumber = playerNumber;
 				
 		firing = false;
-		flameAngle = 0;
+		aimAngle = 0;
 		
 		lastMessage = null;
 		
@@ -116,6 +125,34 @@ public class Player extends MapEntity {
 		return dummy;
 	}
 	
+	public boolean isFalling(){
+		return falling;
+	}
+	
+	public void setSpeedMul(double mul){
+		speedMul = mul;
+	}
+	
+	/**
+	 * Returns where we're aiming (in degrees)
+	 */
+	public double getAimAngle(){
+		return aimAngle;
+	}
+	
+	/**
+	 * Returns true if the circle would be touching this player
+	 */
+	public boolean touchesCircle(double cx, double cy, double cr){
+		double dx = cx - x;
+		double dy = cy - y;
+		double dist = Math.sqrt(dx * dx + dy * dy);
+		if(dist < cr + projectileRadius)
+			return true;
+		else
+			return false;
+	}
+	
 	public void onStart() {
 		respawn();
 	}
@@ -140,6 +177,10 @@ public class Player extends MapEntity {
 		return flameThrower;
 	}
 	
+	public Weapon getCurrWeapon(){
+		return currWeapon;
+	}
+	
 	/**
 	 * Update the server about our current state
 	 */
@@ -149,7 +190,7 @@ public class Player extends MapEntity {
 			return; 
 		
 		PlayerUpdateMessage currMessage = new PlayerUpdateMessage(playerNumber, x, y, vx, vy, 
-				inputX, inputY, flameAngle, firing && !flameThrower.isOverheating(), 
+				inputX, inputY, aimAngle, firing && !flameThrower.isOverheating(), 
 				jumping, falling);
 		
 		// Should we send an update to the server right now?
@@ -160,7 +201,7 @@ public class Player extends MapEntity {
 				lastMessage.jumping != currMessage.jumping ||
 				lastMessage.inputX != currMessage.inputX ||
 				lastMessage.inputY != currMessage.inputY ||
-				Math.abs(Utils.angleDifference(lastMessage.angle, flameAngle)) > 15);
+				Math.abs(Utils.angleDifference(lastMessage.angle, aimAngle)) > 15);
 		
 		// Update the server
 		if(shouldUpdate){
@@ -190,7 +231,7 @@ public class Player extends MapEntity {
 		vy = msg.vy;
 		inputX = msg.inputX;
 		inputY = msg.inputY;
-		flameAngle = msg.angle;
+		aimAngle = msg.angle;
 		firing = msg.firing;
 		
 		setFalling(msg.falling);
@@ -299,8 +340,9 @@ public class Player extends MapEntity {
 				}
 				
 				// Update our inputX and inputY
-				inputX = attemptInputX;
-				inputY = attemptInputY;
+				// Factor in our speed multiplier at this point
+				inputX = attemptInputX * speedMul;
+				inputY = attemptInputY * speedMul;
 				
 			}
 			
@@ -431,43 +473,23 @@ public class Player extends MapEntity {
 		
 		if(!dummy){
 			
-			// Take input from the player to update firing and flameAngle
+			// Take input from the player to update firing and aimAngle
 			
 			firing = false;
 			
-			int xDir = 0;
-			int yDir = 0;
+			Point mp = Input.getMouseLoc();
+			double xAim = mp.x - Game.WIDTH/2;
+			double yAim = mp.y - Game.HEIGHT/2 - FlameThrower.Y_OFFS;
+			aimAngle = Math.toDegrees(Math.atan2(-yAim, xAim));
 			
-			if(Input.isDown(KeyEvent.VK_LEFT)){
-				xDir = -1;
-			}
-			if (Input.isDown(KeyEvent.VK_RIGHT)){
-				xDir = 1;
-			}
-			if(Input.isDown(KeyEvent.VK_UP)){
-				yDir = -1;
-			}
-			if (Input.isDown(KeyEvent.VK_DOWN)){
-				yDir = 1;
-			}
-
-			if(xDir != 0 || yDir != 0){
+			if(Input.isMouseDown() && !Input.isRightMouseDown()){
 				firing = true;
-				flameAngle = Math.toDegrees(Math.atan2(-yDir, xDir));
-			}
-			
-			if(Input.isMouseDown()){
-				firing = true;
-				Point mp = Input.getMouseLoc();
-				double xAim = mp.x - Game.WIDTH/2;
-				double yAim = mp.y - Game.HEIGHT/2 - FlameThrower.Y_OFFS;
-				flameAngle = Math.toDegrees(Math.atan2(-yAim, xAim));
 			}
 		}
 		
 		// Can't shoot if falling
 		if(firing && !falling){			
-			flameThrower.angle = flameAngle;
+			flameThrower.angle = aimAngle;
 			flameThrower.setFiring(true);
 		} else {
 			flameThrower.setFiring(false);

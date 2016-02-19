@@ -16,15 +16,22 @@ public abstract class Weapon extends GameObject {
 		weaponClassToIntMapper.registerClass(weaponClass);
 	}
 	
-	public Weapon(){
+	public Player player;
+	
+	public Weapon(Player player){
 		if(getWeaponId() < 0){
 			Utils.fatal("Couldn't find class: " + getClass() + 
 					", you need to register each weapon in Weapon.java.");
 		}
+		this.player = player;
 	}
 	
 	public int getWeaponId(){
 		return weaponClassToIntMapper.getClassNumber(getClass());
 	}
+	
+	public abstract double getChargePct();
+	
+	public abstract String getName();
 
 }

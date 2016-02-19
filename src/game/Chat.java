@@ -42,7 +42,7 @@ public class Chat extends Entity {
 	
 	public Chat(){
 		x = Game.WIDTH/2 - WIDTH/2;
-		y = Game.HEIGHT - HEIGHT - 14;
+		y = Game.HEIGHT - HEIGHT - 14 - 30;
 		
 		names = new ArrayList<String>();
 		messages = new ArrayList<String>();

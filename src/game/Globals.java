@@ -27,12 +27,14 @@ public class Globals {
 	public static Map map = null;
 	public static PlayerManager playerManager = null;
 	public static String desiredPlayerName = "";
+	public static CollisionManager collisionManager = null;
 	
 	private static boolean isServer = false;
 	
 	
 	public static void initGlobals(){		
 		playerManager = new PlayerManager();
+		collisionManager = new CollisionManager();
 		
 		// Load level from file
 		Globals.map = new Map("TestLevel.txt");

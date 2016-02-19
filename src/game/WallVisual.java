@@ -9,8 +9,8 @@ import java.awt.Image;
 public class WallVisual extends MapEntity {
 	
 	public WallVisual(int xc, int yc){
-		x = Tile.SIZE * xc;
-		y = Tile.SIZE * yc;
+		x = Tile.SIZE * (xc + .5);
+		y = Tile.SIZE * (yc + .5);
 	}
 	
 	public void update(double dt){
@@ -19,7 +19,7 @@ public class WallVisual extends MapEntity {
 	
 	public void draw(Graphics2D g){
 		Image tileset = Globals.map.tileset;
-		g.drawImage(tileset, (int) x, (int) (y-32), (int)(x + 64), (int)(y + 64), 
+		g.drawImage(tileset, (int) x-32, (int) (y-64), (int)(x + 32), (int)(y + 32), 
 					64 * 5, 32, 64 * 6, 64 * 2, null);
 	}	
 }

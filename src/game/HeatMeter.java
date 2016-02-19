@@ -12,8 +12,6 @@ public class HeatMeter extends Meter {
 	public HeatMeter(){
 		x = 10;
 		y = Game.HEIGHT - 30;
-		width = 150;
-		height = 20;
 	}
 	
 	private FlameThrower findFt(){
