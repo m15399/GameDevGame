@@ -3,7 +3,6 @@ package game;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-import engine.Input;
 import game.CollisionManager.Collider;
 import utils.Utils;
 
@@ -22,29 +21,27 @@ public class BowAndArrow extends Weapon {
 	}
 	
 	public void update(double dt){
-		if(player == Globals.player){
-			if(Input.isRightMouseDown()){
-				// Charge up while right mouse down
-				charge = Utils.clamp(charge + CHARGE_RATE * dt, 0, 1);
-				player.setSpeedMul(1 - SLOW_PCT/100);
-				
-			} else {
-				
-				double minCharge = .25;
-				if(charge > minCharge){
-					// fire
-					new Arrow(player.x, player.y, player.getAimAngle(), (charge-minCharge)/(1-minCharge));
-				}
-				
-				// If we charged at all, we set player's speed 
-				if(charge != 0){
-					player.setSpeedMul(1);					
-				}
-				
-				charge = 0;
+		if(input){
+			// Charge up while right mouse down
+			charge = Utils.clamp(charge + CHARGE_RATE * dt, 0, 1);
+			player.setSpeedMul(1 - SLOW_PCT/100);
+			
+		} else {
+			
+			double minCharge = .25;
+			if(charge > minCharge){
+				// fire
+				new Arrow(player.x, player.y, player.getAimAngle(), (charge-minCharge)/(1-minCharge));
 			}
 			
+			// If we charged at all, we set player's speed 
+			if(charge != 0){
+				player.setSpeedMul(1);					
+			}
+			
+			charge = 0;
 		}
+		
 	}
 	
 	public double getChargePct() {
@@ -59,7 +56,8 @@ public class BowAndArrow extends Weapon {
 	
 	private class Arrow extends MapEntity implements Collider {
 
-		private double angleRad, vx, vy, speed, life;
+		private double angleRad, vx, vy, speed, flyTime = .8, stuckTime = 1;
+		private boolean stuck = false;
 		
 		public Arrow(double x, double y, double angle, double power){			
 			this.x = x;
@@ -70,11 +68,10 @@ public class BowAndArrow extends Weapon {
 			vx = Math.cos(angleRad);
 			vy = Math.sin(angleRad);
 			
-			double maxPower = 600;
+			double maxPower = 700;
 			double minPower = 250;
 			
 			speed = power * (maxPower-minPower) + minPower;
-			life = .8;
 			
 			fly(30);
 		}
@@ -96,14 +93,27 @@ public class BowAndArrow extends Weapon {
 		public void update(double dt){
 			super.update(dt);
 			
-			life -= dt;
-			if(life < 0){
-				destroy();
-			} else {
-				Globals.collisionManager.addColliderForFrame(this);				
+			Map map = Globals.map;
+			if(map.isWallAt(x, y)){
+				stuck = true;
 			}
 			
-			fly(speed*dt);
+			if(!stuck){
+				flyTime -= dt;
+				if(flyTime < 0){
+					stuck = true;
+				} else {
+					Globals.collisionManager.addColliderForFrame(this);				
+				}				
+			} else {
+				stuckTime -= dt;
+				if(stuckTime < 0){
+					destroy();
+				}
+			}
+
+			if(!stuck)
+				fly(speed*dt);
 		}
 		
 		public void draw(Graphics2D g){			

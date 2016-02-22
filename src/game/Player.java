@@ -50,8 +50,10 @@ public class Player extends MapEntity {
 	private double fric = 10;
 	private double speedMul = 1;
 	
-	// Move inputs
-	private double inputX, inputY;
+	// Input
+	private PlayerInput playerInput = null;
+	protected double inputX, inputY, aimInput;
+	protected boolean fireInput, weaponInput, jumpInput;
 
 	// Velocity
 	private double vx, vy;
@@ -91,6 +93,8 @@ public class Player extends MapEntity {
 		dummy = false;
 		this.playerNumber = playerNumber;
 				
+		playerInput = new PlayerInput();
+		
 		firing = false;
 		aimAngle = 0;
 		
@@ -119,6 +123,7 @@ public class Player extends MapEntity {
 	
 	public void makeDummy(){
 		dummy = true;
+		playerInput = null;
 	}
 	
 	public boolean isDummy(){
@@ -245,12 +250,16 @@ public class Player extends MapEntity {
 	public void update(double dt) {
 		super.update(dt);
 		
+		if(playerInput != null)
+			playerInput.updatePlayer(this);
+		
 		updateFalling(dt);
 		updateWalkAnimation(dt);
 		updateMovement(dt);
 		updateJumping(dt);
 		checkCollisions(dt);
 		updateFlameThrower(dt);
+		updateWeapon(dt);
 		
 		
 		// Press 1 to test getting stuck in a wall
@@ -320,42 +329,18 @@ public class Player extends MapEntity {
 		walking = false;
 
 		if(!falling){
-			
-			// Key input, if applicable
-			if(!dummy){
-				double attemptInputX = 0;
-				double attemptInputY = 0;
-				
-				if (Input.isDown(KeyEvent.VK_A)){
-					attemptInputX += -1;
-				}
-				if (Input.isDown(KeyEvent.VK_D)){
-					attemptInputX += 1;
-				}
-				if (Input.isDown(KeyEvent.VK_W)){
-					attemptInputY += -1;
-				}
-				if (Input.isDown(KeyEvent.VK_S)){
-					attemptInputY += 1;
-				}
-				
-				// Update our inputX and inputY
-				// Factor in our speed multiplier at this point
-				inputX = attemptInputX * speedMul;
-				inputY = attemptInputY * speedMul;
-				
-			}
-			
 			// At this point inputX and inputY are either:
 			// 1. Player input, if we're the local player
 			// 2. What the server told us, if we're a dummy player
+
+			double moveX = inputX * speedMul;
+			double moveY = inputY * speedMul;
 			
-			if(inputX != 0 || inputY != 0){
+			if(moveX != 0 || moveY != 0){
 				walking = true;
-				vx += acc * inputX * dt;
-				vy += acc * inputY * dt;
+				vx += acc * moveX * dt;
+				vy += acc * moveY * dt;
 			}
-			
 		} 
 
 		// Cap velocity
@@ -389,13 +374,7 @@ public class Player extends MapEntity {
 	
 	private void updateJumping(double dt){
 		
-		boolean wantsToJump = false;
-		
-		if(!dummy && Input.isPressed(KeyEvent.VK_SPACE)){
-			wantsToJump = true;
-		}
-		
-		if(!falling && !jumping && wantsToJump){
+		if(!falling && !jumping && jumpInput){
 			setJumping(true);
 		}
 		
@@ -471,21 +450,8 @@ public class Player extends MapEntity {
 	
 	private void updateFlameThrower(double dt){
 		
-		if(!dummy){
-			
-			// Take input from the player to update firing and aimAngle
-			
-			firing = false;
-			
-			Point mp = Input.getMouseLoc();
-			double xAim = mp.x - Game.WIDTH/2;
-			double yAim = mp.y - Game.HEIGHT/2 - FlameThrower.Y_OFFS;
-			aimAngle = Math.toDegrees(Math.atan2(-yAim, xAim));
-			
-			if(Input.isMouseDown() && !Input.isRightMouseDown()){
-				firing = true;
-			}
-		}
+		firing = fireInput;
+		aimAngle = aimInput;
 		
 		// Can't shoot if falling
 		if(firing && !falling){			
@@ -493,6 +459,16 @@ public class Player extends MapEntity {
 			flameThrower.setFiring(true);
 		} else {
 			flameThrower.setFiring(false);
+		}
+	}
+	
+	private void updateWeapon(double dt){
+		if(currWeapon != null){
+			if(falling){
+				currWeapon.input = false;
+			} else {
+				currWeapon.input = weaponInput;				
+			}
 		}
 	}
 

@@ -18,6 +18,8 @@ public abstract class Weapon extends GameObject {
 	
 	public Player player;
 	
+	protected boolean input = false;
+	
 	public Weapon(Player player){
 		if(getWeaponId() < 0){
 			Utils.fatal("Couldn't find class: " + getClass() + 
@@ -28,6 +30,10 @@ public abstract class Weapon extends GameObject {
 	
 	public int getWeaponId(){
 		return weaponClassToIntMapper.getClassNumber(getClass());
+	}
+	
+	public void setInput(boolean input){
+		this.input = input;
 	}
 	
 	public abstract double getChargePct();

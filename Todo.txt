@@ -24,7 +24,8 @@ Code:
 
 Milestone 2 features:
 	Melee and ranged - pickup, use, respawn
-
+	Character sprite
+	Bigger map
 
 
 Weapons
@@ -36,12 +37,12 @@ Weapons
 		Server tells you when you picked up a weapon
 	Bow and arrow weapon
 		sync
-		die when hit wall
 	Sword
 		120 degree arc in mouse direction
 		meter shows cooldown
 	weapon info - 1 byte?
 		type - 4 bits, charge amount/state - 4 bits 
+
 
 
 
