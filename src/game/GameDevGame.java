@@ -29,10 +29,10 @@ public class GameDevGame extends GameObject {
 	public static void main(String[] args) {
 		
 		// Set debug options here
-//		WINDOW_HEIGHT = .4;
-//		MUSIC = false;
-//		AUTO_JOIN_ADDR = "localhost";
-//		AUTO_JOIN_PORT = 8000;
+		WINDOW_HEIGHT = .4;
+		MUSIC = false;
+		AUTO_JOIN_ADDR = "localhost";
+		AUTO_JOIN_PORT = 8000;
 		
 		if(WINDOW_HEIGHT > 0)
 			Application.launch("GameDevGame", true, WINDOW_HEIGHT);
@@ -103,7 +103,7 @@ public class GameDevGame extends GameObject {
 		
 		// test pickups
 		new WeaponPickup(BowAndArrow.class, 64 * 2.5, 64 * 2.5);
-		new WeaponPickup(BowAndArrow.class, 64 * 0.5, 64 * 4.5);
+		new WeaponPickup(Sword.class, 64 * 0.5, 64 * 4.5);
 		
 		setDrawOrder(1000);
 		

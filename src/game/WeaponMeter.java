@@ -27,7 +27,7 @@ public class WeaponMeter extends Meter {
 	}
 	
 	public Color getColor(){
-		return Color.cyan;
+		return new Color(100, 200, 255);
 	}
 	
 	public String getText(){

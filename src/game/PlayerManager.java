@@ -1,5 +1,6 @@
 package game;
 
+import java.util.Collection;
 import java.util.HashMap;
 
 import utils.Observer;
@@ -53,6 +54,10 @@ public class PlayerManager extends GameObject {
 
 		// Send the update to the Player
 		p.recieveUpdateFromServer(msg);
+	}
+	
+	public Collection<Player> getPlayers(){
+		return players.values();
 	}
 	
 	public void addPlayer(Player p){

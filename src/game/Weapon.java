@@ -10,6 +10,7 @@ public abstract class Weapon extends GameObject {
 	
 	static {
 		registerClass(BowAndArrow.class);
+		registerClass(Sword.class);
 	}
 	
 	private static void registerClass(Class<? extends Weapon> weaponClass){

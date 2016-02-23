@@ -1,6 +1,7 @@
 package game;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 import engine.GameObject;
 
@@ -45,11 +46,12 @@ public class CollisionManager extends GameObject {
 	
 	public void update(double dt){
 		
-		// For now, just check for collisions on the local player
-		
-		Player localPlayer = Globals.player;
-		if(localPlayer != null){
-			checkForPlayerCollisions(localPlayer);
+		// Check all players for collisions 
+		if(Globals.playerManager != null){
+			Collection<Player> players = Globals.playerManager.getPlayers();
+			for(Player p : players){
+				checkForPlayerCollisions(p);
+			}			
 		}
 		
 		collidersForFrame.clear();

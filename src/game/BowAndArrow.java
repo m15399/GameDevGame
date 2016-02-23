@@ -44,6 +44,10 @@ public class BowAndArrow extends Weapon {
 		
 	}
 	
+	public void onDestroy(){
+		player.setSpeedMul(1);
+	}
+	
 	public double getChargePct() {
 		return charge;
 	}

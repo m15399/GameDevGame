@@ -30,15 +30,16 @@ public class WeaponPickup extends MapEntity implements Collider {
 		}
 	}
 	
-	private static final HashMap<Class<? extends Weapon>, WeaponData> imageMap;
+	private static final HashMap<Class<? extends Weapon>, WeaponData> weaponDataMap;
 	static {
-		imageMap = new HashMap<Class<? extends Weapon>, WeaponData>();
+		weaponDataMap = new HashMap<Class<? extends Weapon>, WeaponData>();
 		
 		//
 		// Put pickup descriptions here:
 		// (fill the map of: Class -> WeaponData)
 		//
-		imageMap.put(BowAndArrow.class, new WeaponData("pickup_bow.png", 10));
+		weaponDataMap.put(BowAndArrow.class, new WeaponData("pickup_bow.png", 10));
+		weaponDataMap.put(Sword.class, new WeaponData("pickup_sword.png", 10));
 	}
 	
 	
@@ -55,16 +56,14 @@ public class WeaponPickup extends MapEntity implements Collider {
 	
 	
 	public WeaponPickup(Class<? extends Weapon> weaponClass, double x, double y){
-		WeaponData data = imageMap.get(weaponClass);
+		WeaponData data = weaponDataMap.get(weaponClass);
 		if(data == null){
 			Utils.fatal("Unable to create pickup - no WeaponData was specified for: " + weaponClass);
 		}
-		
 		imageFile = data.imageFileName;
 		respawnTime = data.respawnTime;
 		
 		this.weaponClass = weaponClass;
-		
 		this.x = x;
 		this.y = y;
 	}
