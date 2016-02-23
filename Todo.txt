@@ -30,10 +30,6 @@ Milestone 2 features:
 
 Weapons
 	Pick up from ground
-		Spawning
-			Set locations periodically
-			Each weapon spawn has a respawn time based on type
-				e.g. rocket launchers take a long time to spawn
 		Server tells you when you picked up a weapon
 	Bow and arrow weapon
 		sync

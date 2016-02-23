@@ -88,7 +88,7 @@ public class Player extends MapEntity {
 	public Player(short playerNumber){
 				
 		flameThrower = new FlameThrower(this);
-		currWeapon = new BowAndArrow(this);
+		setWeapon(null);
 		
 		dummy = false;
 		this.playerNumber = playerNumber;
@@ -103,6 +103,12 @@ public class Player extends MapEntity {
 		setName("");
 		
 		Globals.playerManager.addPlayer(this);
+	}
+	
+	public void setWeapon(Weapon wep){
+		if(currWeapon != null)
+			currWeapon.destroy();
+		currWeapon = wep;
 	}
 	
 	public void setName(String theName){
@@ -173,6 +179,8 @@ public class Player extends MapEntity {
 		setFalling(false);
 		
 		setJumping(false);
+		
+		setWeapon(null);
 		
 		walking = false;
 		walkTime = 0;

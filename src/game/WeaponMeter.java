@@ -33,6 +33,9 @@ public class WeaponMeter extends Meter {
 	public String getText(){
 		// Show the weapon's name
 		Weapon w = findWeapon();
-		return w.getName();
+		if(w != null)
+			return w.getName();
+		else
+			return "";
 	}
 }

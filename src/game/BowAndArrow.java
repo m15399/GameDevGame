@@ -69,7 +69,7 @@ public class BowAndArrow extends Weapon {
 			vy = Math.sin(angleRad);
 			
 			double maxPower = 700;
-			double minPower = 250;
+			double minPower = 350;
 			
 			speed = power * (maxPower-minPower) + minPower;
 			
@@ -94,14 +94,20 @@ public class BowAndArrow extends Weapon {
 			super.update(dt);
 			
 			Map map = Globals.map;
+			
+			// Stick in walls
 			if(map.isWallAt(x, y)){
 				stuck = true;
 			}
 			
 			if(!stuck){
+				
+				// Stick in ground
 				flyTime -= dt;
 				if(flyTime < 0){
 					stuck = true;
+					if(!map.isFloorAt(x, y)) // don't stick in middair
+						destroy();
 				} else {
 					Globals.collisionManager.addColliderForFrame(this);				
 				}				

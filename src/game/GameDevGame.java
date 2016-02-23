@@ -101,6 +101,10 @@ public class GameDevGame extends GameObject {
 		new HeatMeter();
 		new WeaponMeter();
 		
+		// test pickups
+		new WeaponPickup(BowAndArrow.class, 64 * 2.5, 64 * 2.5);
+		new WeaponPickup(BowAndArrow.class, 64 * 0.5, 64 * 4.5);
+		
 		setDrawOrder(1000);
 		
 		new Chat();
