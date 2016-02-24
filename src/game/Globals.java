@@ -49,6 +49,7 @@ public class Globals {
 		isServer = true;
 		
 		playerManager = new PlayerManager();
+		collisionManager = new CollisionManager();
 
 		Globals.map = new Map("TestLevel.txt");
 	}

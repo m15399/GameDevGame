@@ -60,7 +60,7 @@ public class Tile extends Entity {
 		tileFire = null;
 		
 		shouldRespawn = false;
-				
+		
 		char c = token.charAt(0);
 		switch (c) {
 		case '1':
@@ -69,6 +69,14 @@ public class Tile extends Entity {
 			break;
 		case '2':
 			setType(Type.FLOOR_UNBURNABLE);
+			break;
+		case 'S':
+			setType(Type.FLOOR_UNBURNABLE);
+			new WeaponPickup(Sword.class, x + SIZE/2, y + SIZE/2);
+			break;
+		case 'B':
+			setType(Type.FLOOR_UNBURNABLE);
+			new WeaponPickup(BowAndArrow.class, x + SIZE/2, y + SIZE/2);
 			break;
 		case 'W':
 			setType(Type.WALL);

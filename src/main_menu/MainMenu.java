@@ -6,6 +6,7 @@ import utils.Observer;
 import engine.Game;
 import engine.GameObject;
 import engine.Input;
+import engine.Sound;
 import game.GameDevGame;
 import game.Globals;
 
@@ -63,6 +64,7 @@ public class MainMenu extends GameObject {
 				buttonHeight, new Observer() {
 					public void notify(Object arg) {
 						// Destroy everything and start an online game
+						Sound.playEffect("select.wav");
 						GameObject.destroyAllObjects();
 						new GameDevGame();
 					}
@@ -78,6 +80,8 @@ public class MainMenu extends GameObject {
 	}
 	
 	private void join(){
+		Sound.playEffect("select.wav");
+		
 		String field = addressField.getText();
 		int semi = field.indexOf(':');
 		if(semi > 0 && semi != field.length()-1){

@@ -21,6 +21,7 @@ import network.TileUpdatesMessage;
 
 import engine.Application;
 import engine.GameObject;
+import engine.Sound;
 import game.Globals;
 import game.Tile;
 
@@ -44,12 +45,15 @@ public class Server {
 		// Launch a server log window 
 		new Logger(launchGui, createLogFile);
 
+		Sound.soundEnabled = false;
+		
 		// Launch the game engine
 		Application.launch("Server Monitor", launchGui, .4);
 		Application.gameFrame.setLocation(100, 350);
 		
 		// Start server
 		Server.initServer(8000);
+		
 	}
 	
 	

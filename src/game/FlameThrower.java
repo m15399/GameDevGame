@@ -3,9 +3,12 @@ package game;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
+import javax.sound.sampled.Clip;
+
 import utils.Utils;
 
 import engine.Game;
+import engine.Sound;
 
 /**
  * Shoots flames.
@@ -41,6 +44,8 @@ public class FlameThrower extends Emitter {
 	private double overheatTime;
 	private double heat; 
 	
+	private Clip soundEffect = null;
+	
 	public FlameThrower(Player parent){
 		this.parent = parent;
 		xo = 0;
@@ -64,11 +69,23 @@ public class FlameThrower extends Emitter {
 		return overheatTime != 0;
 	}
 	
+	private void stopSoundEffect(){
+		if(soundEffect != null){
+			soundEffect.stop();
+			soundEffect = null;
+		}
+	}
+	
 	public void setFiring(boolean b){
-		if(b && overheatTime == 0)
+		if(b && !getEnabled() && overheatTime == 0){
+			stopSoundEffect();
+			if(!parent.isDummy())
+				soundEffect = Sound.startLoop("flamethrower.wav");
 			enable();
-		else
+		} else if(!b && getEnabled()){
+			stopSoundEffect();
 			disable();
+		}
 	}
 	
 	public void emitParticle(){
@@ -97,7 +114,7 @@ public class FlameThrower extends Emitter {
 			if(heat >= 1){
 				heat = 1;
 				overheatTime = OVERHEAT_DURATION; 
-				disable();
+				setFiring(false);
 			}
 		} else {
 			// Cool down
@@ -114,6 +131,10 @@ public class FlameThrower extends Emitter {
 					overheatTime = 0;
 			}
 		}
+	}
+	
+	public void onDestroy(){
+		stopSoundEffect();
 	}
 	
 	/**

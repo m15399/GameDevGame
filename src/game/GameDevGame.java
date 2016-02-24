@@ -3,8 +3,6 @@ package game;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-import javax.sound.sampled.Clip;
-
 import utils.Observer;
 import utils.Utils;
 
@@ -29,10 +27,11 @@ public class GameDevGame extends GameObject {
 	public static void main(String[] args) {
 		
 		// Set debug options here
-		WINDOW_HEIGHT = .4;
-		MUSIC = false;
-		AUTO_JOIN_ADDR = "localhost";
-		AUTO_JOIN_PORT = 8000;
+//		WINDOW_HEIGHT = .4;
+//		MUSIC = false;
+//		Sound.soundEnabled = false;
+//		AUTO_JOIN_ADDR = "localhost";
+//		AUTO_JOIN_PORT = 8000;
 		
 		if(WINDOW_HEIGHT > 0)
 			Application.launch("GameDevGame", true, WINDOW_HEIGHT);
@@ -87,9 +86,7 @@ public class GameDevGame extends GameObject {
 	public void onStart(){
 		// Play some music
 		if(MUSIC){
-			Clip c = Resources.getSound("test.wav");
-			Utils.setClipVolume(c, -5f);
-			c.loop(Clip.LOOP_CONTINUOUSLY);			
+			Sound.loopMusic("test.wav", -5);
 		}
 		
 		// Create globals like map, player
@@ -100,10 +97,6 @@ public class GameDevGame extends GameObject {
 		
 		new HeatMeter();
 		new WeaponMeter();
-		
-		// test pickups
-		new WeaponPickup(BowAndArrow.class, 64 * 2.5, 64 * 2.5);
-		new WeaponPickup(Sword.class, 64 * 0.5, 64 * 4.5);
 		
 		setDrawOrder(1000);
 		

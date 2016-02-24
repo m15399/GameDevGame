@@ -290,6 +290,9 @@ public class Player extends MapEntity {
 			falling = true;
 			fallTime = 0;
 			setDrawOrder(0);
+			
+			if(!dummy)
+				Sound.playEffect("fall.wav");
 		}
 	}
 	
@@ -377,6 +380,9 @@ public class Player extends MapEntity {
 			// start jumping
 			jumping = true;
 			jumpTime = 0;
+			
+			if(!dummy)
+				Sound.playEffect("jump.wav");
 		}
 	}
 	
@@ -495,7 +501,7 @@ public class Player extends MapEntity {
 		// Draw shadow
 		g.setColor(new Color(0, 0, 0, 100));
 		int shadowHeight = height/4;
-		int shadowWidth = width + 8;
+		int shadowWidth = width + 0; // 8
 		g.fillRect((int) (-shadowWidth / 2), (int) (width/2-shadowHeight/2), shadowWidth, shadowHeight);
 		
 		// Draw player
@@ -510,10 +516,14 @@ public class Player extends MapEntity {
 			yo = fofx * -STEP_HEIGHT;
 		}
 		
-		g.setColor(Color.white);
-		int left = (int)(-width/2);
-		int top = (int) (-width / 2 - (height - width) + yo);
-		g.fillRect(left, top, width, height);
+		// Draw a white box
+//		g.setColor(Color.white);
+//		int left = (int)(-width/2);
+//		int top = (int) (-width / 2 - (height - width) + yo);
+//		g.fillRect(left, top, width, height);
+		
+		// Draw player sprite
+		Utils.drawImage(g, "player.png", 0, yo-16, 0, .5);
 		
 		g.setColor(Color.white);
 		g.setFont( new Font("Arial", Font.BOLD, 12) );

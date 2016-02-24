@@ -24,14 +24,11 @@ Code:
 
 Milestone 2 features:
 	Melee and ranged - pickup, use, respawn
-	Character sprite
 	Bigger map
-	Add sound effects
 
 
 Weapons
-	Pick up from ground
-		Server tells you when you picked up a weapon
+	Server tells you when you picked up a weapon, when you get hit
 	Bow and arrow weapon
 		sync
 	Sword
@@ -66,6 +63,10 @@ Improve Networking:
 		GreetingMessage
 			name
 
+Improve sound:
+	Be able to play multiple copies of sound effect
+	Run in another thread to prevent skips
+	Set fx volume based on location
 
 
 Sources of complexity:
@@ -118,6 +119,7 @@ Music system
 Refactor player - PlayerMovement, PlayerController, etc
 Server handles all collisions
 Always draw player names on top
+Split game into more packages
 
 
 

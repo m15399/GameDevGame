@@ -65,7 +65,7 @@ public class BowAndArrow extends Weapon {
 		
 		public Arrow(double x, double y, double angle, double power){			
 			this.x = x;
-			this.y = y;
+			this.y = y - 10; // -10 to make it shoot from his arm, not his butt
 						
 			// We use -angle because our y axis is flipped (down is positive)
 			angleRad = Math.toRadians(-angle);
