@@ -49,7 +49,8 @@ public class Server {
 		
 		// Launch the game engine
 		Application.launch("Server Monitor", launchGui, .4);
-		Application.gameFrame.setLocation(100, 350);
+		if(Application.gameFrame != null)
+			Application.gameFrame.setLocation(100, 350);
 		
 		// Start server
 		Server.initServer(8000);

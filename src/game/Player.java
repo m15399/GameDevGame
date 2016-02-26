@@ -244,8 +244,8 @@ public class Player extends MapEntity {
 		vy = msg.vy;
 		inputX = msg.inputX;
 		inputY = msg.inputY;
-		aimAngle = msg.angle;
-		firing = msg.firing;
+		aimInput = msg.angle;
+		fireInput = msg.firing;
 		
 		setFalling(msg.falling);
 		setJumping(msg.jumping);

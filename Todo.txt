@@ -28,7 +28,7 @@ Milestone 2 features:
 
 
 Weapons
-	Server tells you when you picked up a weapon, when you get hit
+	Server tells you when you picked up a weapon, when you get hit(?)
 	Bow and arrow weapon
 		sync
 	Sword
