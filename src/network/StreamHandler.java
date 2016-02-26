@@ -1,5 +1,7 @@
 package network;
 
+import network.message.NetworkMessage;
+
 /**
  * Abstract base class for handling streams
  */

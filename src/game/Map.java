@@ -11,8 +11,8 @@ import utils.Observer;
 import utils.Utils;
 
 import network.Client;
-import network.MapStateMessage;
-import network.TileUpdatesMessage;
+import network.message.MapStateMessage;
+import network.message.TileUpdatesMessage;
 
 import engine.*;
 import game.Tile.Type;
@@ -193,9 +193,9 @@ public class Map extends GameObject {
 		
 		// If any changes to send, send them
 		if(updateMsg.xCoords.size() > 0){
-			if(Globals.isOnlineClient())
+			if(!Globals.isServer())
 				Client.sendMessage(updateMsg);
-			else if(Globals.isServer())
+			else
 				Server.forwardToAll(updateMsg);
 		}
 	}

@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import network.message.NetworkMessage;
+
 import utils.Observer;
 import utils.Utils;
 

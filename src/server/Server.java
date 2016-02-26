@@ -9,15 +9,15 @@ import java.util.ArrayList;
 import utils.Observer;
 import utils.Utils;
 
-import network.ChatMessage;
 import network.DataTranslator;
-import network.MapStateMessage;
-import network.NetworkMessage;
 import network.NetworkMessagePublisher;
-import network.PlayerDisconnectMessage;
-import network.PlayerUpdateMessage;
-import network.ServerGreetingMessage;
-import network.TileUpdatesMessage;
+import network.message.ChatMessage;
+import network.message.MapStateMessage;
+import network.message.NetworkMessage;
+import network.message.PlayerDisconnectMessage;
+import network.message.PlayerUpdateMessage;
+import network.message.ServerGreetingMessage;
+import network.message.TileUpdatesMessage;
 
 import engine.Application;
 import engine.GameObject;

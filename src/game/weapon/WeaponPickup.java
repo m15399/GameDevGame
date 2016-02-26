@@ -1,4 +1,4 @@
-package game;
+package game.weapon;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -8,6 +8,9 @@ import java.util.HashMap;
 import utils.Utils;
 
 import engine.Game;
+import game.Globals;
+import game.MapEntity;
+import game.Player;
 import game.CollisionManager.Collider;
 
 /**

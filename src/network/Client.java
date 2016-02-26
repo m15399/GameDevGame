@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import network.message.NetworkMessage;
+
 import utils.Utils;
 
 

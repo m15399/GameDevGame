@@ -1,8 +1,9 @@
-package game;
+package game.weapon;
 
 import utils.ClassToIntMapper;
 import utils.Utils;
 import engine.GameObject;
+import game.Player;
 
 public abstract class Weapon extends GameObject {
 	

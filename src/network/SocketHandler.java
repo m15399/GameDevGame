@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
+import network.message.NetworkMessage;
+
 import utils.Observer;
 import utils.Utils;
 

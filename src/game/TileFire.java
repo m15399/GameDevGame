@@ -213,13 +213,13 @@ public class TileFire extends Entity {
 		
 		boolean shouldUpdate = false;
 		
-		if(Globals.isOnlineClient()){
+		if(!Globals.isAuthoritative()){
 			if(localSection > networkSection){
 				shouldUpdate = true;
 			} else if (localSection < networkSection){
 				Utils.err("Player thinks tile is cooler than network, this shouldn't be possible??");
 			} 
-		} else if(Globals.isServer()){
+		} else {
 			if(localSection != networkSection)
 				shouldUpdate = true;
 		}
@@ -243,7 +243,7 @@ public class TileFire extends Entity {
 	 * Network is updating us, set our current heat and our networkHeat
 	 */
 	public void networkSetsHeat(double heatVal){
-		if(Globals.isOnlineClient()){
+		if(!Globals.isAuthoritative()){
 			// If we're the local player and we have heated the tile up
 			// recently, favor our version
 			if(heatVal > getHeat() || Game.time - lastHeatAppliedTime > 1.5)
@@ -264,7 +264,7 @@ public class TileFire extends Entity {
 	}
 	
 	public void update(double dt){
-		if(Globals.isOnlineClient())
+		if(!Globals.isAuthoritative())
 			return;
 		
 		// Passive heat gain/loss

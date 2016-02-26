@@ -5,6 +5,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import network.message.NetworkMessage;
+
 /**
  * Uses the DataTranslator to send and interpret NetworkMessage objects over a 
  * DataStream (stream of bytes, floats, UTF strings, etc)

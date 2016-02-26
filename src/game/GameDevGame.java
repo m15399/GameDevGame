@@ -6,12 +6,15 @@ import java.awt.Graphics2D;
 import utils.Observer;
 import utils.Utils;
 
-import main_menu.MainMenu;
 import network.Client;
-import network.ServerGreetingMessage;
-import network.TileUpdatesMessage;
+import network.message.ServerGreetingMessage;
+import network.message.TileUpdatesMessage;
 
 import engine.*;
+import gui.Chat;
+import gui.HeatMeter;
+import gui.MainMenu;
+import gui.WeaponMeter;
 
 public class GameDevGame extends GameObject {
 

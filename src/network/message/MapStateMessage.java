@@ -1,4 +1,4 @@
-package network;
+package network.message;
 
 import game.Globals;
 import game.Tile;

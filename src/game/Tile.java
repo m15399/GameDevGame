@@ -3,10 +3,13 @@ package game;
 import java.awt.Graphics2D;
 import java.awt.Image;
 
-import network.MapStateMessage;
-import network.TileUpdatesMessage;
+import network.message.MapStateMessage;
+import network.message.TileUpdatesMessage;
 
 import engine.Entity;
+import game.weapon.BowAndArrow;
+import game.weapon.Sword;
+import game.weapon.WeaponPickup;
 
 /**
  * Represents a single Tile on the map. Holds its Tile type and determines how
@@ -243,7 +246,7 @@ public class Tile extends Entity {
 	public void update(double dt){
 		// Respawn timer
 		// We go from empty -> respawning -> floor
-		if(shouldRespawn && !Globals.isOnlineClient()){
+		if(shouldRespawn && Globals.isAuthoritative()){
 			if(type == Type.EMPTY){
 				respawnTime -= dt;
 				if(respawnTime <= RESPAWN_GRAPHIC_TIME)

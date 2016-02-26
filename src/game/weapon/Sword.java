@@ -1,5 +1,8 @@
-package game;
+package game.weapon;
 
+import game.Globals;
+import game.MapEntity;
+import game.Player;
 import game.CollisionManager.Collider;
 
 import java.awt.Color;

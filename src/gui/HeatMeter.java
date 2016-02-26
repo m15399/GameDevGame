@@ -1,8 +1,11 @@
-package game;
+package gui;
 
 import java.awt.Color;
 
 import engine.Game;
+import game.FlameThrower;
+import game.Globals;
+import game.Player;
 
 /**
  * The player's heat/overheat indicator

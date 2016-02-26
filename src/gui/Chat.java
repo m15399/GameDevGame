@@ -1,4 +1,4 @@
-package game;
+package gui;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -10,12 +10,13 @@ import java.util.ArrayList;
 import utils.Observer;
 import utils.Utils;
 
-import network.ChatMessage;
 import network.Client;
+import network.message.ChatMessage;
 
 import engine.Entity;
 import engine.Game;
 import engine.Input;
+import game.Globals;
 
 /** 
  * Chat display during game
@@ -94,7 +95,7 @@ public class Chat extends Entity {
 			if(ch == 10){ // Enter
 				// Send the message to the server
 				if(!currMessage.isEmpty()){
-					Client.sendMessage(new ChatMessage(Globals.player.getName(), currMessage));
+					Client.sendMessage(new ChatMessage(Globals.getPlayerName(), currMessage));
 				}
 				stopTypingMode();
 
@@ -140,7 +141,7 @@ public class Chat extends Entity {
 	}
 	
 	public void update(double dt){
-		if(!typing && Globals.isOnlineClient() && Input.isPressed(KeyEvent.VK_ENTER)){
+		if(!typing && Input.isPressed(KeyEvent.VK_ENTER)){
 			startTypingMode();
 		}
 		
@@ -178,7 +179,7 @@ public class Chat extends Entity {
 		// Draw the current message being typed
 		if(typing){
 			g.setColor(Color.white);
-			g.drawString(getDisplayString(Globals.player.getName(), currMessage), 0, names.size() * SPACING);			
+			g.drawString(getDisplayString(Globals.getPlayerName(), currMessage), 0, names.size() * SPACING);			
 		}
 		
 		g.setTransform(prev);

@@ -7,9 +7,10 @@ import java.awt.geom.AffineTransform;
 import utils.Utils;
 
 import network.Client;
-import network.PlayerUpdateMessage;
+import network.message.PlayerUpdateMessage;
 
 import engine.*;
+import game.weapon.Weapon;
 
 /**
  * Controls the player behavior. Note that it has two modes - regular and dummy mode.
@@ -479,9 +480,9 @@ public class Player extends MapEntity {
 	private void updateWeapon(double dt){
 		if(currWeapon != null){
 			if(falling){
-				currWeapon.input = false;
+				currWeapon.setInput(false);
 			} else {
-				currWeapon.input = weaponInput;				
+				currWeapon.setInput(weaponInput);
 			}
 		}
 	}

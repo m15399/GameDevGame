@@ -1,8 +1,12 @@
-package game;
+package gui;
 
 import java.awt.Color;
 
+
 import engine.Game;
+import game.Globals;
+import game.Player;
+import game.weapon.Weapon;
 
 public class WeaponMeter extends Meter {
 	

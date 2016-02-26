@@ -54,11 +54,15 @@ public class Globals {
 		Globals.map = new Map("TestLevel.txt");
 	}
 	
-	/**
-	 * Are we a client who is online?
-	 */
-	public static boolean isOnlineClient(){
-		return Client.isConnected();
+	public static String getPlayerName(){
+		if(!isServer)
+			return player.getName();
+		else
+			return "[Server]";
+	}
+	
+	public static boolean isAuthoritative(){
+		return isServer || !Client.isConnected();
 	}
 	
 	/**

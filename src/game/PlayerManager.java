@@ -5,8 +5,8 @@ import java.util.HashMap;
 
 import utils.Observer;
 
-import network.PlayerDisconnectMessage;
-import network.PlayerUpdateMessage;
+import network.message.PlayerDisconnectMessage;
+import network.message.PlayerUpdateMessage;
 import engine.GameObject;
 
 /**

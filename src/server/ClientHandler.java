@@ -4,8 +4,8 @@ import java.net.Socket;
 
 import utils.Observer;
 
-import network.NetworkMessage;
 import network.SocketHandler;
+import network.message.NetworkMessage;
 
 /**
  * Stores information about the client and handles messages from it
