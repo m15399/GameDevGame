@@ -2,6 +2,7 @@ package game;
 
 import java.awt.Point;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 
 import engine.Game;
 import engine.Input;
@@ -11,7 +12,74 @@ import engine.Input;
  */
 public class PlayerInput {
 	
-	protected void updatePlayer(Player player){
+	// Holds all inputs for player 
+	private class InputState {
+		public double x, y, aim;
+		public boolean fire, weapon, jump;
+		public double dt;
+		
+		public InputState(Player p, double dt){
+			copyFrom(p);
+			this.dt = dt;
+		}
+		
+		void copyFrom(Player player){
+			x = player.inputX;
+			y = player.inputY;
+			aim = player.aimInput;
+			fire = player.fireInput;
+			jump = player.jumpInput;
+			weapon = player.weaponInput;
+		}
+		
+		void copyTo(Player player){
+			player.inputX = x;
+			player.inputY = y;
+			player.aimInput = aim;
+			player.fireInput = fire;
+			player.weaponInput = weapon;
+			player.jumpInput = jump;
+		}
+	}
+	
+	private static ArrayList<InputState> prevInputs = new ArrayList<InputState>();
+	
+	protected void runInputs(Player player, double elapsed){
+		
+		// Figure out how many frames to "rewind"
+		// We should be doing a fixed time-step, but this works for now...
+		int startIndex = 0;
+		for(int i = prevInputs.size()-1; i >= 0; i--){
+			InputState prevInput = prevInputs.get(i);
+			elapsed -= prevInput.dt;
+			if(elapsed <= 0){
+				startIndex = i;
+				break;
+			}
+		}
+
+		// Store current input so we can restore it later
+		InputState currInput = new InputState(player, 0);
+		
+		// The first frame may have a smaller dt
+		InputState firstInput = prevInputs.get(startIndex);
+		firstInput.copyTo(player);
+		player.update(firstInput.dt + elapsed, true); // factor in remaining time
+		
+		// Run the needed frames
+		for(int i = startIndex+1; i < prevInputs.size(); i++){
+			InputState prevInput = prevInputs.get(i);
+			
+			prevInput.copyTo(player);
+			
+			player.update(prevInput.dt, true);
+		}
+		
+		// restore curr input
+		currInput.copyTo(player);
+	}
+	
+	protected void updatePlayer(Player player, double dt){
 		
 		// Movement 
 		double attemptInputX = 0;
@@ -37,7 +105,7 @@ public class PlayerInput {
 		
 		// Jumping
 		
-		if(Input.isPressed(KeyEvent.VK_SPACE)){
+		if(Input.isPressed(KeyEvent.VK_SPACE) && !player.isJumping()){
 			player.jumpInput = true;
 		} else {
 			player.jumpInput = false;
@@ -63,6 +131,12 @@ public class PlayerInput {
 		} else {
 			player.weaponInput = false;
 		}
+		
+		// Store current inputs to replay later
+		InputState state = new InputState(player, dt);
+		prevInputs.add(state);
+		
+		//TODO not inf size
 	}
 	
 }

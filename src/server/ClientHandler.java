@@ -25,6 +25,7 @@ public class ClientHandler {
 				wasDisconnected();
 			}
 		};
+		socketHandler.client = this;
 		new Thread(socketHandler).start();
 	}
 	
@@ -44,6 +45,6 @@ public class ClientHandler {
 	 * Send a message to the client
 	 */
 	public void sendMessage(NetworkMessage msg){
-		socketHandler.sendMessage(msg);
+		socketHandler.sendMessage(msg);			
 	}
 }

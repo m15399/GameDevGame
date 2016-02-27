@@ -119,7 +119,7 @@ public class WeaponPickup extends MapEntity implements Collider {
 		
 		// oscillates -1 to 1
 		double floatAmplitude = Math.sin(
-				(Game.time + floatOffset) * (Math.PI * 2) / FLOAT_PERIOD);
+				(Game.getTime() + floatOffset) * (Math.PI * 2) / FLOAT_PERIOD);
 		
 		// shadow
 		g.setColor(new Color(0, 0, 0, .4f));

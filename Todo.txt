@@ -36,7 +36,12 @@ Weapons
 	weapon info - 1 byte?
 		type - 4 bits, charge amount/state - 4 bits 
 
-
+DO ASAP
+	use InputState everywhere 
+	names not sent now
+	do better pinging/checking server time
+		http://www.mine-control.com/zack/timesync/timesync.html
+	check TODO's in code
 
 
 Improve Networking:

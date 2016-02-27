@@ -150,10 +150,10 @@ public class Tile extends Entity {
 	/**
 	 * Update our heat, but not the networkHeat
 	 */
-	public void localPlayerAddsHeat(double amt){
+	public void authoritativeAddsHeat(double amt){
 		// tileFire might be null if we are a wall/empty tile
 		if(tileFire != null){
-			tileFire.localPlayerAddsHeat(amt);
+			tileFire.authoritativeAddsHead(amt);
 		}
 	}
 	

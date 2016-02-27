@@ -1,12 +1,13 @@
 package game;
 
 import java.awt.*;
-import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
 
+import server.Server;
 import utils.Utils;
 
 import network.Client;
+import network.message.PlayerInputMessage;
 import network.message.PlayerUpdateMessage;
 
 import engine.*;
@@ -82,8 +83,9 @@ public class Player extends MapEntity {
 	// Network info
 	private short playerNumber;
 	private boolean dummy;
-	private PlayerUpdateMessage lastMessage;
-	private double lastMessageTime;
+	private PlayerUpdateMessage lastUpdateMessage;
+	private PlayerInputMessage lastInputMessage;
+	private double lastUpdateMessageTime;
 	
 	
 	public Player(short playerNumber){
@@ -99,7 +101,7 @@ public class Player extends MapEntity {
 		firing = false;
 		aimAngle = 0;
 		
-		lastMessage = null;
+		lastUpdateMessage = null;
 		
 		setName("");
 		
@@ -135,6 +137,10 @@ public class Player extends MapEntity {
 	
 	public boolean isDummy(){
 		return dummy;
+	}
+	
+	public boolean isJumping(){
+		return jumping;
 	}
 	
 	public boolean isFalling(){
@@ -195,29 +201,69 @@ public class Player extends MapEntity {
 		return currWeapon;
 	}
 	
+	private void sendInputsToServer(){
+		if(dummy)
+			return;
+		
+		PlayerInputMessage currMessage = new PlayerInputMessage(inputX, inputY, aimInput, 
+				fireInput, weaponInput, jumpInput);
+		
+		// Should we send an update to the server right now?
+		boolean shouldUpdate = (lastUpdateMessage == null || // first update
+				Game.getTime() - lastUpdateMessageTime > .5 || // has not updated recently
+				lastInputMessage.fire != currMessage.fire || // state changes...
+				lastInputMessage.jump != currMessage.jump ||
+				lastInputMessage.weapon != currMessage.weapon ||
+				lastInputMessage.x != currMessage.x ||
+				lastInputMessage.y != currMessage.y ||
+				Math.abs(Utils.angleDifference(lastInputMessage.aim, aimInput)) > 15);
+		
+		// Update the server
+		if(shouldUpdate){
+			
+			// Send our name every so often (not every update though)
+			// TODO - put this back in
+//			if(Math.random() < .2){
+//				currMessage.name = name;
+//			}
+			
+			Client.sendMessage(currMessage);
+			lastInputMessage = currMessage;
+		}
+	}
+	
+	public void receieveInputs(PlayerInputMessage inputs){
+		inputX = inputs.x;
+		inputY = inputs.y;
+		aimInput = inputs.aim;
+		fireInput = inputs.fire;
+		jumpInput = inputs.jump;
+		weaponInput = inputs.weapon;
+	}
+	
 	/**
 	 * Update the server about our current state
 	 */
-	private void sendUpdateToServer(){
-		// Dummy's don't update server
-		if(dummy)
-			return; 
+	private void sendUpdateFromServerToClients(){
+
+		if(!Globals.isServer()) // 
+			return;
 		
 		PlayerUpdateMessage currMessage = new PlayerUpdateMessage(playerNumber, x, y, vx, vy, 
-				inputX, inputY, aimAngle, firing && !flameThrower.isOverheating(), 
+				inputX, inputY, aimAngle, jumpTime, fallTime, firing && !flameThrower.isOverheating(), 
 				jumping, falling);
 		
-		// Should we send an update to the server right now?
-		boolean shouldUpdate = (lastMessage == null || // first update
-				Game.time - lastMessageTime > .5 || // has not updated recently
-				lastMessage.falling != currMessage.falling || // state changes...
-				lastMessage.firing != currMessage.firing ||
-				lastMessage.jumping != currMessage.jumping ||
-				lastMessage.inputX != currMessage.inputX ||
-				lastMessage.inputY != currMessage.inputY ||
-				Math.abs(Utils.angleDifference(lastMessage.angle, aimAngle)) > 15);
+		// Should we send an update right now?
+		boolean shouldUpdate = (lastUpdateMessage == null || // first update
+				Game.getTime() - lastUpdateMessageTime > .5 || // has not updated recently
+				lastUpdateMessage.falling != currMessage.falling || // state changes...
+				lastUpdateMessage.firing != currMessage.firing ||
+				lastUpdateMessage.jumping != currMessage.jumping ||
+				lastUpdateMessage.inputX != currMessage.inputX ||
+				lastUpdateMessage.inputY != currMessage.inputY ||
+				Math.abs(Utils.angleDifference(lastUpdateMessage.angle, aimAngle)) > 15);
 		
-		// Update the server
+
 		if(shouldUpdate){
 			
 			// Send our name every so often (not every update though)
@@ -225,9 +271,12 @@ public class Player extends MapEntity {
 				currMessage.name = name;
 			}
 			
-			Client.sendMessage(currMessage);
-			lastMessage = currMessage;
-			lastMessageTime = Game.time;
+			currMessage.time = Globals.getNetworkGameTime();
+			
+			Server.forwardToAll(currMessage);
+			
+			lastUpdateMessage = currMessage;
+			lastUpdateMessageTime = Game.getTime();
 		}
 	}
 
@@ -235,49 +284,71 @@ public class Player extends MapEntity {
 	 * Update this Player object to match the state we recieved from the server.
 	 */
 	public void recieveUpdateFromServer(PlayerUpdateMessage msg){
-		if(!isDummy()){
-			Utils.err("Recieved update about non-dummy player. Something's wrong here...");
-		}
-		
 		x = msg.x;
 		y = msg.y;
 		vx = msg.vx;
 		vy = msg.vy;
-		inputX = msg.inputX;
-		inputY = msg.inputY;
-		aimInput = msg.angle;
-		fireInput = msg.firing;
+		if(dummy){
+			inputX = msg.inputX;
+			inputY = msg.inputY;
+			aimInput = msg.angle;
+			fireInput = msg.firing;			
+		}
 		
 		setFalling(msg.falling);
 		setJumping(msg.jumping);
+		fallTime = msg.fallTime;
+		jumpTime = msg.jumpTime;
 		
 		if(msg.name.length() > 0){
 			setName(msg.name);
+		}
+		
+		/*
+		
+		This is a common technique in online games - what we're going to do
+		when we receive a state update about the local player is first update
+		the local player to match the server's state. Then we're going to re-
+		simulate any inputs that happened since the update was sent. If lag
+		isn't too bad, the player won't notice that his "real" (authoritative)
+		movement is happening somewhere else. 
+		
+		*/
+		if(playerInput != null){
+			double timeDif = Globals.getNetworkGameTime() - msg.time;
+			playerInput.runInputs(this, timeDif);
+		}
+		
+	}
+	
+	/**
+	 * "Rewinds" happen when we recieve an update about our position
+	 * from the server and need to replay recent inputs. While rewinding,
+	 * we don't want to modify certain things - mainly modify our position.
+	 */
+	public void update(double dt, boolean isRewind){
+		if(playerInput != null && !isRewind){
+			playerInput.updatePlayer(this, dt);
+			sendInputsToServer();
+		}
+		
+		updateMovement(dt);
+		checkCollisions(dt);
+		updateJumping(dt);
+		updateFalling(dt);
+		
+		if(!isRewind){
+			updateWalkAnimation(dt);
+			sendUpdateFromServerToClients();
+			updateFlameThrower(dt);
+			updateWeapon(dt);
 		}
 	}
 	
 	public void update(double dt) {
 		super.update(dt);
 		
-		if(playerInput != null)
-			playerInput.updatePlayer(this);
-		
-		updateFalling(dt);
-		updateWalkAnimation(dt);
-		updateMovement(dt);
-		updateJumping(dt);
-		checkCollisions(dt);
-		updateFlameThrower(dt);
-		updateWeapon(dt);
-		
-		
-		// Press 1 to test getting stuck in a wall
-		if (Globals.DEV_MODE && Input.isPressed(KeyEvent.VK_1)) {
-			x = 32 + 64 * 5;
-			y = 32;
-		}
-		
-		sendUpdateToServer();
+		update(dt, false);
 	}
 	
 	private void setFalling(boolean f){
@@ -308,7 +379,7 @@ public class Player extends MapEntity {
 			
 			// Done falling
 			if(fallTime >= FALL_DURATION){
-				if(!dummy)
+				if(Globals.isAuthoritative())
 					respawn();
 				else
 					fallTime = FALL_DURATION;
@@ -457,7 +528,7 @@ public class Player extends MapEntity {
 		y += pushY;
 
 		// Collision with floor
-		if(!dummy && !jumping){
+		if(!jumping){
 			if(!map.isOnFloor(x-floorRadius, y-floorRadius, floorRadius*2, floorRadius*2))
 				setFalling(true);
 		}

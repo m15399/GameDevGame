@@ -15,9 +15,7 @@ import network.message.ChatMessage;
 import network.message.MapStateMessage;
 import network.message.NetworkMessage;
 import network.message.PlayerDisconnectMessage;
-import network.message.PlayerUpdateMessage;
 import network.message.ServerGreetingMessage;
-import network.message.TileUpdatesMessage;
 
 import engine.Application;
 import engine.GameObject;
@@ -75,27 +73,6 @@ public class Server {
 		
 		handlers = new ArrayList<ClientHandler>();
 		
-		// Forward PlayerUpdateMessages to everyone except that player
-		serverPub.subscribe(PlayerUpdateMessage.class, new Observer(){
-			public void notify(Object arg){
-				PlayerUpdateMessage msg = (PlayerUpdateMessage) arg;				
-				
-				if(Globals.playerManager != null)
-					Globals.playerManager.processUpdateMessage(msg);
-				
-				if(msg.playerNumber >= 0){
-					forwardToAll(msg, msg.playerNumber);
-				}
-			}
-		});
-		
-		// Update our map when players heat up tiles
-		serverPub.subscribe(TileUpdatesMessage.class, new Observer(){
-			public void notify(Object arg){
-				TileUpdatesMessage msg = (TileUpdatesMessage) arg;
-				Globals.map.updateTileStates(msg);
-			}
-		});
 		
 		serverPub.subscribe(ChatMessage.class, new Observer(){
 			public void notify(Object arg){
@@ -205,7 +182,7 @@ public class Server {
 			setDrawOrder(-1000);
 			
 			// Start the game simulation
-			Globals.initGlobalsForServer();
+			Globals.initGlobals(true);
 		}
 		
 		public void draw(Graphics2D g){

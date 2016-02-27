@@ -1,5 +1,7 @@
 package network;
 
+import game.GameDevGame;
+
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -32,14 +34,38 @@ public class NetworkMessagePublisher {
 		forwardImmediately = false;
 	}
 	
+	private synchronized void addMessage(NetworkMessage msg){
+		queuedMessages.add(msg);
+	}
+	
 	/**
 	 * Take the message and forward it to subscribers
 	 */
-	public synchronized void takeMessage(NetworkMessage message){
-		if(forwardImmediately)
-			forward(message);
-		else
-			queuedMessages.add(message);
+	public synchronized void takeMessage(final NetworkMessage message){
+		
+		if(GameDevGame.INDUCE_LAG != 0){
+			new Thread(new Runnable(){
+				public void run() {
+					try {
+						Thread.sleep(GameDevGame.INDUCE_LAG);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+					if(forwardImmediately)
+						forward(message);
+					else
+						addMessage(message);
+				}
+			}).start();
+		} else {
+			if(forwardImmediately)
+				forward(message);
+			else
+				queuedMessages.add(message);	
+		}		
+		
 	}
 
 	/**
@@ -50,7 +76,7 @@ public class NetworkMessagePublisher {
 		subscribers.put(theClass, observer);
 	}
 	
-	private void forward(NetworkMessage msg){
+	private synchronized void forward(NetworkMessage msg){
 		Observer observer = subscribers.get(msg.getClass());
 		if(observer == null){
 			Utils.err("No reciever for message: " + msg + 

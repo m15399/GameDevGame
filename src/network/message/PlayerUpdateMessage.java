@@ -18,13 +18,17 @@ public class PlayerUpdateMessage extends NetworkMessage {
 	public double vx, vy;
 	public double inputX, inputY;
 	public double angle;
+	public double jumpTime, fallTime;
+	public double time = -1;
 	public boolean firing, jumping, falling;
 	// weapon info
+	
 	
 	public PlayerUpdateMessage(){}
 	
 	public PlayerUpdateMessage(short playerNumber, double x, double y, double vx, double vy,
-			double inputX, double inputY, double angle, boolean firing, boolean jumping, boolean falling){
+			double inputX, double inputY, double angle, double jumpTime, double fallTime,
+			boolean firing, boolean jumping, boolean falling){
 		this.playerNumber = playerNumber;
 		this.x = x;
 		this.y = y;
@@ -33,10 +37,13 @@ public class PlayerUpdateMessage extends NetworkMessage {
 		this.inputX = inputX;
 		this.inputY = inputY;
 		this.angle = angle;
+		this.jumpTime = jumpTime;
+		this.fallTime = fallTime;
 		this.firing = firing;
 		this.jumping = jumping;
 		this.falling = falling;
 		name = "";
+		
 	}
 	
 	public String toString(){
@@ -74,6 +81,11 @@ public class PlayerUpdateMessage extends NetworkMessage {
 		
 		byte angleByte = (byte)(angleAndData & 0x1F);
 		angle = Utils.unpackRange(angleByte, -180, 180, 5);
+		
+		jumpTime = input.readFloat();
+		fallTime = input.readFloat();
+		
+		time = input.readDouble();
 	}
 
 	public void writeData(DataOutputStream output) throws IOException {
@@ -93,5 +105,10 @@ public class PlayerUpdateMessage extends NetworkMessage {
 		byte fallBit = (byte)(falling ? 1 << 5 : 0);
 		byte angleAndData = (byte)(angle5bit | fireBit | jumpBit | fallBit);
 		output.writeByte(angleAndData);
+		
+		output.writeFloat((float) jumpTime);
+		output.writeFloat((float) fallTime);
+		
+		output.writeDouble(time);
 	}
 }

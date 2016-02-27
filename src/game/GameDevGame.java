@@ -7,6 +7,7 @@ import utils.Observer;
 import utils.Utils;
 
 import network.Client;
+import network.message.PingMessage;
 import network.message.ServerGreetingMessage;
 import network.message.TileUpdatesMessage;
 
@@ -25,6 +26,8 @@ public class GameDevGame extends GameObject {
 	private static String AUTO_JOIN_ADDR = "";
 	private static int AUTO_JOIN_PORT = -1;
 	private static boolean MUSIC = true;
+	
+	public static long INDUCE_LAG = 0;
 	
 	// Starts the game!
 	public static void main(String[] args) {
@@ -93,7 +96,7 @@ public class GameDevGame extends GameObject {
 		}
 		
 		// Create globals like map, player
-		Globals.initGlobals();
+		Globals.initGlobals(false);
 		
 		new Camera();
 		new Background("background.png");
@@ -110,6 +113,10 @@ public class GameDevGame extends GameObject {
 			Client.setAddress(connectAddress, port);
 			Client.connect();
 		}
+		
+		// TODO - temporary way to sync client/server time
+		Client.sendMessage(new PingMessage());
+		
 	}
 	
 	public void update(double dt){
@@ -118,7 +125,7 @@ public class GameDevGame extends GameObject {
 	
 	public void draw(Graphics2D g){
 		// Display the version number for the first few seconds of the game
-		if(Game.time < 5){
+		if(Game.getTime() < 5){
 			g.setColor(Color.white);
 			Utils.drawStringCentered(g, "v" + VERSION, Game.WIDTH - 22, Game.HEIGHT - 12);
 		}

@@ -105,8 +105,7 @@ public class FlameThrower extends Emitter {
 	public void update(double dt){
 		super.update(dt);
 		
-		// Don't overheat if we're on a dummy player
-		if(getEnabled() && !parent.isDummy()){
+		if(getEnabled()){
 			// Heat up
 			heat += HEATUP_RATE * dt;
 			
@@ -150,27 +149,27 @@ public class FlameThrower extends Emitter {
 			life = FLAME_LIFE;
 			
 			tickHeat();
-			lastTick = Game.time;
+			lastTick = Game.getTime();
 		}
 		
 		/**
 		 * Apply a small amount of heat to the tile we're on
 		 */
 		private void tickHeat(){
-			// Don't heat tiles if we're on a dummy player
-			if(parent.isDummy())
+			// Don't heat tiles if we're not authoritative
+			if(!Globals.isAuthoritative())
 				return; 
 			
 			Map m = Globals.map;
 			Tile t = m.tileAt(x, y);
 			if(t != null)
-				t.localPlayerAddsHeat(PARTICLE_HEAT_AMT);
+				t.authoritativeAddsHeat(PARTICLE_HEAT_AMT);
 		}
 		
 		public void update(double dt){
 			super.update(dt);
 			
-			if(Game.time > lastTick + TICK_TIME){
+			if(Game.getTime() > lastTick + TICK_TIME){
 				tickHeat();
 				lastTick += TICK_TIME;
 			}

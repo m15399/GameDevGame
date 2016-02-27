@@ -7,6 +7,7 @@ import java.net.Socket;
 
 import network.message.NetworkMessage;
 
+import server.ClientHandler;
 import utils.Observer;
 import utils.Utils;
 
@@ -26,6 +27,9 @@ public class SocketHandler implements Runnable {
 	private boolean connected;
 	
 	public Observer onDisconnect;
+	
+	// Used to tag messages with who we got them from
+	public ClientHandler client = null;
 
 	public SocketHandler(Socket sock, NetworkMessagePublisher publisher) {
 		socket = sock;
@@ -94,6 +98,7 @@ public class SocketHandler implements Runnable {
 			NetworkMessage msg = streamHandler.readObject();
 			
 			if(msg != null){
+				msg.client = client;
 				publisher.takeMessage(msg);
 			} else {
 				Utils.err("Failed to read message from socket, disconnecting");

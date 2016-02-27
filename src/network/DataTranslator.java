@@ -9,7 +9,9 @@ import java.util.HashMap;
 import network.message.ChatMessage;
 import network.message.MapStateMessage;
 import network.message.NetworkMessage;
+import network.message.PingMessage;
 import network.message.PlayerDisconnectMessage;
+import network.message.PlayerInputMessage;
 import network.message.PlayerUpdateMessage;
 import network.message.ServerGreetingMessage;
 import network.message.TileUpdatesMessage;
@@ -41,7 +43,8 @@ public class DataTranslator {
 		registerClass(PlayerUpdateMessage.class);
 		registerClass(ServerGreetingMessage.class);
 		registerClass(TileUpdatesMessage.class);
-		
+		registerClass(PlayerInputMessage.class);
+		registerClass(PingMessage.class);
 	}
 	
 	private static void registerClass(Class<? extends NetworkMessage> theClass){

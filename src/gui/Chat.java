@@ -82,7 +82,7 @@ public class Chat extends Entity {
 		names.add(name);
 		messages.add(msg);
 		
-		lastChangeTime = Game.time;
+		lastChangeTime = Game.getTime();
 	}
 	
 	/**
@@ -162,7 +162,7 @@ public class Chat extends Entity {
 	public void draw(Graphics2D g){
 		
 		// Should the chatbox be drawn?
-		boolean visible = typing || Game.time - lastChangeTime < 5;
+		boolean visible = typing || Game.getTime() - lastChangeTime < 5;
 		if(!visible)
 			return;
 		

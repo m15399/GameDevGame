@@ -57,7 +57,7 @@ public abstract class Emitter extends Entity {
 		enabled = true;
 
 		emitParticle();
-		lastEmit = Game.time;
+		lastEmit = Game.getTime();
 	}
 	
 	public void disable(){
@@ -86,7 +86,7 @@ public abstract class Emitter extends Entity {
 	public void update(double dt){
 		// Shoot some particles if enough time has passed
 		if(enabled){
-			double timeSinceEmit = Game.time - lastEmit;
+			double timeSinceEmit = Game.getTime() - lastEmit;
 			double desiredTime = 1.0 / rate;
 			
 			// Shoot enough particles to maintain rate

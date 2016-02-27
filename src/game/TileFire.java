@@ -52,11 +52,6 @@ public class TileFire extends Entity {
 	private double networkHeat;
 	
 	/**
-	 * When we last applied heat to the tile
-	 */
-	private double lastHeatAppliedTime;
-	
-	/**
 	 * Last time the heat was changed at all
 	 */
 	private double lastHeatChangeTime;
@@ -76,7 +71,6 @@ public class TileFire extends Entity {
 		
 		heat = 0;
 		networkHeat = 0;
-		lastHeatAppliedTime = -1;
 		lastHeatChangeTime = -1;
 
 		stage = Stage.NONE;
@@ -114,16 +108,12 @@ public class TileFire extends Entity {
 		return heat;
 	}
 
-	/**
-	 * Call this when the local player takes an action that adds heat. 
-	 */
-	public void localPlayerAddsHeat(double amt){
+	public void authoritativeAddsHead(double amt){
 		if(amt < 0){
 			Utils.err("Added heat amt should always be positive");
 			return;
 		}
 		changeHeat(amt);
-		lastHeatAppliedTime = Game.time;
 	}
 	
 	private void setHeat(double heat){
@@ -133,7 +123,7 @@ public class TileFire extends Entity {
 	private void changeHeat(double amt){
 		passiveChangeHeat(amt);
 	
-		lastHeatChangeTime = Game.time;
+		lastHeatChangeTime = Game.getTime();
 	}
 	
 	/**
@@ -209,21 +199,7 @@ public class TileFire extends Entity {
 			localSection = ((int)getHeat()) / heatPerSection;
 		
 		
-		// Should we update the network?
-		
-		boolean shouldUpdate = false;
-		
-		if(!Globals.isAuthoritative()){
-			if(localSection > networkSection){
-				shouldUpdate = true;
-			} else if (localSection < networkSection){
-				Utils.err("Player thinks tile is cooler than network, this shouldn't be possible??");
-			} 
-		} else {
-			if(localSection != networkSection)
-				shouldUpdate = true;
-		}
-		
+		boolean shouldUpdate = Globals.isAuthoritative() && localSection != networkSection;
 		
 		// Return the update or -1
 		
@@ -243,17 +219,7 @@ public class TileFire extends Entity {
 	 * Network is updating us, set our current heat and our networkHeat
 	 */
 	public void networkSetsHeat(double heatVal){
-		if(!Globals.isAuthoritative()){
-			// If we're the local player and we have heated the tile up
-			// recently, favor our version
-			if(heatVal > getHeat() || Game.time - lastHeatAppliedTime > 1.5)
-				setHeat(heatVal);
-			
-			// Client can assume whole network has been set to this heat
-			networkHeat = heatVal;
-		} else {
-			setHeat(heatVal);
-		}
+		setHeat(heatVal);
 	}
 	
 	public void onDestroy(){
@@ -271,7 +237,7 @@ public class TileFire extends Entity {
 		// Wait .5s because we don't want the heat to cool down before we have a 
 		// chance to update the network (makes sure network sees the max heat 
 		// reached before cooling)
-		if(Game.time - lastHeatChangeTime > .5){
+		if(Game.getTime() - lastHeatChangeTime > .5){
 			double mod = STAGE_HEAT_MODIFY[stage.ordinal()] * PASSIVE_HEAT_CHANGE_SPEED;
 			passiveChangeHeat(mod * dt);
 		}

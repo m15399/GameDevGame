@@ -33,12 +33,15 @@ public class Map extends GameObject {
 	 */
 	public Map(String textFileName) {
 		
-		Globals.publisher().subscribe(MapStateMessage.class, new Observer(){
-			public void notify(Object arg){
-				MapStateMessage msg = (MapStateMessage) arg;
-				readEntireMapState(msg);
-			}
-		});
+		if(!Globals.isServer()){
+			Client.publisher.subscribe(MapStateMessage.class, new Observer(){
+				public void notify(Object arg){
+					MapStateMessage msg = (MapStateMessage) arg;
+					readEntireMapState(msg);
+				}
+			});
+		}
+
 		
 		tileset = null;
 		
