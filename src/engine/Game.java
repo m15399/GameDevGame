@@ -63,6 +63,14 @@ public class Game {
 
 		// update Input
 		Input.update();
+		
+		
+//		if(Globals.DEBUG){
+//			int intTime = (int)Math.floor(Globals.getNetworkGameTime());
+//			if(Globals.getNetworkGameTime() - intTime < 1/60.0){
+//				System.out.println("TICK " + Globals.getNetworkGameTime());
+//			}
+//		}
 	}
 
 	public void draw(Graphics2D g) {
@@ -75,8 +83,18 @@ public class Game {
 		
 		if(Globals.DEV_MODE){
 			g.setColor(Color.white);
-			g.drawString(String.format("%d", (int)fps), 10, 20);			
+			g.drawString(String.format("%d", (int)fps), 10, 20);
 		}
+		
+//		if(Globals.DEBUG){
+//			g.setColor(Color.white);
+//			g.drawString("" + Globals.getNetworkGameTime(), 200, 100);
+//			
+//			int intTime = (int)Math.floor(Globals.getNetworkGameTime());
+//			if(Globals.getNetworkGameTime() - intTime < 1/30.0){
+//				g.fillRect(150, 100, 10, 10);
+//			}
+//		}
 		
 		updateFps();
 	}

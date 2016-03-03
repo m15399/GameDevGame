@@ -35,7 +35,7 @@ public class Globals {
 	public static CollisionManager collisionManager = null;
 	
 	private static double gameStartTime = 0;
-	private static double pingTime = 0;
+	public static double pingTime = 0;
 	
 	private static boolean isServer = false;
 	
@@ -77,8 +77,6 @@ public class Globals {
 					pingTime = pingTimeLong / 1000.0;
 					
 					setGameTime(msg.gameTime + pingTime);
-					
-					System.out.println("Ping time = " + pingTime);
 				}
 			}
 		});

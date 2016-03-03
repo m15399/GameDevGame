@@ -1,10 +1,15 @@
 package network;
 
 import game.GameDevGame;
+import game.Globals;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
+
+import javax.swing.Timer;
 
 import network.message.NetworkMessage;
 
@@ -38,27 +43,33 @@ public class NetworkMessagePublisher {
 		queuedMessages.add(msg);
 	}
 	
-	/**
-	 * Take the message and forward it to subscribers
-	 */
-	public synchronized void takeMessage(final NetworkMessage message){
-		
-		if(GameDevGame.INDUCE_LAG != 0){
-			new Thread(new Runnable(){
-				public void run() {
-					try {
-						Thread.sleep(GameDevGame.INDUCE_LAG);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-
+	private class Lagger {
+		NetworkMessage message;
+		public Lagger(NetworkMessage msg, int theDelay){
+			message = msg;
+			
+			Timer t = new Timer(theDelay, new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
 					if(forwardImmediately)
 						forward(message);
 					else
 						addMessage(message);
 				}
-			}).start();
+			});
+			t.setRepeats(false);
+			t.start();
+		}
+	}
+	
+	/**
+	 * Take the message and forward it to subscribers
+	 */
+	public synchronized void takeMessage(NetworkMessage message){
+		
+		if(!Globals.isServer() && GameDevGame.CLIENT_LAG != 0){
+			new Lagger(message, GameDevGame.CLIENT_LAG);
+		} else if(Globals.isServer() && GameDevGame.SERVER_LAG != 0){
+			new Lagger(message, GameDevGame.SERVER_LAG);
 		} else {
 			if(forwardImmediately)
 				forward(message);

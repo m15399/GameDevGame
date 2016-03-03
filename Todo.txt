@@ -23,8 +23,10 @@ _______________________________________________________________________________
 Code:
 
 Milestone 2 features:
-	Melee and ranged - pickup, use, respawn
-	Bigger map
+	Send weapon info - sync weapons
+	Players get hit (can be judged by their own screen)
+	ASAP list
+	Multiple spawn points/random spawn
 
 
 Weapons
@@ -42,6 +44,8 @@ DO ASAP
 	do better pinging/checking server time
 		http://www.mine-control.com/zack/timesync/timesync.html
 	check TODO's in code
+	send fall time
+	arrow landing in two objs at once causes destroy object twice error
 
 
 Improve Networking:

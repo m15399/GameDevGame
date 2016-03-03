@@ -68,6 +68,9 @@ public class SocketHandler implements Runnable {
 	 * Send a message through the output socket
 	 */
 	public synchronized void sendMessage(NetworkMessage msg){
+		if(!isConnected()){
+			return;
+		}
 		int err = streamHandler.sendMessage(msg);
 		if(err != 0){
 			Utils.err("Failed to send message to socket, disconnecting");

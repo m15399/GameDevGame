@@ -27,7 +27,8 @@ public class GameDevGame extends GameObject {
 	private static int AUTO_JOIN_PORT = -1;
 	private static boolean MUSIC = true;
 	
-	public static long INDUCE_LAG = 0;
+	public static int CLIENT_LAG = 0;
+	public static int SERVER_LAG = 0;
 	
 	// Starts the game!
 	public static void main(String[] args) {
@@ -114,13 +115,16 @@ public class GameDevGame extends GameObject {
 			Client.connect();
 		}
 		
-		// TODO - temporary way to sync client/server time
-		Client.sendMessage(new PingMessage());
 		
 	}
 	
 	public void update(double dt){
 		Client.update();
+		
+		if(Game.frameNumber % 10 == 0){
+			// TODO - temporary way to sync client/server time
+			Client.sendMessage(new PingMessage());
+		}
 	}
 	
 	public void draw(Graphics2D g){
@@ -129,6 +133,7 @@ public class GameDevGame extends GameObject {
 			g.setColor(Color.white);
 			Utils.drawStringCentered(g, "v" + VERSION, Game.WIDTH - 22, Game.HEIGHT - 12);
 		}
+
 	}
 
 }

@@ -122,6 +122,7 @@ public class Utils {
 	 * @param t Value between 0 and 1
 	 */
 	public static double lerp(double a, double b, double t) {
+		t = Math.min(t, 1);
 		return (1 - t) * a + t * b;
 	}
 	

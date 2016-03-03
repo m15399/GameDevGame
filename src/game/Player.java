@@ -57,6 +57,10 @@ public class Player extends MapEntity {
 	protected double inputX, inputY, aimInput;
 	protected boolean fireInput, weaponInput, jumpInput;
 
+	// FakePos - we use this to make the player interpolate to adjusted positions
+	// rather than popping immediately
+	private double fpx, fpy;
+	
 	// Velocity
 	private double vx, vy;
 	
@@ -158,6 +162,10 @@ public class Player extends MapEntity {
 		return aimAngle;
 	}
 	
+	public double[] getCameraPos(){
+		return new double[]{fpx, fpy};
+	}
+	
 	/**
 	 * Returns true if the circle would be touching this player
 	 */
@@ -191,6 +199,8 @@ public class Player extends MapEntity {
 		
 		walking = false;
 		walkTime = 0;
+		
+		syncFakePosition();
 	}
 	
 	public FlameThrower getFlameThrower(){
@@ -199,6 +209,11 @@ public class Player extends MapEntity {
 	
 	public Weapon getCurrWeapon(){
 		return currWeapon;
+	}
+	
+	private void syncFakePosition(){
+		fpx = x;
+		fpy = y;
 	}
 	
 	private void sendInputsToServer(){
@@ -332,7 +347,7 @@ public class Player extends MapEntity {
 			sendInputsToServer();
 		}
 		
-		updateMovement(dt);
+		updateMovement(dt, isRewind);
 		checkCollisions(dt);
 		updateJumping(dt);
 		updateFalling(dt);
@@ -357,6 +372,7 @@ public class Player extends MapEntity {
 			falling = false;
 			fallTime = 0;
 			setDrawOrder(0);
+			syncFakePosition();
 		} else if (!falling && f){
 			// start falling
 			falling = true;
@@ -408,7 +424,8 @@ public class Player extends MapEntity {
 		}
 	}
 	
-	private void updateMovement(double dt){
+	private void updateMovement(double dt, boolean isRewind){
+		
 		walking = false;
 
 		if(!falling){
@@ -437,10 +454,37 @@ public class Player extends MapEntity {
 		// Move player
 		x += vx * dt;
 		y += vy * dt;
+		
+		if(!isRewind){
+			fpx += vx * dt;
+			fpy += vy * dt;			
+		}
 
 		// Friction
 		vx *= 1 - (dt * fric);
 		vy *= 1 - (dt * fric);
+		
+		
+		// Fake position
+		if(!isRewind){
+			double dfpx = x - fpx;
+			double dfpy = y - fpy;
+			
+			double tolerance = 1;
+			
+			if(Math.abs(dfpx) < tolerance){
+				fpx = x;
+			}
+			if(Math.abs(dfpy) < tolerance){
+				fpy = y;
+			}
+			
+			double fac = 10;
+			fpx += dfpx * fac * dt;
+			fpy += dfpy * fac * dt;
+		}
+		
+		
 	}
 	
 	private void setJumping(boolean j){
@@ -562,7 +606,8 @@ public class Player extends MapEntity {
 		AffineTransform prev = g.getTransform();
 		
 		// We subtract this offset to make (x, y) be the coord of the player's feet, instead of his middle
-		g.translate(x, (y - Y_DRAW_OFFSET));
+		// We use the "fake pos" - the position that looks correct but isn't quite
+		g.translate(fpx, (fpy - Y_DRAW_OFFSET));
 		
 		// If falling, scale the sprite down to make it look like we're falling 
 		if(falling){
@@ -602,6 +647,9 @@ public class Player extends MapEntity {
 		Utils.drawStringCentered(g, name, 0, -height / 2 - 16);
 		
 		g.setTransform(prev);
+		
+		g.setColor(Color.white);
+		g.fillRect((int)x, (int)y, 3, 3);
 
 		if(Globals.DEV_MODE){
 			// Draw collision bounds (for debugging)

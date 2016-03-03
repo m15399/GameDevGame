@@ -52,14 +52,17 @@ public class Camera extends GameObject {
 		double[] pos = new double[2];
 		
 		// If no target, just follow Globals.player
-		Entity theTarget = (target != null ? target : Globals.player);
-		
-		if(theTarget != null){
-			pos[0] = theTarget.x - Game.WIDTH / 2;
-			pos[1] = theTarget.y - Game.HEIGHT / 2;
+		Entity theTarget = target;
+		if(target == null){
+			if(Globals.player != null)
+				pos = Globals.player.getCameraPos();
 		} else {
-			pos[0] = pos[1] = 0;
+			pos[0] = theTarget.x;
+			pos[1] = theTarget.y;
 		}
+		
+		pos[0] -= Game.WIDTH / 2;
+		pos[1] -= Game.HEIGHT / 2;
 		
 		return pos;
 	}

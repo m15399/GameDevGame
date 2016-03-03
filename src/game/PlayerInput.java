@@ -3,6 +3,7 @@ package game;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.List;
 
 import engine.Game;
 import engine.Input;
@@ -42,7 +43,7 @@ public class PlayerInput {
 		}
 	}
 	
-	private static ArrayList<InputState> prevInputs = new ArrayList<InputState>();
+	private static List<InputState> prevInputs = new ArrayList<InputState>();
 	
 	protected void runInputs(Player player, double elapsed){
 		
@@ -53,10 +54,13 @@ public class PlayerInput {
 			InputState prevInput = prevInputs.get(i);
 			elapsed -= prevInput.dt;
 			if(elapsed <= 0){
-				startIndex = i;
+				startIndex = i+1;
 				break;
 			}
 		}
+		
+		if(startIndex >= prevInputs.size()) 
+			return;
 
 		// Store current input so we can restore it later
 		InputState currInput = new InputState(player, 0);
@@ -99,8 +103,13 @@ public class PlayerInput {
 		}
 		
 		// Update our inputX and inputY
-		player.inputX = attemptInputX;
-		player.inputY = attemptInputY;
+		if(!player.isFalling()){
+			player.inputX = attemptInputX;
+			player.inputY = attemptInputY;			
+		} else {
+			player.inputX = 0;
+			player.inputY = 0;
+		}
 		
 		
 		// Jumping
@@ -136,7 +145,10 @@ public class PlayerInput {
 		InputState state = new InputState(player, dt);
 		prevInputs.add(state);
 		
-		//TODO not inf size
+		int max = 100;
+		if(prevInputs.size() > max * 2){
+			prevInputs = prevInputs.subList(prevInputs.size() - max, prevInputs.size());
+		}
 	}
 	
 }

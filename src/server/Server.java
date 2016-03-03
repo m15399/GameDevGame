@@ -187,7 +187,7 @@ public class Server {
 		
 		public void draw(Graphics2D g){
 			// Draw the game zoomed out so we can see the whole map
-			double scaleFac = .5;
+			double scaleFac = .65;
 			g.scale(scaleFac, scaleFac);
 			g.translate(Tile.SIZE, Tile.SIZE);
 		}
