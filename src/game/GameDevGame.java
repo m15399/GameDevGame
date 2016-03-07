@@ -28,7 +28,7 @@ public class GameDevGame extends GameObject {
 	private static boolean MUSIC = true;
 	
 	public static int CLIENT_LAG = 0;
-	public static int SERVER_LAG = 0;
+	public static int SERVER_LAG = CLIENT_LAG;
 	
 	// Starts the game!
 	public static void main(String[] args) {
@@ -38,6 +38,7 @@ public class GameDevGame extends GameObject {
 //		MUSIC = false;
 //		Sound.soundEnabled = false;
 //		AUTO_JOIN_ADDR = "localhost";
+//		AUTO_JOIN_ADDR = "54.153.119.226"; // Amazon server
 //		AUTO_JOIN_PORT = 8000;
 		
 		if(WINDOW_HEIGHT > 0)
@@ -121,7 +122,10 @@ public class GameDevGame extends GameObject {
 	public void update(double dt){
 		Client.update();
 		
-		if(Game.frameNumber % 10 == 0){
+		// Send some pings to figure out server time
+		double freq = 60;
+		double num = 10;
+		if(Game.frameNumber % freq == 0 && Game.frameNumber < freq * num){
 			// TODO - temporary way to sync client/server time
 			Client.sendMessage(new PingMessage());
 		}

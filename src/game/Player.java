@@ -31,6 +31,8 @@ public class Player extends MapEntity {
 	
 	private static final double MAX_VELOCITY = 260;
 	
+	private static final double FAKE_POS_INTERP_SPEED = 2; 
+	
 	private int width = 40, height = 50;
 	
 	private String name;
@@ -270,13 +272,13 @@ public class Player extends MapEntity {
 		
 		// Should we send an update right now?
 		boolean shouldUpdate = (lastUpdateMessage == null || // first update
-				Game.getTime() - lastUpdateMessageTime > .5 || // has not updated recently
+				Game.getTime() - lastUpdateMessageTime > .25 || // has not updated recently
 				lastUpdateMessage.falling != currMessage.falling || // state changes...
 				lastUpdateMessage.firing != currMessage.firing ||
 				lastUpdateMessage.jumping != currMessage.jumping ||
 				lastUpdateMessage.inputX != currMessage.inputX ||
 				lastUpdateMessage.inputY != currMessage.inputY ||
-				Math.abs(Utils.angleDifference(lastUpdateMessage.angle, aimAngle)) > 15);
+				Math.abs(Utils.angleDifference(lastUpdateMessage.angle, aimAngle)) > 10);
 		
 
 		if(shouldUpdate){
@@ -299,6 +301,7 @@ public class Player extends MapEntity {
 	 * Update this Player object to match the state we recieved from the server.
 	 */
 	public void recieveUpdateFromServer(PlayerUpdateMessage msg){
+		
 		x = msg.x;
 		y = msg.y;
 		vx = msg.vx;
@@ -330,7 +333,7 @@ public class Player extends MapEntity {
 		
 		*/
 		if(playerInput != null){
-			double timeDif = Globals.getNetworkGameTime() - msg.time;
+			double timeDif = 2 * (Globals.getNetworkGameTime() - msg.time);
 			playerInput.runInputs(this, timeDif);
 		}
 		
@@ -348,7 +351,7 @@ public class Player extends MapEntity {
 		}
 		
 		updateMovement(dt, isRewind);
-		checkCollisions(dt);
+		checkCollisions(dt, isRewind);
 		updateJumping(dt);
 		updateFalling(dt);
 		
@@ -479,9 +482,8 @@ public class Player extends MapEntity {
 				fpy = y;
 			}
 			
-			double fac = 10;
-			fpx += dfpx * fac * dt;
-			fpy += dfpy * fac * dt;
+			fpx += dfpx * FAKE_POS_INTERP_SPEED * dt;
+			fpy += dfpy * FAKE_POS_INTERP_SPEED * dt;
 		}
 		
 		
@@ -518,7 +520,7 @@ public class Player extends MapEntity {
 		} 
 	}
 
-	private void checkCollisions(double dt){
+	private void checkCollisions(double dt, boolean isRewind){
 		/*
 		 * Right now here's what we're doing:
 		 * 
@@ -570,6 +572,11 @@ public class Player extends MapEntity {
 
 		x += pushX;
 		y += pushY;
+		
+		if(!isRewind){
+			fpx += pushX;
+			fpy += pushY;			
+		}
 
 		// Collision with floor
 		if(!jumping){
@@ -648,10 +655,11 @@ public class Player extends MapEntity {
 		
 		g.setTransform(prev);
 		
-		g.setColor(Color.white);
-		g.fillRect((int)x, (int)y, 3, 3);
-
 		if(Globals.DEV_MODE){
+			// Real pos
+			g.setColor(Color.white);
+			g.fillRect((int)x, (int)y, 3, 3);
+			
 			// Draw collision bounds (for debugging)
 			g.setColor(Color.green);
 			g.drawArc((int)(x-wallRadius), (int)(y-wallRadius), wallRadius*2,wallRadius*2, 0, 360);

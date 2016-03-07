@@ -28,7 +28,6 @@ Milestone 2 features:
 	ASAP list
 	Multiple spawn points/random spawn
 
-
 Weapons
 	Server tells you when you picked up a weapon, when you get hit(?)
 	Bow and arrow weapon
@@ -41,8 +40,6 @@ Weapons
 DO ASAP
 	use InputState everywhere 
 	names not sent now
-	do better pinging/checking server time
-		http://www.mine-control.com/zack/timesync/timesync.html
 	check TODO's in code
 	send fall time
 	arrow landing in two objs at once causes destroy object twice error

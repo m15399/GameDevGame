@@ -70,6 +70,9 @@ public class PlayerInput {
 		firstInput.copyTo(player);
 		player.update(firstInput.dt + elapsed, true); // factor in remaining time
 		
+//		System.out.println("Running " + (prevInputs.size() - startIndex - 1) + 
+//				" frames + " + (firstInput.dt + elapsed));
+		
 		// Run the needed frames
 		for(int i = startIndex+1; i < prevInputs.size(); i++){
 			InputState prevInput = prevInputs.get(i);

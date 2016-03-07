@@ -12,6 +12,7 @@ import java.util.Queue;
 import javax.swing.Timer;
 
 import network.message.NetworkMessage;
+import network.message.PingMessage;
 
 import utils.Observer;
 import utils.Utils;
@@ -39,10 +40,6 @@ public class NetworkMessagePublisher {
 		forwardImmediately = false;
 	}
 	
-	private synchronized void addMessage(NetworkMessage msg){
-		queuedMessages.add(msg);
-	}
-	
 	private class Lagger {
 		NetworkMessage message;
 		public Lagger(NetworkMessage msg, int theDelay){
@@ -50,15 +47,19 @@ public class NetworkMessagePublisher {
 			
 			Timer t = new Timer(theDelay, new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					if(forwardImmediately)
-						forward(message);
-					else
-						addMessage(message);
+					processMessage(message);
 				}
 			});
 			t.setRepeats(false);
 			t.start();
 		}
+	}
+	
+	private synchronized void processMessage(NetworkMessage message){
+		if(forwardImmediately || message.getClass() == PingMessage.class)
+			forward(message);
+		else
+			queuedMessages.add(message);
 	}
 	
 	/**
@@ -71,10 +72,7 @@ public class NetworkMessagePublisher {
 		} else if(Globals.isServer() && GameDevGame.SERVER_LAG != 0){
 			new Lagger(message, GameDevGame.SERVER_LAG);
 		} else {
-			if(forwardImmediately)
-				forward(message);
-			else
-				queuedMessages.add(message);	
+			processMessage(message);
 		}		
 		
 	}

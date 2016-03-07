@@ -1,5 +1,6 @@
 package game;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import engine.Game;
@@ -35,6 +36,7 @@ public class Globals {
 	public static CollisionManager collisionManager = null;
 	
 	private static double gameStartTime = 0;
+	private static ArrayList<Double> gameStartTimes = new ArrayList<Double>();
 	public static double pingTime = 0;
 	
 	private static boolean isServer = false;
@@ -75,8 +77,8 @@ public class Globals {
 				} else {
 					long pingTimeLong = new Date().getTime() - msg.sentTime;
 					pingTime = pingTimeLong / 1000.0;
-					
-					setGameTime(msg.gameTime + pingTime);
+										
+					setGameTime(msg.gameTime + pingTime / 2);
 				}
 			}
 		});
@@ -93,8 +95,14 @@ public class Globals {
 		return ret;
 	}
 	
-	public static void setGameTime(double t){
-		gameStartTime = Game.getTime() - t;
+	public static void setGameTime(double t){		
+		
+		// Use the median of all the gameTime's we've collected to get the best guess
+		double newGameStartTime = Game.getTime() - t;
+		gameStartTimes.add(newGameStartTime);
+		gameStartTime = gameStartTimes.get(gameStartTimes.size()/2);
+				
+//		System.out.println("Setting gameStartTime: " + gameStartTime + ". Ping: " + pingTime);
 	}
 	
 	public static String getPlayerName(){
